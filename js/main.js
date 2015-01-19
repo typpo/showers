@@ -4,7 +4,8 @@
   var me = this;
 
   /** Options and defaults **/
-  opts.static_prefix = opts.static_prefix || '/static';
+  opts.static_prefix = typeof opts.static_prefix === 'undefined' ?
+    '/static' : opts.static_prefix;
   opts.default_camera_position = opts.camera_position || [0, 155, 32];
   opts.camera_fly_around = typeof opts.camera_fly_around === 'undefined' ? true : opts.camera_fly_around;
   opts.jed_delta = opts.jed_delta || 0.25;
