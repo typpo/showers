@@ -534,13 +534,13 @@
       small_roid_circled_texture:
         { type: 't', value: loadTexture(opts.static_prefix + '/img/cloud4-circled.png') }
     };
-    var vertexshader = document.getElementById('vertexshader').textContent
+    var vertexshader = document.getElementById('orbit-vertex-shader').textContent
                           .replace('{{PIXELS_PER_AU}}', PIXELS_PER_AU.toFixed(1));
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
       attributes:     attributes,
       vertexShader:   vertexshader,
-      fragmentShader: document.getElementById('fragmentshader').textContent
+      fragmentShader: document.getElementById('orbit-fragment-shader').textContent
     });
     particle_system_shader_material.depthTest = false;
     particle_system_shader_material.vertexColor = true;
