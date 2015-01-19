@@ -10,9 +10,9 @@ window.Ephemeris = {
 
     w_bar: 58.33968,
     w: 271.07725,   // ARGUMENT of perihelion.  argument = longitude of perihelion - longitude of ascending node
-    om: 147.26243,
+    o: 147.26243,
 
-    P: 365.256
+    p: 365.256
   },
 
   // http://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html
@@ -27,8 +27,8 @@ window.Ephemeris = {
     w_bar: 77.45779628,
     w: 29.12703035,
     L: 252.25032350,
-    om: 48.33076593,
-    P: 87.969
+    o: 48.33076593,
+    p: 87.969
   },
   venus: {
     full_name: 'Venus',
@@ -40,8 +40,8 @@ window.Ephemeris = {
     w_bar: 131.60246718,
     w: 54.92262463,
     L: 181.97909950,
-    om: 76.67984255,
-    P: 224.701
+    o: 76.67984255,
+    p: 224.701
   },
   earth: {
     full_name: 'Earth',
@@ -53,9 +53,8 @@ window.Ephemeris = {
     w_bar: 102.93768193,
     w: 102.93768193,
     L: 100.46457166,
-    //om:-11.26064,
-    om: 0,
-    P: 365.256
+    o: 0,
+    p: 365.256
   },
   mars:{
     full_name: 'Mars',
@@ -67,8 +66,8 @@ window.Ephemeris = {
     w_bar: -23.94362959,   // longitude of perihelion
     w: -73.5031685,   // argument of perihelion
     L: -4.55343205,    // mean longitude
-    om: 49.55953891,    // longitude of ascending node
-    P: 686.980
+    o: 49.55953891,    // longitude of ascending node
+    p: 686.980
   },
   jupiter: {
     full_name: 'Jupiter',
@@ -80,8 +79,8 @@ window.Ephemeris = {
     w_bar: 14.72847983,
     w: -85.74542926,
     L: 34.39644051,
-    om: 100.47390909,
-    P: 4332.589
+    o: 100.47390909,
+    p: 4332.589
   }
 };
 

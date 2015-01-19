@@ -25,6 +25,10 @@
     var prev;
     for (var i=0; i <= parts; i++, time+=delta) {
       var pos = this.getPosAtTime(time);
+      if (isNaN(pos[0]) || isNaN(pos[1]) || isNaN(pos[2])) {
+        console.error('NaN position value - you may have bad data in the following ephemeris:');
+        console.log(this.eph);
+      }
       var vector = new THREE.Vector3(pos[0], pos[1], pos[2]);
       prev = vector;
       pts.push(vector);
@@ -52,7 +56,8 @@
     var a = this.eph.a;
     var i = (this.eph.i) * pi/180;
     var o = (this.eph.o) * pi/180; // longitude of ascending node
-    var p = this.eph.w * pi/180; // LONGITUDE of perihelion
+    // LONGITUDE of perihelion
+    var p = (this.eph.w_bar || this.eph.w + this.eph.om) * pi/180;
     var ma = this.eph.ma;
     var M;
     // Calculate mean anomaly at jed
@@ -86,8 +91,9 @@
 
 
   Orbit3D.prototype.getEllipse = function() {
-    if (!this.ellipse)
+    if (!this.ellipse) {
       this.ellipse = this.createOrbit(this.opts.jed);
+    }
     return this.ellipse;
   }
 

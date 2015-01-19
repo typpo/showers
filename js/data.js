@@ -1,4 +1,4 @@
-window.ASTEROID_DATA = [
+window.ORBIT_DATA = [
   {
     "time": "5:28:35.11",
     "sol_long": "105.58947",

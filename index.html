@@ -1,8 +1,7 @@
 ﻿<!doctype html>
 <html>
 <head>
-
-  <title>The Moon</title>
+  <title>Meteor showers</title>
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
@@ -15,7 +14,6 @@
 
 </head>
 <body>
-
   <!-- Three.JS Container -->
   <div id="container"></div>
 
@@ -84,7 +82,7 @@
         float v = 2.0 * atan(sqrt((1.0+e)/(1.0-e)) * tan(E/2.0));
 
         // radius vector, in AU
-        float r = a * (1.0 - e*e) / (1.0 + e * cos(v)) * 50.;  // pixels per NM
+        float r = a * (1.0 - e*e) / (1.0 + e * cos(v)) * {{PIXELS_PER_AU}};
 
         // heliocentric coords
         float X = r * (cos(o_rad) * cos(v + p_rad - o_rad) - sin(o_rad) * sin(v + p_rad - o_rad) * cos(i_rad));

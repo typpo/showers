@@ -251,10 +251,6 @@
     scene.add(sprite);
 
     // Ellipses
-    if (opts.run_asteroid_query) {
-      runAsteroidQuery();
-    }
-
     $('#loading-text').html('planets');
     var mercury = new Orbit3D(Ephemeris.mercury,
         {
@@ -345,6 +341,10 @@
     skyBox.renderDepth = 1000.0;
     scene.add(skyBox);
     window.skyBox = skyBox;
+
+    if (opts.run_asteroid_query) {
+      runAsteroidQuery();
+    }
 
     $(opts.container).on('mousedown', function() {
       opts.camera_fly_around = false;
@@ -500,7 +500,7 @@
       });
            */
       setTimeout(function() {
-        me.processAsteroidRankings(window.ASTEROID_DATA);
+        me.processAsteroidRankings(window.ORBIT_DATA);
       }, 0);
     }
   }
@@ -800,8 +800,9 @@
         'orbit': orbit,
         'idx': added_objects.length
       };
+      /*
       // TODO(@ian) all this specific objects-of-interest/featured stuff
-      // needs to be moved out of 3d code !!
+      // needs to be moved out of 3d code.
       if (featured_count++ < NUM_BIG_PARTICLES) {
         featured_html += '<tr data-full-name="'
           + roid.full_name
@@ -811,12 +812,14 @@
           + (roid.price < 1 ? 'N/A' : '$' + fuzzy_price(roid.price))
           + '</td></tr>';
       }
+      */
 
       // Add to list of objects in scene
       added_objects.push(orbit);
     } // end asteroid results for loop
 
     // handle when view mode is switched - need to clear every row but the sun
+    /*
     if (featured_2012_da14) {
       $('#objects-of-interest tr:gt(2)').remove();
     }
@@ -848,6 +851,7 @@
       return false;
     });
     $('#objects-of-interest-container').show();
+    */
 
     jed = toJED(new Date());  // reset date
     if (!asteroids_loaded) {
@@ -855,11 +859,14 @@
     }
     createParticleSystem();   // initialize and start the simulation
 
+    /*
     if (featured_2012_da14) {
       setLock('earth');
       $('#sun-selector').css('background-color', 'black');
       $('#earth-selector').css('background-color', 'green');
     }
+   */
+
     if (!first_loaded) {
       animate();
       first_loaded = true;
