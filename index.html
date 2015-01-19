@@ -41,10 +41,10 @@
       attribute float e;
       attribute float i;
       attribute float o;
-      attribute float P;
       attribute float ma;
       attribute float n;
       attribute float w;
+      attribute float P;
       attribute float epoch;
 
       attribute float visible;
@@ -58,7 +58,12 @@
         float p_rad = (w) * pi/180.0; // LONGITUDE of perihelion
         float ma_rad = ma * pi/180.0;
         float n_rad;
-        n_rad = 2.0 * pi / P;
+        if (P > 0.) {
+          n_rad = 2.0 * pi / P;
+        }
+        else {
+          n_rad = n * pi/180.0; // mean motion
+        }
 
         float d = jed - epoch;
         float M = ma_rad + n_rad * d;
