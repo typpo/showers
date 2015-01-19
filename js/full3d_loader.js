@@ -9,7 +9,7 @@
     },
     run_asteroid_query: true,
     show_dat_gui: true,
-    static_prefix: window.passthrough_vars.offline_mode ? 'static' : '/static'
+    static_prefix: ''
   });
 
   if (window.passthrough_vars.offline_mode) {

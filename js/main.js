@@ -180,13 +180,12 @@
       window.gl = renderer.getContext();
     }
     else {
-      //renderer	= new THREE.CanvasRenderer();
       opts.not_supported_callback();
       return;
     }
     var $container = $(opts.container);
-    var containerHeight = $container.height();//$(window).height()/2;
-    var containerWidth = $container.width();  // $(window).width()
+    var containerHeight = $container.height();
+    var containerWidth = $container.width();
     renderer.setSize(containerWidth, containerHeight);
     opts.container.appendChild(renderer.domElement);
 
@@ -199,11 +198,14 @@
     window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
     setDefaultCameraPosition();
 
+    // TODO include libs for this
+    /*
     THREEx.WindowResize(renderer, camera, opts.container);    // handle window resize
     // Fullscreen api
     if (THREEx.FullScreen && THREEx.FullScreen.available()) {
       THREEx.FullScreen.bindKey();
     }
+   */
 
     camera.lookAt(new THREE.Vector3(0,0,0));
     scene.add(camera);
@@ -218,12 +220,15 @@
     window.cc = cameraControls;
 
     // This is stupid but it's how I set up the initial rotation
+    // TODO fix this
+    /*
     cameraControls.forceRotate(
         new THREE.Vector3(0.09133858267716535, 0.4658716047427351, 0.1826620371691377),
         new THREE.Vector3(-0.12932885444884135, 0.35337196181704117,  0.023557202790282953));
     cameraControls.forceRotate(
         new THREE.Vector3(0.5557858773636077, 0.7288978222072244, 0.17927802044881952),
         new THREE.Vector3(-0.0656536826099882, 0.5746939531732201, 0.7470641189675084));
+       */
 
 
     // Rendering solar system
@@ -481,6 +486,7 @@
       }, 0);
     }
     else {
+      /*
       $.getJSON('/api/rankings?sort_by=' + sort + '&limit='
           + MAX_NUM_ORBITS
           + '&orbits_only=true', function(data) {
@@ -489,6 +495,10 @@
         alert("Sorry, we've encountered an error and we can't load the simulation");
         mixpanel.track('3d error', {type: 'json'});
       });
+           */
+      setTimeout(function() {
+        me.processAsteroidRankings(window.ASTEROID_DATA);
+      }, 0);
     }
   }
 

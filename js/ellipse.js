@@ -1,4 +1,4 @@
-<F28>;(function() {
+;(function() {
   'use strict';
 
   var pi = Math.PI, sin = Math.sin, cos = Math.cos;
@@ -85,4 +85,4 @@
   }
 
   window.Orbit3D = Orbit3D;
-})();<F29>
+})();
