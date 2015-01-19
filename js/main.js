@@ -7,10 +7,12 @@
   opts.static_prefix = typeof opts.static_prefix === 'undefined' ?
     '/static' : opts.static_prefix;
   opts.default_camera_position = opts.camera_position || [0, 155, 32];
-  opts.camera_fly_around = typeof opts.camera_fly_around === 'undefined' ? true : opts.camera_fly_around;
+  opts.camera_fly_around = typeof opts.camera_fly_around === 'undefined' ?
+    true : opts.camera_fly_around;
   opts.jed_delta = opts.jed_delta || 0.25;
   opts.custom_object_fn = opts.custom_object_fn || null;
-  opts.object_texture_path = opts.object_texture_path || opts.static_prefix + "/img/cloud4.png";
+  opts.object_texture_path = opts.object_texture_path ||
+    opts.static_prefix + "/img/cloud4.png";
   opts.not_supported_callback = opts.not_supported_callback || function() {};
   opts.sun_scale = opts.sun_scale || 50;
   opts.show_dat_gui = opts.show_dat_gui || false;
