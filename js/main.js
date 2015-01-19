@@ -35,7 +35,6 @@
   /** Constants **/
   var WEB_GL_ENABLED = true
     , MAX_NUM_ORBITS = 4000
-    , PIXELS_PER_AU = 50
     , NUM_BIG_PARTICLES = 25;   // show this many asteroids with orbits
 
   /** Other variables **/
@@ -537,12 +536,10 @@
       small_roid_circled_texture:
         { type: 't', value: loadTexture(opts.static_prefix + '/img/cloud4-circled.png') }
     };
-    var vertexshader = document.getElementById('orbit-vertex-shader').textContent
-                          .replace('{{PIXELS_PER_AU}}', PIXELS_PER_AU.toFixed(1));
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
       attributes:     attributes,
-      vertexShader:   vertexshader,
+      vertexShader:   document.getElementById('orbit-vertex-shader').textContent,
       fragmentShader: document.getElementById('orbit-fragment-shader').textContent
     });
     particle_system_shader_material.depthTest = false;
@@ -568,7 +565,8 @@
       attributes.n.value[i] = added_objects[i].eph.n || -1.0;
       attributes.w.value[i] = added_objects[i].eph.w_bar ||
         (added_objects[i].eph.w + added_objects[i].eph.om);
-      attributes.P.value[i] = added_objects[i].eph.p || 365.0;  // TODO
+      attributes.P.value[i] = added_objects[i].eph.p ||
+        Math.sqrt(Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
         Math.random() * 2451545.0; // TODO
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||
@@ -576,6 +574,7 @@
       attributes.locked.value[i] = 0.0;
     }  // end added_objects loop
     setAttributeNeedsUpdateFlags();
+    console.log(attributes);
 
     particleSystem = new THREE.ParticleSystem(
       particle_system_geometry,

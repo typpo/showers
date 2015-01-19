@@ -2,7 +2,7 @@
   'use strict';
 
   var pi = Math.PI, sin = Math.sin, cos = Math.cos;
-  var PIXELS_PER_NM = 50;
+  var PIXELS_PER_AU = 50;
 
   var Orbit3D = function(eph, opts) {
     opts = opts || {};
@@ -79,7 +79,7 @@
     var v = 2 * Math.atan(Math.sqrt((1+e)/(1-e)) * Math.tan(E/2));
 
     // Radius vector, in AU
-    var r = a * (1 - e*e) / (1 + e * cos(v)) * PIXELS_PER_NM;
+    var r = a * (1 - e*e) / (1 + e * cos(v)) * PIXELS_PER_AU;
 
     // Hekliocentric coords
     var X = r * (cos(o) * cos(v + p - o) - sin(o) * sin(v + p - o) * cos(i))
