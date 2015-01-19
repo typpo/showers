@@ -89,7 +89,6 @@
     return ret;
   }
 
-
   Orbit3D.prototype.getEllipse = function() {
     if (!this.ellipse) {
       this.ellipse = this.createOrbit(this.opts.jed);
