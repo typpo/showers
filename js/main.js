@@ -566,8 +566,8 @@
       attributes.o.value[i] = added_objects[i].eph.om;
       attributes.ma.value[i] = added_objects[i].eph.ma || 0; // TODO
       attributes.n.value[i] = added_objects[i].eph.n || -1.0;
-      attributes.w.value[i] = added_objects[i].eph.w_bar
-        || (added_objects[i].eph.w + added_objects[i].eph.om);
+      attributes.w.value[i] = added_objects[i].eph.w_bar ||
+        (added_objects[i].eph.w + added_objects[i].eph.om);
       attributes.P.value[i] = added_objects[i].eph.P || 365.0;  // TODO
       attributes.epoch.value[i] = added_objects[i].eph.epoch || 2451545.0; // TODO
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||

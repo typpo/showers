@@ -8,7 +8,7 @@
       $('#not-supported').show();
     },
     run_asteroid_query: true,
-    show_dat_gui: true,
+    //show_dat_gui: true,
     static_prefix: ''
   });
 
