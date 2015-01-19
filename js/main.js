@@ -569,9 +569,10 @@
       attributes.w.value[i] = added_objects[i].eph.w_bar ||
         (added_objects[i].eph.w + added_objects[i].eph.om);
       attributes.P.value[i] = added_objects[i].eph.p || 365.0;  // TODO
-      attributes.epoch.value[i] = added_objects[i].eph.epoch || 2451545.0; // TODO
+      attributes.epoch.value[i] = added_objects[i].eph.epoch ||
+        Math.random() * 2451545.0; // TODO
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||
-        new THREE.Color(0xffffff); // TODO
+        new THREE.Color(0xff00ff); // TODO
       attributes.locked.value[i] = 0.0;
     }  // end added_objects loop
     setAttributeNeedsUpdateFlags();
