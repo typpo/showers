@@ -55,7 +55,7 @@
     var e = this.eph.e;
     var a = this.eph.a;
     var i = (this.eph.i) * pi/180;
-    var o = (this.eph.o) * pi/180; // longitude of ascending node
+    var o = (this.eph.om) * pi/180; // longitude of ascending node
     // LONGITUDE of perihelion
     var p = (this.eph.w_bar || this.eph.w + this.eph.om) * pi/180;
     var ma = this.eph.ma;
