@@ -84,5 +84,12 @@
     return ret;
   }
 
+
+  Orbit3D.prototype.getEllipse = function() {
+    if (!this.ellipse)
+      this.ellipse = this.createOrbit(this.opts.jed);
+    return this.ellipse;
+  }
+
   window.Orbit3D = Orbit3D;
 })();
