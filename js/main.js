@@ -93,22 +93,6 @@
 
   function initGUI() {
     var ViewUI = function() {
-      this['Cost effective'] = function() {
-        me.clearRankings();
-        runAsteroidQuery('score');
-      };
-      this['Most valuable'] = function() {
-        me.clearRankings();
-        runAsteroidQuery('value');
-      };
-      this['Most accessible'] = function() {
-        me.clearRankings();
-        runAsteroidQuery('accessibility');
-      };
-      this['Smallest'] = function() {
-        me.clearRankings();
-        runAsteroidQuery('smallest');
-      };
       this['Speed'] = opts.jed_delta;
       this['Planet orbits'] = planet_orbits_visible;
       this['Milky Way'] = opts.milky_way_visible;
@@ -118,10 +102,6 @@
     window.onload = function() {
       var text = new ViewUI();
       var gui = new dat.GUI();
-      gui.add(text, 'Cost effective');
-      gui.add(text, 'Most valuable');
-      gui.add(text, 'Most accessible');
-      gui.add(text, 'Smallest');
       gui.add(text, 'Speed', 0, 1).onChange(function(val) {
         opts.jed_delta = val;
         var was_moving = object_movement_on;
