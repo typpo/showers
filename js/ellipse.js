@@ -41,8 +41,8 @@
     var line = new THREE.Line(points,
       new THREE.LineDashedMaterial({
         color: this.opts.color,
-        linewidth: this.opts.width,
-        dashSize: 1,
+        linewidth: 3,
+        dashSize: 2,
         gapSize: 0.5
       }), THREE.LineStrip);
     return line;
