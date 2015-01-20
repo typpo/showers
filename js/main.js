@@ -94,7 +94,7 @@
   function initGUI() {
     var ViewUI = function() {
       this['Speed'] = opts.jed_delta;
-      this['Planet orbits'] = planet_orbits_visible;
+      this['Show orbits'] = planet_orbits_visible;
       this['Milky Way'] = opts.milky_way_visible;
       this['Display date'] = '12/26/2012';
     };
@@ -107,7 +107,7 @@
         var was_moving = object_movement_on;
         object_movement_on = opts.jed_delta > 0;
       });
-      gui.add(text, 'Planet orbits').onChange(function() {
+      gui.add(text, 'Show orbits').onChange(function() {
         togglePlanetOrbits();
       });
       gui.add(text, 'Milky Way').onChange(function() {
