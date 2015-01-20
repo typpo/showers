@@ -269,8 +269,16 @@
           name: 'Jupiter'
         });
     scene.add(jupiter.getEllipse());
+    var comet169pneat = new Orbit3D(Ephemeris.comet169pneat,
+        {
+          color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+          display_color: new THREE.Color(0xccffff),
+          particle_geometry: particle_system_geometry,
+          name: '169P/NEAT'
+        });
+    scene.add(comet169pneat.getEllipse());
 
-    planets = [mercury, venus, earth, mars, jupiter];
+    planets = [mercury, venus, earth, mars, jupiter, comet169pneat];
     if (featured_2012_da14) {
       // Special: 2012 DA14
       var asteroid_2012_da14 = new Orbit3D(Ephemeris.asteroid_2012_da14,
