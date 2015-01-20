@@ -12,7 +12,7 @@
   opts.jed_delta = opts.jed_delta || 0.25;
   opts.custom_object_fn = opts.custom_object_fn || null;
   opts.object_texture_path = opts.object_texture_path ||
-    opts.static_prefix + "/img/cloud4.png";
+    opts.static_prefix + "img/cloud4.png";
   opts.not_supported_callback = opts.not_supported_callback || function() {};
   opts.sun_scale = opts.sun_scale || 50;
   opts.show_dat_gui = opts.show_dat_gui || false;
@@ -206,7 +206,7 @@
 
     // "sun" - 0,0 marker
     $('#loading-text').html('sun');
-    var texture = loadTexture(opts.static_prefix + '/img/sunsprite.png');
+    var texture = loadTexture(opts.static_prefix + 'img/sunsprite.png');
     var sprite = new THREE.Sprite(new THREE.SpriteMaterial({
       map: texture,
       blending: THREE.AdditiveBlending,
@@ -223,7 +223,7 @@
     var mercury = new Orbit3D(Ephemeris.mercury,
         {
           color: 0x913CEE, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + '/img/texture-mercury.jpg',
+          texture_path: opts.static_prefix + 'img/texture-mercury.jpg',
           display_color: new THREE.Color(0x913CEE),
           particle_geometry: particle_system_geometry,
           name: 'Mercury'
@@ -232,7 +232,7 @@
     var venus = new Orbit3D(Ephemeris.venus,
         {
           color: 0xFF7733, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + '/img/texture-venus.jpg',
+          texture_path: opts.static_prefix + 'img/texture-venus.jpg',
           display_color: new THREE.Color(0xFF7733),
           particle_geometry: particle_system_geometry,
           name: 'Venus'
@@ -241,7 +241,7 @@
     var earth = new Orbit3D(Ephemeris.earth,
         {
           color: 0x009ACD, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + '/img/texture-earth.jpg',
+          texture_path: opts.static_prefix + 'img/texture-earth.jpg',
           display_color: new THREE.Color(0x009ACD),
           particle_geometry: particle_system_geometry,
           name: 'Earth'
@@ -254,7 +254,7 @@
     var mars = new Orbit3D(Ephemeris.mars,
         {
           color: 0xA63A3A, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + '/img/texture-mars.jpg',
+          texture_path: opts.static_prefix + 'img/texture-mars.jpg',
           display_color: new THREE.Color(0xA63A3A),
           particle_geometry: particle_system_geometry,
           name: 'Mars'
@@ -263,7 +263,7 @@
     var jupiter = new Orbit3D(Ephemeris.jupiter,
         {
           color: 0xFF7F50, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + '/img/texture-jupiter.jpg',
+          texture_path: opts.static_prefix + 'img/texture-jupiter.jpg',
           display_color: new THREE.Color(0xFF7F50),
           particle_geometry: particle_system_geometry,
           name: 'Jupiter'
@@ -276,7 +276,7 @@
       var asteroid_2012_da14 = new Orbit3D(Ephemeris.asteroid_2012_da14,
           {
             color: 0xff0000, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + '/img/cloud4.png',   // not using loadTexture, no support for offline mode...
+          texture_path: opts.static_prefix + 'img/cloud4.png',   // not using loadTexture, no support for offline mode...
           display_color: new THREE.Color(0xff0000),
           particle_geometry: particle_system_geometry,
           name: '2012 DA14'
@@ -292,7 +292,7 @@
     // Skybox
     var geometry = new THREE.SphereGeometry(3000, 60, 40);
     var uniforms = {
-      texture: { type: 't', value: loadTexture(opts.static_prefix + '/img/eso_dark.jpg') }
+      texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
     };
 
     var material = new THREE.ShaderMaterial( {
@@ -499,11 +499,11 @@
       earth_i: { type: 'f', value: Ephemeris.earth.i },
       earth_om: { type: 'f', value: Ephemeris.earth.om },
       planet_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + '/img/cloud4.png') },
+        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4.png') },
       small_roid_texture:
         { type: 't', value: loadTexture(opts.object_texture_path) },
       small_roid_circled_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + '/img/cloud4-circled.png') }
+        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png') }
     };
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
