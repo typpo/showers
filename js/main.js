@@ -758,8 +758,8 @@
         orbit = new Orbit3D(roid, orbit_params, useBigParticles);
       }
       else {
-        var display_color = i < NUM_BIG_PARTICLES ?
-            opts.top_object_color : displayColorForObject(roid);
+        var display_color = /*i < NUM_BIG_PARTICLES ?
+            opts.top_object_color :*/ displayColorForObject(roid);
         orbit = new Orbit3D(roid, {
           color: 0xcccccc,
           display_color: display_color,
