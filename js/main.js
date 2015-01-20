@@ -551,8 +551,7 @@
       if (i < planets.length) {
         attributes.size.value[i] = 75;
         attributes.is_planet.value[i] = 1.0;
-      }
-      else {
+      } else {
         attributes.size.value[i] = added_objects[i].opts.object_size;
         attributes.is_planet.value[i] = 0.0;
       }
@@ -572,9 +571,9 @@
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||
         new THREE.Color(0xff00ff); // TODO
       attributes.locked.value[i] = 0.0;
+      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
     }  // end added_objects loop
     setAttributeNeedsUpdateFlags();
-    console.log(attributes);
 
     particleSystem = new THREE.ParticleSystem(
       particle_system_geometry,
