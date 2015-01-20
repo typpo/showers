@@ -9,7 +9,10 @@
     },
     run_asteroid_query: true,
     show_dat_gui: true,
-    static_prefix: ''
+    static_prefix: '',
+    //camera_position: [18.58451231886428, -350.32000584838624, 133.3893086458709],
+    camera_position: [38.58451231886428, -360.32000584838624, 193.3893086458709],
+    camera_fly_around: false
   });
 
   // Other wiring

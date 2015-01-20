@@ -6,7 +6,7 @@
   /** Options and defaults **/
   opts.static_prefix = typeof opts.static_prefix === 'undefined' ?
     '/static' : opts.static_prefix;
-  opts.default_camera_position = opts.camera_position || [0, 155, 32];
+  opts.default_camera_position = opts.camera_position || [0, -136, 113];
   opts.camera_fly_around = typeof opts.camera_fly_around === 'undefined' ?
     true : opts.camera_fly_around;
   opts.jed_delta = opts.jed_delta || 0.25;
@@ -198,7 +198,6 @@
     var cameraH	= 3;
     var cameraW	= cameraH / containerHeight * containerWidth;
     window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
-    setDefaultCameraPosition();
 
     // TODO include libs for this
     /*
@@ -209,6 +208,7 @@
     }
    */
 
+    setDefaultCameraPosition();
     camera.lookAt(new THREE.Vector3(0,0,0));
     scene.add(camera);
 
@@ -220,17 +220,6 @@
     cameraControls.maxDistance = 1100;
     cameraControls.dynamicDampingFactor = 0.5;
     window.cc = cameraControls;
-
-    // This is stupid but it's how I set up the initial rotation
-    // TODO fix this
-    /*
-    cameraControls.forceRotate(
-        new THREE.Vector3(0.09133858267716535, 0.4658716047427351, 0.1826620371691377),
-        new THREE.Vector3(-0.12932885444884135, 0.35337196181704117,  0.023557202790282953));
-    cameraControls.forceRotate(
-        new THREE.Vector3(0.5557858773636077, 0.7288978222072244, 0.17927802044881952),
-        new THREE.Vector3(-0.0656536826099882, 0.5746939531732201, 0.7470641189675084));
-       */
 
 
     // Rendering solar system
@@ -355,9 +344,9 @@
   function setNeutralCameraPosition() {
     // Follow floating path around
     var timer = 0.0001 * Date.now();
-    cam.position.x = Math.sin(timer) * 25;
+    cam.position.x = opts.default_camera_position[0] + Math.sin(timer) * 25;
     //cam.position.y = Math.sin( timer ) * 100;
-    cam.position.z = 100 + Math.cos(timer) * 20;
+    cam.position.z = opts.default_camera_position[2] + Math.cos(timer) * 20;
   }
 
   function setDefaultCameraPosition() {
@@ -634,8 +623,7 @@
           cam.position.set(pos[0]+25, pos[1]-25, pos[2]-70);
         }
         cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
-      }
-      else {
+      } else {
         setNeutralCameraPosition();
       }
     }
