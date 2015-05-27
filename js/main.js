@@ -269,6 +269,33 @@
           name: 'Jupiter'
         });
     scene.add(jupiter.getEllipse());
+    var saturn = new Orbit3D(Ephemeris.saturn,
+        {
+          color: 0x996633, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-saturn.jpg',
+          display_color: new THREE.Color(0x996633),
+          particle_geometry: particle_system_geometry,
+          name: 'Saturn'
+        });
+    scene.add(saturn.getEllipse());
+    var uranus = new Orbit3D(Ephemeris.uranus,
+        {
+          color: 0x0099FF, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-uranus.jpg',
+          display_color: new THREE.Color(0x0099FF),
+          particle_geometry: particle_system_geometry,
+          name: 'uranus'
+        });
+    scene.add(uranus.getEllipse());
+    var neptune = new Orbit3D(Ephemeris.neptune,
+        {
+          color: 0x3333FF, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-neptune.jpg',
+          display_color: new THREE.Color(0x3333FF),
+          particle_geometry: particle_system_geometry,
+          name: 'neptune'
+        });
+    scene.add(neptune.getEllipse());
     /*
     var comet169pneat = new Orbit3D(Ephemeris.comet169pneat,
         {
@@ -288,7 +315,8 @@
         });
     scene.add(cometThatcher.getEllipse());
 
-    planets = [mercury, venus, earth, mars, jupiter, cometThatcher];
+    planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,
+      cometThatcher];
     if (featured_2012_da14) {
       // Special: 2012 DA14
       var asteroid_2012_da14 = new Orbit3D(Ephemeris.asteroid_2012_da14,
@@ -308,7 +336,7 @@
     }
 
     // Skybox
-    var geometry = new THREE.SphereGeometry(10000, 60, 40);
+    var geometry = new THREE.SphereGeometry(3000, 60, 40);
     var uniforms = {
       texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
     };
@@ -475,16 +503,10 @@
       }, 0);
     }
     else {
-      /*
-      $.getJSON('/api/rankings?sort_by=' + sort + '&limit='
-          + MAX_NUM_ORBITS
-          + '&orbits_only=true', function(data) {
-            me.processAsteroidRankings(data);
-      }).error(function() {
-        alert("Sorry, we've encountered an error and we can't load the simulation");
-        mixpanel.track('3d error', {type: 'json'});
-      });
-           */
+      var data = window.ORBIT_DATA;
+      for (var i=0; i < 3; i++) {
+        data.push.apply(data, window.ORBIT_DATA);
+      }
       setTimeout(function() {
         me.processAsteroidRankings(window.ORBIT_DATA);
       }, 0);
@@ -539,12 +561,12 @@
         attributes.size.value[i] = 75;
         attributes.is_planet.value[i] = 1.0;
       } else {
-        //attributes.size.value[i] = added_objects[i].opts.object_size;
-        attributes.size.value[i] = 175;
+        attributes.size.value[i] = added_objects[i].opts.object_size;
+        //attributes.size.value[i] = 175;
         attributes.is_planet.value[i] = 0.0;
       }
 
-      attributes.a.value[i] = added_objects[i].eph.a;
+      attributes.a.value[i] = added_objects[i].eph.a >= 999 ? 0 : added_objects[i].eph.a;
       attributes.e.value[i] = added_objects[i].eph.e;
       attributes.i.value[i] = added_objects[i].eph.i;
       attributes.o.value[i] = added_objects[i].eph.om;
@@ -554,7 +576,7 @@
         (added_objects[i].eph.w + added_objects[i].eph.om);
       attributes.P.value[i] = added_objects[i].eph.p ||
         Math.sqrt(Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
-      //attributes.P.value[i] = 365;
+      attributes.P.value[i] = 365;
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
         Math.random() * 2451545.0; // TODO
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||
