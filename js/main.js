@@ -197,7 +197,7 @@
     cameraControls.panSpeed = 2;
     cameraControls.zoomSpeed = 3;
     cameraControls.rotateSpeed = 3;
-    cameraControls.maxDistance = 1100;
+    cameraControls.maxDistance = 2500;
     cameraControls.dynamicDampingFactor = 0.5;
     window.cc = cameraControls;
 
@@ -336,7 +336,7 @@
     }
 
     // Skybox
-    var geometry = new THREE.SphereGeometry(3000, 60, 40);
+    var geometry = new THREE.SphereGeometry(2500, 60, 40);
     var uniforms = {
       texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
     };
