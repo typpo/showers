@@ -269,6 +269,7 @@
           name: 'Jupiter'
         });
     scene.add(jupiter.getEllipse());
+    /*
     var comet169pneat = new Orbit3D(Ephemeris.comet169pneat,
         {
           color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
@@ -277,8 +278,17 @@
           name: '169P/NEAT'
         });
     scene.add(comet169pneat.getEllipse());
+    */
+    var cometThatcher = new Orbit3D(Ephemeris.cometThatcher,
+        {
+          color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+          display_color: new THREE.Color(0xccffff),
+          particle_geometry: particle_system_geometry,
+          name: 'Comet Thatcher'
+        });
+    scene.add(cometThatcher.getEllipse());
 
-    planets = [mercury, venus, earth, mars, jupiter, comet169pneat];
+    planets = [mercury, venus, earth, mars, jupiter, cometThatcher];
     if (featured_2012_da14) {
       // Special: 2012 DA14
       var asteroid_2012_da14 = new Orbit3D(Ephemeris.asteroid_2012_da14,
@@ -298,7 +308,7 @@
     }
 
     // Skybox
-    var geometry = new THREE.SphereGeometry(3000, 60, 40);
+    var geometry = new THREE.SphereGeometry(10000, 60, 40);
     var uniforms = {
       texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
     };
@@ -529,7 +539,8 @@
         attributes.size.value[i] = 75;
         attributes.is_planet.value[i] = 1.0;
       } else {
-        attributes.size.value[i] = added_objects[i].opts.object_size;
+        //attributes.size.value[i] = added_objects[i].opts.object_size;
+        attributes.size.value[i] = 175;
         attributes.is_planet.value[i] = 0.0;
       }
 
@@ -543,6 +554,7 @@
         (added_objects[i].eph.w + added_objects[i].eph.om);
       attributes.P.value[i] = added_objects[i].eph.p ||
         Math.sqrt(Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
+      //attributes.P.value[i] = 365;
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
         Math.random() * 2451545.0; // TODO
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||
@@ -727,6 +739,7 @@
       return;
     }
     var n = data.length;
+    console.log('Loading', n);
     // add planets
     added_objects = planets.slice();
     particle_system_geometry = new THREE.Geometry();

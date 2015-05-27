@@ -92,6 +92,17 @@ window.Ephemeris = {
     w: 217.9759064340549, // arg of perihelion
     om: 176.2211702605364,
     p: 1535.05469180196
+  },
+  cometThatcher: {
+    full_name: '1861 G1',
+    ma: -0.0234598,
+    epoch: 2400920.5,
+    a: 55.6818869,
+    e: 0.983465,
+    i: 79.7733,
+    w: 213.4496, // arg of perihelion
+    om: 31.8674,
+    p: 151578.75
   }
 };
 
