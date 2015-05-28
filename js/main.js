@@ -578,7 +578,7 @@
         Math.sqrt(Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
       if (i >= planets.length) {
         // Artificial speed for comet
-        attributes.P.value[i] = 1200;
+        attributes.P.value[i] = 7200;
       }
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
         Math.random() * 2451545.0; // TODO
