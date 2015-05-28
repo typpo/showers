@@ -262,16 +262,16 @@
     scene.add(mars.getEllipse());
     var jupiter = new Orbit3D(Ephemeris.jupiter,
         {
-          color: 0xFF7F50, width: 1, jed: jed, object_size: 1.7,
+          color: 0xFFB90F, width: 1, jed: jed, object_size: 1.7,
           texture_path: opts.static_prefix + 'img/texture-jupiter.jpg',
-          display_color: new THREE.Color(0xFF7F50),
+          display_color: new THREE.Color(0xFFB90F),
           particle_geometry: particle_system_geometry,
           name: 'Jupiter'
         });
     scene.add(jupiter.getEllipse());
     var saturn = new Orbit3D(Ephemeris.saturn,
         {
-          color: 0x996633, width: 1, jed: jed, object_size: 1.7,
+          color: 0x336633, width: 1, jed: jed, object_size: 1.7,
           texture_path: opts.static_prefix + 'img/texture-saturn.jpg',
           display_color: new THREE.Color(0x996633),
           particle_geometry: particle_system_geometry,
@@ -576,7 +576,10 @@
         (added_objects[i].eph.w + added_objects[i].eph.om);
       attributes.P.value[i] = added_objects[i].eph.p ||
         Math.sqrt(Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
-      attributes.P.value[i] = 1200;
+      if (i >= planets.length) {
+        // Artificial speed for comet
+        attributes.P.value[i] = 1200;
+      }
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
         Math.random() * 2451545.0; // TODO
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||
