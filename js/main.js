@@ -566,7 +566,7 @@
         attributes.is_planet.value[i] = 0.0;
       }
 
-      attributes.a.value[i] = added_objects[i].eph.a >= 999 ? 0 : added_objects[i].eph.a;
+      attributes.a.value[i] = added_objects[i].eph.a;
       attributes.e.value[i] = added_objects[i].eph.e;
       attributes.i.value[i] = added_objects[i].eph.i;
       attributes.o.value[i] = added_objects[i].eph.om;
@@ -576,7 +576,7 @@
         (added_objects[i].eph.w + added_objects[i].eph.om);
       attributes.P.value[i] = added_objects[i].eph.p ||
         Math.sqrt(Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
-      attributes.P.value[i] = 365;
+      attributes.P.value[i] = 1200;
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
         Math.random() * 2451545.0; // TODO
       attributes.value_color.value[i] = added_objects[i].opts.display_color ||
@@ -784,6 +784,9 @@
         useBigParticles = false;
       }
       var roid = data[i];
+      if (roid.a >= 999) {
+        continue;
+      }
       var locked = false;
       var orbit;
       if (opts.custom_object_fn) {
