@@ -124,7 +124,7 @@
         for (var i = 0; i < added_objects.length; i++) {
           if (i >= planets.length) {
             // Artificial speed for comet
-            attributes.P.value[i] = attributes.P.value[i] / opts.meteoroid_factor;
+            attributes.P.value[i] = attributes.realP.value[i] / opts.meteoroid_factor;
           }
         }
         attributes.P.needsUpdate = true;
