@@ -10,6 +10,7 @@
   opts.camera_fly_around = typeof opts.camera_fly_around === 'undefined' ?
     true : opts.camera_fly_around;
   opts.jed_delta = opts.jed_delta || 0.25;
+  opts.meteoroid_factor = opts.meteoroid_factor || 6;
   opts.custom_object_fn = opts.custom_object_fn || null;
   opts.object_texture_path = opts.object_texture_path ||
     opts.static_prefix + "img/cloud4.png";
@@ -93,26 +94,16 @@
 
   function initGUI() {
     var ViewUI = function() {
-      this['Speed'] = opts.jed_delta;
-      this['Show orbits'] = planet_orbits_visible;
-      this['Milky Way'] = opts.milky_way_visible;
       this['Display date'] = '12/26/2012';
+      this['Time lapse'] = opts.jed_delta;
+      this['Meteoroid speed'] = opts.meteoroid_factor;
+      this['Show orbits'] = planet_orbits_visible;
+      this['Show Milky Way'] = opts.milky_way_visible;
     };
 
     window.onload = function() {
       var text = new ViewUI();
-      var gui = new dat.GUI();
-      gui.add(text, 'Speed', 0, 1).onChange(function(val) {
-        opts.jed_delta = val;
-        var was_moving = object_movement_on;
-        object_movement_on = opts.jed_delta > 0;
-      });
-      gui.add(text, 'Show orbits').onChange(function() {
-        togglePlanetOrbits();
-      });
-      gui.add(text, 'Milky Way').onChange(function() {
-        toggleMilkyWay();
-      });
+      var gui = new dat.GUI({width: 300});
       gui.add(text, 'Display date').onChange(function(val) {
         var newdate = new Date(Date.parse(val));
         if (newdate) {
@@ -123,6 +114,26 @@
           }
         }
       }).listen();
+      gui.add(text, 'Time lapse', 0, 30).onChange(function(val) {
+        opts.jed_delta = val / 30;
+        var was_moving = object_movement_on;
+        object_movement_on = opts.jed_delta > 0;
+      });
+      gui.add(text, 'Meteoroid speed', 0, 30).onChange(function(val) {
+        opts.meteoroid_factor = val;
+        for (var i = 0; i < added_objects.length; i++) {
+          if (i >= planets.length) {
+            // Artificial speed for comet
+            attributes.P.value[i] = attributes.P.value[i] / opts.meteoroid_factor;
+          }
+        }
+      });
+      gui.add(text, 'Show orbits').onChange(function() {
+        togglePlanetOrbits();
+      });
+      gui.add(text, 'Show Milky Way').onChange(function() {
+        toggleMilkyWay();
+      });
       window.datgui = text;
     }; // end window onload
   } // end initGUI
@@ -524,6 +535,7 @@
       n: { type: 'f', value: [] },
       w: { type: 'f', value: [] },
       P: { type: 'f', value: [] },
+      realP: { type: 'f', value: [] },
       epoch: { type: 'f', value: [] },
       size: { type: 'f', value: [] },
       value_color : { type: 'c', value: [] },
@@ -574,11 +586,12 @@
       attributes.n.value[i] = added_objects[i].eph.n || -1.0;
       attributes.w.value[i] = added_objects[i].eph.w_bar ||
         (added_objects[i].eph.w + added_objects[i].eph.om);
-      attributes.P.value[i] = added_objects[i].eph.p ||
-        Math.sqrt(Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
+      attributes.realP.value[i] = attributes.P.value[i] =
+        added_objects[i].eph.p || Math.sqrt(
+          Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
       if (i >= planets.length) {
         // Artificial speed for comet
-        attributes.P.value[i] /= 6;
+        attributes.P.value[i] /= opts.meteoroid_factor;
       }
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
         Math.random() * 2451545.0; // TODO
