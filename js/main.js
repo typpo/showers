@@ -119,7 +119,7 @@
         var was_moving = object_movement_on;
         object_movement_on = opts.jed_delta > 0;
       });
-      gui.add(text, 'Meteoroid speed', 0, 30).onChange(function(val) {
+      gui.add(text, 'Meteoroid speed', 1, 30).onChange(function(val) {
         opts.meteoroid_factor = val;
         for (var i = 0; i < added_objects.length; i++) {
           if (i >= planets.length) {
