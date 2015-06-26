@@ -10,10 +10,14 @@
   z-index:99999;
   position: absolute;
   top: 0;
-  left: 0;
+  left: 20px;
   height: 100px;
   width: 650px;
   margin: 5px 15px;
   color: white;
   font-family: Helvetica, Arial, sans-serif;
+}
+
+#label span {
+  color: #ccc;
 }
