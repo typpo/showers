@@ -21,3 +21,21 @@
 #label span {
   color: #ccc;
 }
+
+ul.share-buttons {
+  display: inline;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  vertical-align: sub;
+  margin-left: 8px;
+}
+
+ul.share-buttons li {
+  display: inline;
+}
+
+ul.share-buttons img {
+  width: 20px;
+  height: auto;
+}
