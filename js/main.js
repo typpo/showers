@@ -95,8 +95,8 @@
   function initGUI() {
     var ViewUI = function() {
       this['Display date'] = '12/26/2012';
-      this['Time lapse'] = opts.jed_delta;
-      this['Meteoroid speed'] = opts.meteoroid_factor;
+      this['Speed'] = opts.jed_delta;
+      //this['Meteoroid speed'] = opts.meteoroid_factor;
       this['Show orbits'] = planet_orbits_visible;
       this['Show Milky Way'] = opts.milky_way_visible;
     };
@@ -114,11 +114,12 @@
           }
         }
       }).listen();
-      gui.add(text, 'Time lapse', 0, 30).onChange(function(val) {
+      gui.add(text, 'Speed', 0, 30).onChange(function(val) {
         opts.jed_delta = val / 30;
         var was_moving = object_movement_on;
         object_movement_on = opts.jed_delta > 0;
       });
+      /*
       gui.add(text, 'Meteoroid speed', 1, 30).onChange(function(val) {
         opts.meteoroid_factor = val;
         for (var i = 0; i < added_objects.length; i++) {
@@ -130,6 +131,7 @@
         }
         attributes.P.needsUpdate = true;
       });
+      */
       gui.add(text, 'Show orbits').onChange(function() {
         togglePlanetOrbits();
       });
@@ -210,10 +212,9 @@
     cameraControls.panSpeed = 2;
     cameraControls.zoomSpeed = 3;
     cameraControls.rotateSpeed = 3;
-    cameraControls.maxDistance = 2500;
+    cameraControls.maxDistance = 2200;
     cameraControls.dynamicDampingFactor = 0.5;
     window.cc = cameraControls;
-
 
     // Rendering solar system
 
@@ -319,17 +320,17 @@
         });
     scene.add(comet169pneat.getEllipse());
     */
-    var cometThatcher = new Orbit3D(Ephemeris.cometThatcher,
+    var comet = new Orbit3D(Ephemeris.cometSwiftTuttle,
         {
           color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
           display_color: new THREE.Color(0xccffff),
           particle_geometry: particle_system_geometry,
           name: 'Comet Thatcher'
         });
-    scene.add(cometThatcher.getEllipse());
+    scene.add(comet.getEllipse());
 
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,
-      cometThatcher];
+      comet];
     if (featured_2012_da14) {
       // Special: 2012 DA14
       var asteroid_2012_da14 = new Orbit3D(Ephemeris.asteroid_2012_da14,
@@ -349,7 +350,7 @@
     }
 
     // Skybox
-    var geometry = new THREE.SphereGeometry(2500, 60, 40);
+    var geometry = new THREE.SphereGeometry(2800, 60, 40);
     var uniforms = {
       texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
     };
@@ -514,8 +515,28 @@
         var data = window.passthrough_vars.rankings[sort];
         me.processAsteroidRankings(data);
       }, 0);
-    }
-    else {
+    } else if (window.ORBIT_DATA.length == 1) {
+      var base = window.ORBIT_DATA[0];
+      var data = [base];
+      var between = function(min, max) {
+        return Math.random() * (min - max) + max;
+      }
+      for (var i=0; i < 500; i++) {
+        var variant = $.extend(true, {}, base);
+        variant.epoch = Math.random() * variant.epoch;
+        variant.a = variant.a * between(0.4, 1.1);
+        variant.e = variant.e * between(0.99, 1.01);
+        variant.i = variant.i * between(0.99, 1.01);
+        //variant.ma = variant.ma * between(0.99, 1.01);
+        //variant.p = 2 * Math.PI *
+         // Math.sqrt(Math.pow(variant.a, 3) / 132712440018/86400);
+        delete variant.p;
+        data.push(variant);
+      }
+      setTimeout(function() {
+        me.processAsteroidRankings(data);
+      }, 0);
+    } else {
       var data = window.ORBIT_DATA;
       for (var i=0; i < 2; i++) {
         data.push.apply(data, window.ORBIT_DATA);
@@ -572,7 +593,7 @@
 
     for (var i = 0; i < added_objects.length; i++) {
       if (i < planets.length) {
-        attributes.size.value[i] = 75;
+        attributes.size.value[i] = 150;
         attributes.is_planet.value[i] = 1.0;
       } else {
         attributes.size.value[i] = added_objects[i].opts.object_size;
@@ -820,7 +841,7 @@
           color: 0xcccccc,
           display_color: display_color,
           width: 2,
-          object_size: i < NUM_BIG_PARTICLES ? 50 : 15, //1.5,
+          object_size: i < NUM_BIG_PARTICLES ? 50 : 30, //1.5,
           jed: jed,
           particle_geometry: particle_system_geometry // will add itself to this geometry
         }, useBigParticles);

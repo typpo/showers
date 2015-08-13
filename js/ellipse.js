@@ -42,7 +42,7 @@
     var line = new THREE.Line(points,
       new THREE.LineDashedMaterial({
         color: this.opts.color,
-        linewidth: 2.5,
+        linewidth: 1,
         dashSize: 2,
         gapSize: 0.5
       }), THREE.LineStrip);
