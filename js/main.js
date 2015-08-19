@@ -186,6 +186,8 @@
     renderer.setSize(containerWidth, containerHeight);
     opts.container.appendChild(renderer.domElement);
 
+    THREEx.WindowResize(renderer, camera);
+
     // create a scene
     scene = new THREE.Scene();
 
