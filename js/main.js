@@ -44,10 +44,11 @@
     , pi = Math.PI
     , using_webgl = false
     , object_movement_on = true
-    , lastHovered
+    , last_hovered
     , added_objects = []
     , planets = []
     , planet_orbits_visible = true
+    , comet_orbit = null
     , jed = toJED(new Date())
     , particle_system_geometry = null
     , asteroids_loaded = false
@@ -79,11 +80,6 @@
 
   $('#btn-toggle-movement').on('click', function() {
     object_movement_on = !object_movement_on;
-  });
-  $('#controls .js-sort').on('click', function() {
-    runAsteroidQuery($(this).data('sort'));
-    $('#controls .js-sort').css('font-weight', 'normal');
-    $(this).css('font-weight', 'bold');
   });
 
   // 2012 DA14 feature special case
@@ -164,7 +160,7 @@
     return WEB_GL_ENABLED && Detector.webgl;
   }
 
-  function init(){
+  function init() {
     // Sets up the scene
     $('#loading-text').html('renderer');
     if (isWebGLSupported()){
@@ -312,27 +308,8 @@
           name: 'neptune'
         });
     scene.add(neptune.getEllipse());
-    /*
-    var comet169pneat = new Orbit3D(Ephemeris.comet169pneat,
-        {
-          color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
-          display_color: new THREE.Color(0xccffff),
-          particle_geometry: particle_system_geometry,
-          name: '169P/NEAT'
-        });
-    scene.add(comet169pneat.getEllipse());
-    */
-    var comet = new Orbit3D(Ephemeris.cometSwiftTuttle,
-        {
-          color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
-          display_color: new THREE.Color(0xccffff),
-          particle_geometry: particle_system_geometry,
-          name: 'Comet Thatcher'
-        });
-    scene.add(comet.getEllipse());
 
-    planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,
-      comet];
+    planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
     if (featured_2012_da14) {
       // Special: 2012 DA14
       var asteroid_2012_da14 = new Orbit3D(Ephemeris.asteroid_2012_da14,
@@ -372,8 +349,10 @@
     scene.add(skyBox);
     window.skyBox = skyBox;
 
+    setupCloudSelectionHandler();
     if (opts.run_asteroid_query) {
-      runAsteroidQuery();
+      // TODO: pick default view instead of hardcoding
+      loadParticles(window.METEOR_CLOUD_DATA['Perseid']);
     }
 
     $(opts.container).on('mousedown', function() {
@@ -505,20 +484,49 @@
     }
   }
 
-  function runAsteroidQuery(sort) {
-    sort = sort || 'score';
-    $('#loading').show();
+  function setupCloudSelectionHandler() {
+    var $select = $('#showers-select');
+    for (var key in window.METEOR_CLOUD_DATA) {
+      $('<option>').html(key).attr('value', key).appendTo($select);
+    }
 
-    // Get new data points
-    $('#loading-text').html('asteroids database');
-    if (typeof passthrough_vars !== 'undefined' && passthrough_vars.offline_mode) {
-      setTimeout(function() {
-        // Timeout for rest of class to initialize...
-        var data = window.passthrough_vars.rankings[sort];
-        me.processAsteroidRankings(data);
-      }, 0);
-    } else if (window.ORBIT_DATA.length == 1) {
-      var base = window.ORBIT_DATA[0];
+    $select.on('change', function() {
+      // Cleanup.
+      me.clearRankings();
+      scene.remove(comet);
+
+      var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
+      if (!cloud_obj) {
+        console.error('Tried to load key', key);
+        alert("Something went wrong - couldn't load data for this meteor shower!");
+        return;
+      }
+
+      // Add new comet.
+      var comet = new Orbit3D(cloud_obj.orbit_data,
+          {
+            color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+            display_color: new THREE.Color(0xff69b4 /* hot pink */ ),
+            particle_geometry: particle_system_geometry,
+            name: cloud_obj.name
+          });
+      scene.add(comet.getEllipse());
+      console.log(comet);
+
+      // Add meteor cloud.
+      loadParticles(cloud_obj);
+    });
+  }
+
+  function loadParticles(cloud_obj) {
+    // TODO loader
+    //$('#loading').show();
+    //$('#loading-text').html('asteroids database');
+
+    var orbit_data = cloud_obj.orbit_data;
+    if (orbit_data.length == 1) {
+      // We only have the comet's orbit, no meteor-specific data.
+      var base = orbit_data[0];
       var data = [base];
       var between = function(min, max) {
         return Math.random() * (min - max) + max;
@@ -539,6 +547,7 @@
         me.processAsteroidRankings(data);
       }, 0);
     } else {
+      // We have real data on meteor showers.
       var data = window.ORBIT_DATA;
       for (var i=0; i < 2; i++) {
         data.push.apply(data, window.ORBIT_DATA);
@@ -770,17 +779,14 @@
 
   me.clearRankings = function() {
     // Remove any old setup
-    for (var i=0; i < added_objects.length; i++) {
-      scene.remove(added_objects[i].getParticle());
-    }
     clearLock(true);
     if (particleSystem) {
       scene.remove(particleSystem);
       particleSystem = null;
     }
 
-    if (lastHovered) {
-      scene.remove(lastHovered);
+    if (last_hovered) {
+      scene.remove(last_hovered);
     }
   };
 
@@ -802,7 +808,6 @@
       return;
     }
     var n = data.length;
-    console.log('Loading', n);
     // add planets
     added_objects = planets.slice();
     particle_system_geometry = new THREE.Geometry();
