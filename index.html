@@ -28,7 +28,7 @@
 <body>
   <div id="label">
     <h2>Meteor showers</h2>
-    <span>The Perseids peak in mid-August, when the Earth's orbit intersects the dust cloud left by the Comet Swift-Tuttle.</span>
+    <span>The <span id="meteor-shower-name"></span> shower peaks in <span id="meteor-shower-peak"></span>, when the Earth's orbit intersects the dust cloud left by the comet <span id="meteor-shower-comet-name"></span>.</span>
 
     <select id="showers-select"></select>
 
@@ -198,7 +198,8 @@
   <script type="text/javascript" src="lib/template.js"></script>
 
   <!-- Include Three.JS scene controller script -->
-  <script type="text/javascript" src="js/data/perseid.js"></script>
+  <script type="text/javascript" src="js/data/capricornid.js"></script>
+  <script type="text/javascript" src="js/data/lyrid.js"></script>
   <script type="text/javascript" src="js/data/showers.js"></script>
   <script type="text/javascript" src="js/util.js"></script>
   <script type="text/javascript" src="js/ephemeris.js"></script>

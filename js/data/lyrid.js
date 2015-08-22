@@ -1,4 +1,4 @@
-window.ORBIT_DATA= [
+window.Lyrid = [
   {
     a: 5.760,
     om: 31.611,

@@ -1,4 +1,4 @@
-window.ORBIT_DATA = [
+window.Capricornid = [
   {
     sol_long: 105.58947,
     f_skew: 0.8,

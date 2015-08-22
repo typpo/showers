@@ -69,6 +69,9 @@
     , uniforms
     , particleSystem
 
+  // dom stuff
+  var $select = $('#showers-select');
+
   // Initialization
   init();
   if (opts.show_dat_gui) {
@@ -316,8 +319,10 @@
 
     setupCloudSelectionHandler();
     if (opts.run_asteroid_query) {
-      // TODO: pick default view instead of hardcoding
-      loadParticles(window.METEOR_CLOUD_DATA['Perseid']);
+      //loadParticles(window.METEOR_CLOUD_DATA['Perseid']);
+      setTimeout(function() {
+        loadNewViewSelection();
+      }, 0);
     }
 
     $(opts.container).on('mousedown', function() {
@@ -450,48 +455,59 @@
   }
 
   function setupCloudSelectionHandler() {
-    var $select = $('#showers-select');
     for (var key in window.METEOR_CLOUD_DATA) {
       $('<option>').html(key).attr('value', key).appendTo($select);
     }
 
-    $select.on('change', function() {
-      // Cleanup.
-      me.clearRankings();
+    $select.on('change', loadNewViewSelection);
+  }
 
-      var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
-      if (!cloud_obj) {
-        console.error('Tried to load key', key);
-        alert("Something went wrong - couldn't load data for this meteor shower!");
-        return;
-      }
+  function loadNewViewSelection() {
+    // Cleanup.
+    me.clearRankings();
 
-      // Add new comet.
-      /*
-      var comet = new Orbit3D(cloud_obj.orbit_data,
-          {
-            color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
-            display_color: new THREE.Color(0xff69b4), // hot pink
-            particle_geometry: particle_system_geometry,
-            name: cloud_obj.name
-          });
-      scene.add(comet.getEllipse());
-      */
+    // Update caption
 
-      // Add meteor cloud.
-      loadParticles(cloud_obj);
-    });
+    var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
+    if (!cloud_obj) {
+      console.error('Tried to load key', key);
+      alert("Something went wrong - couldn't load data for this meteor shower!");
+      return;
+    }
+
+    $('#meteor-shower-name').html(cloud_obj.name);
+    $('#meteor-shower-peak').html(cloud_obj.peak);
+    $('#meteor-shower-comet-name').html(cloud_obj.comet_name);
+
+    // Add new comet.
+    /*
+       var comet = new Orbit3D(cloud_obj.comet_orbit,
+       {
+color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+display_color: new THREE.Color(0xff69b4), // hot pink
+particle_geometry: particle_system_geometry,
+name: cloud_obj.name
+});
+scene.add(comet.getEllipse());
+*/
+
+    // Add meteor cloud.
+    loadParticles(cloud_obj);
   }
 
   function loadParticles(cloud_obj) {
     // TODO loader
     //$('#loading').show();
     //$('#loading-text').html('asteroids database');
-
-    var orbit_data = cloud_obj.orbit_data;
-    if (orbit_data.length == 1) {
+    if (cloud_obj.full_orbit_data) {
+      // We have real data on meteor showers.
+      setTimeout(function() {
+        console.log(cloud_obj.full_orbit_data);
+        me.processAsteroidRankings(cloud_obj.full_orbit_data);
+      }, 0);
+    } else if (cloud_obj.comet_orbit) {
       // We only have the comet's orbit, no meteor-specific data.
-      var base = orbit_data[0];
+      var base = cloud_obj.comet_orbit;
       var data = [base];
       var between = function(min, max) {
         return Math.random() * (min - max) + max;
@@ -510,15 +526,6 @@
       }
       setTimeout(function() {
         me.processAsteroidRankings(data);
-      }, 0);
-    } else {
-      // We have real data on meteor showers.
-      var data = window.ORBIT_DATA;
-      for (var i=0; i < 2; i++) {
-        data.push.apply(data, window.ORBIT_DATA);
-      }
-      setTimeout(function() {
-        me.processAsteroidRankings(window.ORBIT_DATA);
       }, 0);
     }
   }
