@@ -510,7 +510,6 @@
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
       setTimeout(function() {
-        console.log(cloud_obj.full_orbit_data);
         me.processAsteroidRankings(cloud_obj.full_orbit_data);
       }, 0);
     } else if (cloud_obj.comet_orbit) {
@@ -560,7 +559,7 @@
     };
 
     uniforms = {
-      color: { type: 'c', value: new THREE.Color( 0xffffff ) },
+      color: { type: 'c', value: new THREE.Color(0xffffff) },
       jed: { type: 'f', value: jed },
       earth_i: { type: 'f', value: Ephemeris.earth.i },
       earth_om: { type: 'f', value: Ephemeris.earth.om },
@@ -588,7 +587,6 @@
         attributes.is_planet.value[i] = 1.0;
       } else {
         attributes.size.value[i] = added_objects[i].opts.object_size;
-        //attributes.size.value[i] = 175;
         attributes.is_planet.value[i] = 0.0;
       }
 
@@ -604,7 +602,7 @@
         added_objects[i].eph.p || Math.sqrt(
           Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
       if (i >= planets.length) {
-        // Artificial speed for comet
+        // Artificial speed for non-planets.
         attributes.P.value[i] /= opts.meteoroid_factor;
       }
       attributes.epoch.value[i] = added_objects[i].eph.epoch ||
