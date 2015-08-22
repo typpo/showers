@@ -638,8 +638,13 @@
     var col = new THREE.Color(color);
 
     var context = canvas.getContext('2d');
-    var gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
-    var rgbaString = 'rgba(' + ~~ ( col.r * 255 ) + ',' + ~~ ( col.g * 255 ) + ',' + ~~ ( col.b * 255 ) + ',' + (1) + ')';
+    var gradient = context.createRadialGradient(canvas.width / 2,
+                                                canvas.height / 2, 0,
+                                                canvas.width / 2,
+                                                canvas.height / 2,
+                                                canvas.width / 2);
+    var rgbaString = 'rgba(' + ~~ ( col.r * 255 ) + ',' + ~~ ( col.g * 255 ) +
+      ',' + ~~ ( col.b * 255 ) + ',' + (1) + ')';
     gradient.addColorStop( 0, rgbaString);
     gradient.addColorStop( 0.1, rgbaString);
     gradient.addColorStop( 0.6, 'rgba(125, 20, 0, 0.2)' );
@@ -654,7 +659,7 @@
   }
 
   function animate() {
-    // animation loop
+    // Animation loop
     if (!asteroids_loaded) {
       render();
       requestAnimFrame(animate);
@@ -760,15 +765,7 @@
       particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
     }
 
-    var useBigParticles = !using_webgl;
     for (var i=0; i < n; i++) {
-      if (i === NUM_BIG_PARTICLES) {
-        if (!using_webgl) {
-          // only show objects of interest if there's no particlesystem support
-          break;
-        }
-        useBigParticles = false;
-      }
       var roid = data[i];
       if (roid.a >= 999) {
         continue;
@@ -779,7 +776,7 @@
         var orbit_params = opts.custom_object_fn(roid);
         orbit_params.particle_geometry = particle_system_geometry; // will add itself to this geometry
         orbit_params.jed = jed;
-        orbit = new Orbit3D(roid, orbit_params, useBigParticles);
+        orbit = new Orbit3D(roid, orbit_params);
       }
       else {
         var display_color = /*i < NUM_BIG_PARTICLES ?
@@ -791,7 +788,7 @@
           object_size: i < NUM_BIG_PARTICLES ? 50 : 30, //1.5,
           jed: jed,
           particle_geometry: particle_system_geometry // will add itself to this geometry
-        }, useBigParticles);
+        });
       }
 
       // Add it to featured list
@@ -819,12 +816,4 @@
 
     if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
   };    // end processAsteroidRankings
-
-  me.pause = function() {
-    object_movement_on = false;
-  };
-
-  me.play = function() {
-    object_movement_on = true;
-  };
 }
