@@ -140,11 +140,13 @@
       for (var i=0; i < planets.length; i++) {
         scene.remove(planets[i].getEllipse());
       }
+      scene.remove(cometOrbitDisplayed);
     }
     else {
       for (var i=0; i < planets.length; i++) {
         scene.add(planets[i].getEllipse());
       }
+      scene.add(cometOrbitDisplayed);
     }
     planet_orbits_visible = !planet_orbits_visible;
   }
@@ -493,7 +495,9 @@
       name: cloud_obj.name
     });
     cometOrbitDisplayed = comet.getEllipse();
-    scene.add(cometOrbitDisplayed);
+    if (planet_orbits_visible) {
+      scene.add(cometOrbitDisplayed);
+    }
 
     // Add meteor cloud.
     loadParticles(cloud_obj);
