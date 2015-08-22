@@ -44,3 +44,19 @@ ul.share-buttons img {
   width: 20px;
   height: auto;
 }
+
+.shower-select-container {
+  margin-top: 14px;
+  color: #ccc;
+}
+
+.shower-select-container select {
+  background-color: #202020;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  line-height: 2.5;
+
+  font-size: 14px;
+  color: #fff;
+}

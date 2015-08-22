@@ -69,8 +69,8 @@
     , uniforms
     , particleSystem
 
-  // dom stuff
-  var $select = $('#showers-select');
+  // DOM selections.
+  var $select = $('#shower-select');
 
   // Initialization
   init();

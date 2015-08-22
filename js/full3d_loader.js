@@ -26,6 +26,6 @@
   });
 
   function isScreenBigEnough() {
-    return $(window).width() > 1280;
+    return $(window).width() > 760;
   }
 })();
