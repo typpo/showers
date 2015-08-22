@@ -480,7 +480,6 @@
     $('#meteor-shower-comet-name').html(cloud_obj.comet_name);
 
     // Add new comet.
-    /*
        var comet = new Orbit3D(cloud_obj.comet_orbit,
        {
 color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
@@ -489,7 +488,6 @@ particle_geometry: particle_system_geometry,
 name: cloud_obj.name
 });
 scene.add(comet.getEllipse());
-*/
 
     // Add meteor cloud.
     loadParticles(cloud_obj);

@@ -40,12 +40,36 @@ window.METEOR_CLOUD_DATA = {
     name: 'Capricornid',
     peak: 'mid-July',
     comet_name: '169P/NEAT',
+    comet_orbit: {
+      full_name: '169P/NEAT',
+      epoch: 2454306.5,
+      a: 2.604263020070025,
+      e: 0.7669213009105551,
+      q: 0.6069982368046702,
+      i: 11.30426956301453,
+      om: 176.2198405695179, // long of ascending node, aka 'node' in sbdb
+      w: 217.9762263570652, // arg of peri, aka 'peri' in sbdb
+      ma: 158.4168571978383, // mean anomaly, aka 'M' in sbdb
+      p: 1535.061194216666, // period
+    },
     full_orbit_data: window.Capricornid,
   },
   'Lyrid': {
     name: 'Lyrid',
     peak: 'April',
     comet_name: 'C/1861 G1 Thatcher',
+    comet_orbit: {
+      full_name: 'C/1861 G1 Thatcher',
+      epoch: 2400920.5,
+      a: 55.6818869,
+      e: 0.983465,
+      q: 0.920700,
+      i: 79.7733,
+      om: 31.8674, // long of ascending node, aka 'node' in sbdb
+      w: 213.4496, // arg of peri, aka 'peri' in sbdb
+      ma: -0.0234598, // mean anomaly, aka 'M' in sbdb
+      p: 151578.75, // period
+    },
     full_orbit_data: window.Lyrid,
   },
   'Orionid': {
