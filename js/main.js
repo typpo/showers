@@ -173,8 +173,6 @@
     renderer.setSize(containerWidth, containerHeight);
     opts.container.appendChild(renderer.domElement);
 
-    THREEx.WindowResize(renderer, camera);
-
     // create a scene
     scene = new THREE.Scene();
 
@@ -183,14 +181,7 @@
     var cameraW	= cameraH / containerHeight * containerWidth;
     window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
 
-    // TODO include libs for this
-    /*
-    THREEx.WindowResize(renderer, camera, opts.container);    // handle window resize
-    // Fullscreen api
-    if (THREEx.FullScreen && THREEx.FullScreen.available()) {
-      THREEx.FullScreen.bindKey();
-    }
-   */
+    THREEx.WindowResize(renderer, camera, opts.container);
 
     setDefaultCameraPosition();
     camera.lookAt(new THREE.Vector3(0,0,0));
