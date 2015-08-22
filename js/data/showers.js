@@ -22,6 +22,7 @@ window.METEOR_CLOUD_DATA = {
   'Leonid': {
     name: 'Leonid',
     peak: 'mid-November',
+    date: 'November 18',
     comet_name: 'Tempel-Tuttle',
     comet_orbit: {
       full_name: '55P/Tempel-Tuttle',
@@ -38,7 +39,8 @@ window.METEOR_CLOUD_DATA = {
   },
   'Capricornid': {
     name: 'Capricornid',
-    peak: 'mid-July',
+    peak: 'late July',
+    date: 'July 31',
     comet_name: '169P/NEAT',
     comet_orbit: {
       full_name: '169P/NEAT',

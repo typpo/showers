@@ -251,7 +251,7 @@
     setAttributeNeedsUpdateFlags();
   }
 
-  // camera locking fns
+  // Camera locking fns
   function clearLock(set_default_camera) {
     if (!locked_object) return;
 
