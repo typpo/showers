@@ -39,4 +39,5 @@ window.METEOR_CLOUD_DATA = {
       }
     ]
   }
+  // next up: Orionids, Taurids
 };

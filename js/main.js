@@ -493,7 +493,6 @@
     $select.on('change', function() {
       // Cleanup.
       me.clearRankings();
-      scene.remove(comet);
 
       var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
       if (!cloud_obj) {
@@ -503,15 +502,16 @@
       }
 
       // Add new comet.
+      /*
       var comet = new Orbit3D(cloud_obj.orbit_data,
           {
             color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
-            display_color: new THREE.Color(0xff69b4 /* hot pink */ ),
+            display_color: new THREE.Color(0xff69b4), // hot pink
             particle_geometry: particle_system_geometry,
             name: cloud_obj.name
           });
       scene.add(comet.getEllipse());
-      console.log(comet);
+      */
 
       // Add meteor cloud.
       loadParticles(cloud_obj);
