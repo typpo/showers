@@ -8,7 +8,7 @@
       $('#not-supported').show();
     },
     run_asteroid_query: true,
-    show_dat_gui: isDesktop(),
+    show_dat_gui: isScreenBigEnough(),
     static_prefix: '',
     camera_position: [18.58451231886428, -350.32000584838624, 133.3893086458709],
     //camera_position: [380.58451231886428, -3600.32000584838624, 1930.3893086458709],
@@ -25,11 +25,7 @@
     $('#show_sidebar_container').hide();
   });
 
-  function isTouchDevice() {
-    return 'ontouchstart' in window || 'onmsgesturechange' in window;
-  }
-
-  function isDesktop() {
-    return window.screenX != 0 && !isTouchDevice();
+  function isScreenBigEnough() {
+    return $(window).width() > 1280;
   }
 })();
