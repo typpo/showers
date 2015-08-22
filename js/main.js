@@ -64,9 +64,6 @@
     , locked_object_size = -1
     , locked_object_color = -1
 
-  // 2012 da14 special case
-  var featured_2012_da14 = getParameterByName('2012_DA14') === '1';
-
   // glsl and webgl stuff
   var attributes
     , uniforms
@@ -81,12 +78,6 @@
   $('#btn-toggle-movement').on('click', function() {
     object_movement_on = !object_movement_on;
   });
-
-  // 2012 DA14 feature special case
-  if (featured_2012_da14) {
-    jed = toJED(new Date('2012-11-01'));
-    if (typeof mixpanel !== 'undefined') mixpanel.track('2012_da14 special');
-  }
 
   function initGUI() {
     var ViewUI = function() {
@@ -310,23 +301,6 @@
     scene.add(neptune.getEllipse());
 
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
-    if (featured_2012_da14) {
-      // Special: 2012 DA14
-      var asteroid_2012_da14 = new Orbit3D(Ephemeris.asteroid_2012_da14,
-          {
-            color: 0xff0000, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/cloud4.png',   // not using loadTexture, no support for offline mode...
-          display_color: new THREE.Color(0xff0000),
-          particle_geometry: particle_system_geometry,
-          name: '2012 DA14'
-          });
-      scene.add(asteroid_2012_da14.getEllipse());
-      feature_map['2012 DA14'] = {
-        orbit: asteroid_2012_da14,
-        idx: 5
-      };
-      planets.push(asteroid_2012_da14);
-    }
 
     // Skybox
     var geometry = new THREE.SphereGeometry(2800, 60, 40);
@@ -559,7 +533,7 @@
   }
 
   function createParticleSystem() {
-    // attributes
+    // Attributes
     attributes = {
       a: { type: 'f', value: [] },
       e: { type: 'f', value: [] },
@@ -574,7 +548,7 @@
       size: { type: 'f', value: [] },
       value_color : { type: 'c', value: [] },
 
-      // attributes can't be bool or int in some versions of opengl
+      // Attributes can't be bool or int in some versions of opengl
       locked: { type: 'f', value: [] },
       is_planet: { type: 'f', value: [] }
     };
@@ -687,13 +661,7 @@
       if (locked_object) {
         // Follow locked object
         var pos = locked_object.getPosAtTime(jed);
-        if (featured_2012_da14 && locked_object.name === 'Earth') {
-          cam.position.set(pos[0]-20, pos[1]+20, pos[2]+20);
-        }
-        else {
-          //cam.position.set(pos[0]+50, pos[1]+50, pos[2]+50);
-          cam.position.set(pos[0]+25, pos[1]-25, pos[2]-70);
-        }
+        cam.position.set(pos[0]+25, pos[1]-25, pos[2]-70);
         cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
       } else {
         setNeutralCameraPosition();
@@ -727,36 +695,6 @@
 
     // actually render the scene
     renderer.render(scene, camera);
-  }
-
-  /** Fuzzy price **/
-
-  var fuzzes = [
-    {
-      word: 'trillion',
-      num: 1000000000000
-    },
-    {
-      word: 'billion',
-      num: 1000000000
-    },
-    {
-      word: 'million',
-      num: 1000000
-    }
-  ];
-
-  function fuzzy_price(n) {
-    for (var i=0; i < fuzzes.length; i++) {
-      var x = fuzzes[i];
-      if (n / x.num >= 1) {
-        var prefix = (n / x.num);
-        if (i === -1 && prefix > 100)
-          return '>100 ' + x.word;
-        return prefix.toFixed(2) + ' ' + x.word;
-      }
-    }
-    return n;
   }
 
   function loadTexture(path) {
@@ -819,8 +757,6 @@
     }
 
     var useBigParticles = !using_webgl;
-    var featured_count = 0;
-    var featured_html = '';
     for (var i=0; i < n; i++) {
       if (i === NUM_BIG_PARTICLES) {
         if (!using_webgl) {
@@ -859,72 +795,16 @@
         'orbit': orbit,
         'idx': added_objects.length
       };
-      /*
-      // TODO(@ian) all this specific objects-of-interest/featured stuff
-      // needs to be moved out of 3d code.
-      if (featured_count++ < NUM_BIG_PARTICLES) {
-        featured_html += '<tr data-full-name="'
-          + roid.full_name
-          + '"><td><a href="#">'
-          + (roid.prov_des || roid.full_name)
-          + '</a></td><td>'
-          + (roid.price < 1 ? 'N/A' : '$' + fuzzy_price(roid.price))
-          + '</td></tr>';
-      }
-      */
 
       // Add to list of objects in scene
       added_objects.push(orbit);
     } // end asteroid results for loop
-
-    // handle when view mode is switched - need to clear every row but the sun
-    /*
-    if (featured_2012_da14) {
-      $('#objects-of-interest tr:gt(2)').remove();
-    }
-    else {
-      $('#objects-of-interest tr:gt(1)').remove();
-    }
-    $('#objects-of-interest').append(featured_html).on('click', 'tr', function() {
-      $('#objects-of-interest tr').css('background-color', '#000');
-      var $e = $(this);
-      var full_name = $e.data('full-name');
-      $('#sun-selector').css('background-color', 'green');
-      switch (full_name) {
-        // special case full names
-        case 'sun':
-          clearLock(true);
-          return false;
-        case '2012 DA14':
-          // highlight the earth too
-          //setHighlight('earth');
-          break;
-      }
-      clearLock();
-
-      // set new lock
-      $e.css('background-color', 'green');
-      $('#sun-selector').css('background-color', '#000');
-      setLock(full_name);
-
-      return false;
-    });
-    $('#objects-of-interest-container').show();
-    */
 
     jed = toJED(new Date());  // reset date
     if (!asteroids_loaded) {
       asteroids_loaded = true;
     }
     createParticleSystem();   // initialize and start the simulation
-
-    /*
-    if (featured_2012_da14) {
-      setLock('earth');
-      $('#sun-selector').css('background-color', 'black');
-      $('#earth-selector').css('background-color', 'green');
-    }
-   */
 
     if (!first_loaded) {
       animate();
