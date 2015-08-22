@@ -64,6 +64,9 @@
     , locked_object_size = -1
     , locked_object_color = -1
 
+  // Comet stuff
+  var cometOrbitDisplayed = null;
+
   // glsl and webgl stuff
   var attributes
     , uniforms
@@ -465,6 +468,9 @@
   function loadNewViewSelection() {
     // Cleanup.
     me.clearRankings();
+    if (cometOrbitDisplayed) {
+      scene.remove(cometOrbitDisplayed);
+    }
 
     // Update caption
 
@@ -480,14 +486,14 @@
     $('#meteor-shower-comet-name').html(cloud_obj.comet_name);
 
     // Add new comet.
-       var comet = new Orbit3D(cloud_obj.comet_orbit,
-       {
-color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
-display_color: new THREE.Color(0xff69b4), // hot pink
-particle_geometry: particle_system_geometry,
-name: cloud_obj.name
-});
-scene.add(comet.getEllipse());
+    var comet = new Orbit3D(cloud_obj.comet_orbit, {
+      color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+      display_color: new THREE.Color(0xff69b4), // hot pink
+      particle_geometry: particle_system_geometry,
+      name: cloud_obj.name
+    });
+    cometOrbitDisplayed = comet.getEllipse();
+    scene.add(cometOrbitDisplayed);
 
     // Add meteor cloud.
     loadParticles(cloud_obj);
