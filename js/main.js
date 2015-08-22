@@ -51,7 +51,7 @@
     , comet_orbit = null
     , jed = toJED(new Date())
     , particle_system_geometry = null
-    , asteroids_loaded = false
+    , particles_loaded = false
     , display_date_last_updated = 0
     , first_loaded = false
     , skyBox = null
@@ -80,10 +80,6 @@
   if (opts.show_dat_gui) {
     initGUI();
   }
-
-  $('#btn-toggle-movement').on('click', function() {
-    object_movement_on = !object_movement_on;
-  });
 
   function initGUI() {
     var ViewUI = function() {
@@ -155,8 +151,8 @@
     skyBox.visible = opts.milky_way_visible = !opts.milky_way_visible;
   }
 
-  function isWebGLSupported() {
-    return WEB_GL_ENABLED && Detector.webgl;
+  function changeJED(new_jed) {
+    jed = new_jed;
   }
 
   function init() {
@@ -205,126 +201,12 @@
     window.cc = cameraControls;
 
     // Rendering solar system
-
-    // "sun" - 0,0 marker
-    $('#loading-text').html('sun');
-    var texture = loadTexture(opts.static_prefix + 'img/sunsprite.png');
-    var sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: texture,
-      blending: THREE.AdditiveBlending,
-      useScreenCoordinates: false,
-      color: 0xffffff
-    }));
-    sprite.scale.x = opts.sun_scale;
-    sprite.scale.y = opts.sun_scale;
-    sprite.scale.z = 1;
-    scene.add(sprite);
-
-    // Ellipses
-    $('#loading-text').html('planets');
-    var mercury = new Orbit3D(Ephemeris.mercury,
-        {
-          color: 0x913CEE, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-mercury.jpg',
-          display_color: new THREE.Color(0x913CEE),
-          particle_geometry: particle_system_geometry,
-          name: 'Mercury'
-        });
-    scene.add(mercury.getEllipse());
-    var venus = new Orbit3D(Ephemeris.venus,
-        {
-          color: 0xFF7733, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-venus.jpg',
-          display_color: new THREE.Color(0xFF7733),
-          particle_geometry: particle_system_geometry,
-          name: 'Venus'
-        });
-    scene.add(venus.getEllipse());
-    var earth = new Orbit3D(Ephemeris.earth,
-        {
-          color: 0x009ACD, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-earth.jpg',
-          display_color: new THREE.Color(0x009ACD),
-          particle_geometry: particle_system_geometry,
-          name: 'Earth'
-        });
-    scene.add(earth.getEllipse());
-    feature_map['earth'] = {
-      orbit: earth,
-      idx: 2
-    };
-    var mars = new Orbit3D(Ephemeris.mars,
-        {
-          color: 0xA63A3A, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-mars.jpg',
-          display_color: new THREE.Color(0xA63A3A),
-          particle_geometry: particle_system_geometry,
-          name: 'Mars'
-        });
-    scene.add(mars.getEllipse());
-    var jupiter = new Orbit3D(Ephemeris.jupiter,
-        {
-          color: 0xFFB90F, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-jupiter.jpg',
-          display_color: new THREE.Color(0xFFB90F),
-          particle_geometry: particle_system_geometry,
-          name: 'Jupiter'
-        });
-    scene.add(jupiter.getEllipse());
-    var saturn = new Orbit3D(Ephemeris.saturn,
-        {
-          color: 0x336633, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-saturn.jpg',
-          display_color: new THREE.Color(0x996633),
-          particle_geometry: particle_system_geometry,
-          name: 'Saturn'
-        });
-    scene.add(saturn.getEllipse());
-    var uranus = new Orbit3D(Ephemeris.uranus,
-        {
-          color: 0x0099FF, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-uranus.jpg',
-          display_color: new THREE.Color(0x0099FF),
-          particle_geometry: particle_system_geometry,
-          name: 'uranus'
-        });
-    scene.add(uranus.getEllipse());
-    var neptune = new Orbit3D(Ephemeris.neptune,
-        {
-          color: 0x3333FF, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-neptune.jpg',
-          display_color: new THREE.Color(0x3333FF),
-          particle_geometry: particle_system_geometry,
-          name: 'neptune'
-        });
-    scene.add(neptune.getEllipse());
-
-    planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
-
-    // Skybox
-    var geometry = new THREE.SphereGeometry(2800, 60, 40);
-    var uniforms = {
-      texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
-    };
-
-    var material = new THREE.ShaderMaterial( {
-      uniforms:       uniforms,
-      vertexShader:   document.getElementById('sky-vertex').textContent,
-      fragmentShader: document.getElementById('sky-density').textContent
-    });
-
-    skyBox = new THREE.Mesh(geometry, material);
-    skyBox.scale.set(-1, 1, 1);
-    skyBox.eulerOrder = 'XZY';
-    skyBox.rotation.z = pi/2;
-    skyBox.rotation.x = pi;
-    skyBox.renderDepth = 1000.0;
-    scene.add(skyBox);
-    window.skyBox = skyBox;
+    setupSun();
+    setupPlanets();
+    setupSkybox();
 
     setupCloudSelectionHandler();
     if (opts.run_asteroid_query) {
-      //loadParticles(window.METEOR_CLOUD_DATA['Perseid']);
       setTimeout(function() {
         loadNewViewSelection();
       }, 0);
@@ -429,36 +311,6 @@
     opts.camera_fly_around = true;
   } // end setLock
 
-  function handleSimulationResults(e, particles) {
-    var data = e.data;
-    switch(data.type) {
-      case 'result':
-        // queue simulation results
-        var positions = data.value.positions;
-
-        for (var i=0; i < positions.length; i++) {
-          particles[i].MoveParticleToPosition(positions[i]);
-        }
-
-        if (typeof datgui !== 'undefined') {
-          // update with date
-          var now = new Date().getTime();
-          if (now - display_date_last_updated > 500) {
-            var georgian_date = fromJED(data.value.jed);
-            datgui['display date'] = georgian_date.getMonth()+1 + "/"
-              + georgian_date.getDate() + "/" + georgian_date.getFullYear();
-            display_date_last_updated = now;
-          }
-        }
-        break;
-      case 'debug':
-        console.log(data.value);
-        break;
-      default:
-        console.log('Invalid data type', data.type);
-    }
-  }
-
   function setupCloudSelectionHandler() {
     for (var key in window.METEOR_CLOUD_DATA) {
       $('<option>').html(key).attr('value', key).appendTo($select);
@@ -474,8 +326,6 @@
       scene.remove(cometOrbitDisplayed);
     }
 
-    // Update caption
-
     var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
     if (!cloud_obj) {
       console.error('Tried to load key', key);
@@ -483,6 +333,7 @@
       return;
     }
 
+    // Update caption
     $('#meteor-shower-name').html(cloud_obj.name);
     $('#meteor-shower-peak').html(cloud_obj.peak);
     $('#meteor-shower-comet-name').html(cloud_obj.comet_name);
@@ -630,37 +481,9 @@
     attributes.size.needsUpdate = true;
   }
 
-  function starTexture(color, size) {
-    size = (size) ? parseInt(size*24, 10) : 24;
-    var canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    var col = new THREE.Color(color);
-
-    var context = canvas.getContext('2d');
-    var gradient = context.createRadialGradient(canvas.width / 2,
-                                                canvas.height / 2, 0,
-                                                canvas.width / 2,
-                                                canvas.height / 2,
-                                                canvas.width / 2);
-    var rgbaString = 'rgba(' + ~~ ( col.r * 255 ) + ',' + ~~ ( col.g * 255 ) +
-      ',' + ~~ ( col.b * 255 ) + ',' + (1) + ')';
-    gradient.addColorStop( 0, rgbaString);
-    gradient.addColorStop( 0.1, rgbaString);
-    gradient.addColorStop( 0.6, 'rgba(125, 20, 0, 0.2)' );
-    gradient.addColorStop( -1.92, 'rgba(0,0,0,0)' );
-    context.fillStyle = gradient;
-    context.fillRect( 0, 0, canvas.width, canvas.height );
-    return canvas;
-  }
-
-  function changeJED(new_jed) {
-    jed = new_jed;
-  }
-
   function animate() {
     // Animation loop
-    if (!asteroids_loaded) {
+    if (!particles_loaded) {
       render();
       requestAnimFrame(animate);
       return;
@@ -670,7 +493,7 @@
       if (locked_object) {
         // Follow locked object
         var pos = locked_object.getPosAtTime(jed);
-        cam.position.set(pos[0]+25, pos[1]-25, pos[2]-70);
+        cam.position.set(pos[0]+1, pos[1]+1, pos[2]-1);
         cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
       } else {
         setNeutralCameraPosition();
@@ -802,8 +625,8 @@
     } // end asteroid results for loop
 
     jed = toJED(new Date());  // reset date
-    if (!asteroids_loaded) {
-      asteroids_loaded = true;
+    if (!particles_loaded) {
+      particles_loaded = true;
     }
     createParticleSystem();   // initialize and start the simulation
 
@@ -816,4 +639,131 @@
 
     if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
   };    // end processAsteroidRankings
+
+  /** Util functions **/
+
+  function setupSun() {
+    // Sun is at 0,0
+    $('#loading-text').html('sun');
+    var texture = loadTexture(opts.static_prefix + 'img/sunsprite.png');
+    var sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: texture,
+      blending: THREE.AdditiveBlending,
+      useScreenCoordinates: false,
+      color: 0xffffff
+    }));
+    sprite.scale.x = opts.sun_scale;
+    sprite.scale.y = opts.sun_scale;
+    sprite.scale.z = 1;
+    scene.add(sprite);
+
+  }
+
+  function setupPlanets() {
+    $('#loading-text').html('planets');
+    var mercury = new Orbit3D(Ephemeris.mercury,
+        {
+          color: 0x913CEE, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-mercury.jpg',
+          display_color: new THREE.Color(0x913CEE),
+          particle_geometry: particle_system_geometry,
+          name: 'Mercury'
+        });
+    scene.add(mercury.getEllipse());
+    var venus = new Orbit3D(Ephemeris.venus,
+        {
+          color: 0xFF7733, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-venus.jpg',
+          display_color: new THREE.Color(0xFF7733),
+          particle_geometry: particle_system_geometry,
+          name: 'Venus'
+        });
+    scene.add(venus.getEllipse());
+    var earth = new Orbit3D(Ephemeris.earth,
+        {
+          color: 0x009ACD, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-earth.jpg',
+          display_color: new THREE.Color(0x009ACD),
+          particle_geometry: particle_system_geometry,
+          name: 'Earth'
+        });
+    scene.add(earth.getEllipse());
+    feature_map['earth'] = {
+      orbit: earth,
+      idx: 2
+    };
+    var mars = new Orbit3D(Ephemeris.mars,
+        {
+          color: 0xA63A3A, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-mars.jpg',
+          display_color: new THREE.Color(0xA63A3A),
+          particle_geometry: particle_system_geometry,
+          name: 'Mars'
+        });
+    scene.add(mars.getEllipse());
+    var jupiter = new Orbit3D(Ephemeris.jupiter,
+        {
+          color: 0xFFB90F, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-jupiter.jpg',
+          display_color: new THREE.Color(0xFFB90F),
+          particle_geometry: particle_system_geometry,
+          name: 'Jupiter'
+        });
+    scene.add(jupiter.getEllipse());
+    var saturn = new Orbit3D(Ephemeris.saturn,
+        {
+          color: 0x336633, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-saturn.jpg',
+          display_color: new THREE.Color(0x996633),
+          particle_geometry: particle_system_geometry,
+          name: 'Saturn'
+        });
+    scene.add(saturn.getEllipse());
+    var uranus = new Orbit3D(Ephemeris.uranus,
+        {
+          color: 0x0099FF, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-uranus.jpg',
+          display_color: new THREE.Color(0x0099FF),
+          particle_geometry: particle_system_geometry,
+          name: 'uranus'
+        });
+    scene.add(uranus.getEllipse());
+    var neptune = new Orbit3D(Ephemeris.neptune,
+        {
+          color: 0x3333FF, width: 1, jed: jed, object_size: 1.7,
+          texture_path: opts.static_prefix + 'img/texture-neptune.jpg',
+          display_color: new THREE.Color(0x3333FF),
+          particle_geometry: particle_system_geometry,
+          name: 'neptune'
+        });
+    scene.add(neptune.getEllipse());
+
+    planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
+  }
+
+  function setupSkybox() {
+    var geometry = new THREE.SphereGeometry(2800, 60, 40);
+    var uniforms = {
+      texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
+    };
+
+    var material = new THREE.ShaderMaterial( {
+      uniforms:       uniforms,
+      vertexShader:   document.getElementById('sky-vertex').textContent,
+      fragmentShader: document.getElementById('sky-density').textContent
+    });
+
+    skyBox = new THREE.Mesh(geometry, material);
+    skyBox.scale.set(-1, 1, 1);
+    skyBox.eulerOrder = 'XZY';
+    skyBox.rotation.z = pi/2;
+    skyBox.rotation.x = pi;
+    skyBox.renderDepth = 1000.0;
+    scene.add(skyBox);
+    window.skyBox = skyBox;
+  }
+
+  function isWebGLSupported() {
+    return WEB_GL_ENABLED && Detector.webgl;
+  }
 }
