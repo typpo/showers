@@ -47,6 +47,23 @@ window.METEOR_CLOUD_DATA = {
     peak: 'April',
     comet_name: 'C/1861 G1 Thatcher',
     full_orbit_data: window.Lyrid,
+  },
+  'Orionid': {
+    name: 'Orionid',
+    peak: 'late October',
+    comet_name: '1P/Halley',
+    comet_orbit: {
+      full_name: '1P/Halley',
+      epoch: 2449400.5,
+      a: 17.8341442925537,
+      e: 0.967142908462304,
+      q: 0.585978111516909,
+      i: 162.262690579161,
+      om: 58.42008097656843, // long of ascending node, aka 'node' in sbdb
+      w: 111.3324851045177, // arg of peri, aka 'peri' in sbdb
+      ma: 38.3842644764388, // mean anomaly, aka 'M' in sbdb
+      p: 27509.1290731861, // period
+    }
   }
   // next up: Orionids, Taurids
 };
