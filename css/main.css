@@ -23,7 +23,7 @@ body {
   font-family: Helvetica, Arial, sans-serif;
 }
 
-#label span {
+#label .description {
   color: #ccc;
 }
 
