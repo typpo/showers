@@ -2,6 +2,7 @@ window.METEOR_CLOUD_DATA = {
   'Perseid': {
     name: 'Perseid',
     peak: 'mid-August',
+    date: '8/12',
     // TODO comet struct
     source_name: 'Swift-Tuttle',
     source_orbit: {
@@ -59,6 +60,7 @@ window.METEOR_CLOUD_DATA = {
   'Lyrid': {
     name: 'Lyrid',
     peak: 'April',
+    date: '4/22',
     source_name: 'C/1861 G1 Thatcher',
     source_orbit: {
       full_name: 'C/1861 G1 Thatcher',
@@ -77,6 +79,7 @@ window.METEOR_CLOUD_DATA = {
   'Orionid': {
     name: 'Orionid',
     peak: 'late October',
+    date: '10/21',
     source_name: 'Halley',
     source_orbit: {
       full_name: '1P/Halley',

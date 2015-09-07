@@ -312,11 +312,22 @@
   } // end setLock
 
   function setupCloudSelectionHandler() {
-    var showers = [];
+    var shower_names = [];
     for (var key in window.METEOR_CLOUD_DATA) {
-      $('<option>').html(key).attr('value', key)
-        .data('date', window.METEOR_CLOUD_DATA[key].date).appendTo($select);
+      shower_names.push(key);
     }
+
+    shower_names.sort(function(a, b) {
+      var showerA = window.METEOR_CLOUD_DATA[a];
+      var showerB = window.METEOR_CLOUD_DATA[b];
+      return new Date(showerA.date) - new Date(showerB.date);
+    });
+
+    shower_names.forEach(function(key) {
+      var shower = window.METEOR_CLOUD_DATA[key];
+      var display = key + ' - ' + shower.peak;
+      $('<option>').html(display).attr('value', key).appendTo($select);
+    });
 
     $select.on('change', loadNewViewSelection);
   }
@@ -339,7 +350,7 @@
     $('#meteor-shower-name').html(cloud_obj.name);
     $('#meteor-shower-peak').html(cloud_obj.peak);
     $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
-    $('#meteor-shower-comet-name').html(cloud_obj.source_name);
+    $('#meteor-shower-object-name').html(cloud_obj.source_name);
 
     // Add new comet.
     var comet = new Orbit3D(cloud_obj.source_orbit, {
