@@ -3,8 +3,8 @@ window.METEOR_CLOUD_DATA = {
     name: 'Perseid',
     peak: 'mid-August',
     // TODO comet struct
-    comet_name: 'Swift-Tuttle',
-    comet_orbit: {
+    source_name: 'Swift-Tuttle',
+    source_orbit: {
       full_name: 'Comet 109P/Swift-Tuttle',
       epoch: 2450000.5,
       a: 26.0920694978266,
@@ -22,9 +22,9 @@ window.METEOR_CLOUD_DATA = {
   'Leonid': {
     name: 'Leonid',
     peak: 'mid-November',
-    date: 'November 18',
-    comet_name: 'Tempel-Tuttle',
-    comet_orbit: {
+    date: '11/18',
+    source_name: 'Tempel-Tuttle',
+    source_orbit: {
       full_name: '55P/Tempel-Tuttle',
       epoch: 2451040.5,
       a: 10.3383382297577,
@@ -40,9 +40,9 @@ window.METEOR_CLOUD_DATA = {
   'Capricornid': {
     name: 'Capricornid',
     peak: 'late July',
-    date: 'July 31',
-    comet_name: '169P/NEAT',
-    comet_orbit: {
+    date: '7/31',
+    source_name: '169P/NEAT',
+    source_orbit: {
       full_name: '169P/NEAT',
       epoch: 2454306.5,
       a: 2.604263020070025,
@@ -59,8 +59,8 @@ window.METEOR_CLOUD_DATA = {
   'Lyrid': {
     name: 'Lyrid',
     peak: 'April',
-    comet_name: 'C/1861 G1 Thatcher',
-    comet_orbit: {
+    source_name: 'C/1861 G1 Thatcher',
+    source_orbit: {
       full_name: 'C/1861 G1 Thatcher',
       epoch: 2400920.5,
       a: 55.6818869,
@@ -77,8 +77,8 @@ window.METEOR_CLOUD_DATA = {
   'Orionid': {
     name: 'Orionid',
     peak: 'late October',
-    comet_name: '1P/Halley',
-    comet_orbit: {
+    source_name: 'Halley',
+    source_orbit: {
       full_name: '1P/Halley',
       epoch: 2449400.5,
       a: 17.8341442925537,
@@ -90,6 +90,101 @@ window.METEOR_CLOUD_DATA = {
       ma: 38.3842644764388, // mean anomaly, aka 'M' in sbdb
       p: 27509.1290731861, // period
     }
-  }
-  // next up: Orionids, Taurids
+  },
+  'Quadrantid': {
+    source_type: 'asteroid',
+    name: 'Perseid',
+    peak: 'early January',
+    date: '1/3',
+    // TODO comet struct
+    source_name: 'Swift-Tuttle',
+    source_orbit: {
+      full_name: '2003 EH1',
+      epoch: 2457000.5,
+      a: 3.122076326984469,
+      e: 0.6190846552236009,
+      q: 1.189246780511523,
+      i: 70.87628080581905,
+      om: 282.9631889304927, // long of ascending node, aka 'node' in sbdb
+      w: 171.352056383936, // arg of peri, aka 'peri' in sbdb
+      ma: 48.43591036347674, // mean anomaly, aka 'M' in sbdb
+      p: 2014.947343719152, // period in days
+      Q: 5.054905873457415, // aphelion
+    }
+  },
+  'Delta Aquariid': {
+    name: 'Delta Aquariid',
+    peak: 'late July',
+    date: '7/28',
+    // TODO comet struct
+    source_name: 'Machholz',
+    source_orbit: {
+      full_name: '96P/Machholz',
+      epoch: 2456541.5,
+      a: 3.033939724939583,
+      e: 0.9592118287498192,
+      q: 0.123748853063562,
+      i: 58.31221423529453,
+      om: 94.32323631127545, // long of ascending node, aka 'node' in sbdb
+      w: 14.75774840136655, // arg of peri, aka 'peri' in sbdb
+      ma: 77.99276065152682, // mean anomaly, aka 'M' in sbdb
+      p: 1930.229059113251, // period, in days
+    }
+  },
+  'Southern Taurid': {
+    name: 'Southern Taurid',
+    peak: 'October',
+    date: '10/10',
+    source_name: 'Encke',
+    source_orbit: {
+      full_name: '2P/Encke',
+      epoch: 2457260.5,
+      a: 2.215132168119717,
+      e: 0.8483353543281217,
+      q: 0.3359572353942565,
+      i: 11.78145516019895,
+      om: 334.5681964371267, // long of ascending node, aka 'node' in sbdb
+      w: 186.5460141528601, // arg of peri, aka 'peri' in sbdb
+      ma: 191.9830650931392, // mean anomaly, aka 'M' in sbdb
+      p: 1204.197975688157, // period, in days
+    }
+  },
+  'Northern Taurid': {
+    name: 'Northern Taurid',
+    peak: 'November',
+    date: '11/12',
+    source_name: 'Encke',
+    source_orbit: {
+      full_name: '2P/Encke',
+      epoch: 2457260.5,
+      a: 2.215132168119717,
+      e: 0.8483353543281217,
+      q: 0.3359572353942565,
+      i: 11.78145516019895,
+      om: 334.5681964371267, // long of ascending node, aka 'node' in sbdb
+      w: 186.5460141528601, // arg of peri, aka 'peri' in sbdb
+      ma: 191.9830650931392, // mean anomaly, aka 'M' in sbdb
+      p: 1204.197975688157, // period, in days
+    }
+  },
+  'Geminid': {
+    source_type: 'asteroid',
+    name: 'Geminid',
+    peak: 'October to November',
+    date: '10/10',
+    // TODO comet struct
+    source_name: 'Encke',
+    source_orbit: {
+      full_name: '2P/Encke',
+      epoch: 2457260.5,
+      a: 2.215132168119717,
+      e: 0.8483353543281217,
+      q: 0.3359572353942565,
+      i: 11.78145516019895,
+      om: 334.5681964371267, // long of ascending node, aka 'node' in sbdb
+      w: 186.5460141528601, // arg of peri, aka 'peri' in sbdb
+      ma: 191.9830650931392, // mean anomaly, aka 'M' in sbdb
+      p: 1204.197975688157, // period, in days
+    }
+  },
 };

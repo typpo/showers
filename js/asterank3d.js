@@ -48,7 +48,7 @@
     , added_objects = []
     , planets = []
     , planet_orbits_visible = true
-    , comet_orbit = null
+    , source_orbit = null
     , jed = toJED(new Date())
     , particle_system_geometry = null
     , particles_loaded = false
@@ -312,8 +312,10 @@
   } // end setLock
 
   function setupCloudSelectionHandler() {
+    var showers = [];
     for (var key in window.METEOR_CLOUD_DATA) {
-      $('<option>').html(key).attr('value', key).appendTo($select);
+      $('<option>').html(key).attr('value', key)
+        .data('date', window.METEOR_CLOUD_DATA[key].date).appendTo($select);
     }
 
     $select.on('change', loadNewViewSelection);
@@ -336,10 +338,11 @@
     // Update caption
     $('#meteor-shower-name').html(cloud_obj.name);
     $('#meteor-shower-peak').html(cloud_obj.peak);
-    $('#meteor-shower-comet-name').html(cloud_obj.comet_name);
+    $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
+    $('#meteor-shower-comet-name').html(cloud_obj.source_name);
 
     // Add new comet.
-    var comet = new Orbit3D(cloud_obj.comet_orbit, {
+    var comet = new Orbit3D(cloud_obj.source_orbit, {
       color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
       display_color: new THREE.Color(0xff69b4), // hot pink
       particle_geometry: particle_system_geometry,
@@ -363,9 +366,9 @@
       setTimeout(function() {
         me.processAsteroidRankings(cloud_obj.full_orbit_data);
       }, 0);
-    } else if (cloud_obj.comet_orbit) {
+    } else if (cloud_obj.source_orbit) {
       // We only have the comet's orbit, no meteor-specific data.
-      var base = cloud_obj.comet_orbit;
+      var base = cloud_obj.source_orbit;
       var data = [base];
       var between = function(min, max) {
         return Math.random() * (min - max) + max;
