@@ -101,17 +101,11 @@
   Orbit3D.prototype.getFatEllipse = function() {
     if (!this.fatEllipse) {
       var pointGeometry = this.createOrbit(this.opts.jed);
-      /*
       this.fatEllipse = new THREE.Line(pointGeometry,
         new THREE.LineBasicMaterial({
           transparent: true,
           linewidth: 10,
         }), THREE.LineStrip);
-       */
-      this.fatEllipse = new THREE.Mesh(pointGeometry,
-                                       new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-      }));
     }
     return this.fatEllipse;
   };

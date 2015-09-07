@@ -28,7 +28,7 @@ window.METEOR_CLOUD_DATA = {
     map: 'leonids_north.jpg',
     source_name: 'Tempel-Tuttle',
     source_orbit: {
-      full_name: '55P/Tempel-Tuttle',
+      full_name: 'Comet 55P/Tempel-Tuttle',
       epoch: 2451040.5,
       a: 10.3383382297577,
       e: 0.905552720972412,
@@ -46,7 +46,7 @@ window.METEOR_CLOUD_DATA = {
     date: '7/31',
     source_name: '169P/NEAT',
     source_orbit: {
-      full_name: '169P/NEAT',
+      full_name: 'Comet 169P/NEAT',
       epoch: 2454306.5,
       a: 2.604263020070025,
       e: 0.7669213009105551,
@@ -66,7 +66,7 @@ window.METEOR_CLOUD_DATA = {
     map: 'lyrids_north.jpg',
     source_name: 'C/1861 G1 Thatcher',
     source_orbit: {
-      full_name: 'C/1861 G1 Thatcher',
+      full_name: 'Comet C/1861 G1 Thatcher',
       epoch: 2400920.5,
       a: 55.6818869,
       e: 0.983465,
@@ -92,7 +92,7 @@ window.METEOR_CLOUD_DATA = {
     map: 'orionids_north.jpg',
     source_name: 'Halley',
     source_orbit: {
-      full_name: '1P/Halley',
+      full_name: 'Comet 1P/Halley',
       epoch: 2449400.5,
       a: 17.8341442925537,
       e: 0.967142908462304,
@@ -113,7 +113,7 @@ window.METEOR_CLOUD_DATA = {
     // TODO comet struct
     source_name: 'Swift-Tuttle',
     source_orbit: {
-      full_name: '2003 EH1',
+      full_name: 'Asteroid 2003 EH1',
       epoch: 2457000.5,
       a: 3.122076326984469,
       e: 0.6190846552236009,
@@ -133,7 +133,7 @@ window.METEOR_CLOUD_DATA = {
     map: 'delta_aquarids_north.jpg',
     source_name: 'Machholz',
     source_orbit: {
-      full_name: '96P/Machholz',
+      full_name: 'Comet 96P/Machholz',
       epoch: 2456541.5,
       a: 3.033939724939583,
       e: 0.9592118287498192,
@@ -151,7 +151,7 @@ window.METEOR_CLOUD_DATA = {
     date: '10/10',
     source_name: 'Encke',
     source_orbit: {
-      full_name: '2P/Encke',
+      full_name: 'Comet 2P/Encke',
       epoch: 2457260.5,
       a: 2.215132168119717,
       e: 0.8483353543281217,
@@ -169,7 +169,7 @@ window.METEOR_CLOUD_DATA = {
     date: '11/12',
     source_name: 'Encke',
     source_orbit: {
-      full_name: '2P/Encke',
+      full_name: 'Comet 2P/Encke',
       epoch: 2457260.5,
       a: 2.215132168119717,
       e: 0.8483353543281217,
@@ -190,7 +190,7 @@ window.METEOR_CLOUD_DATA = {
     map: 'geminids_north.jpg',
     source_name: 'Phaethon',
     source_orbit: {
-      full_name: '3200 Phaethon',
+      full_name: 'Asteroid 3200 Phaethon',
       epoch: 2457000.5,
       a: 1.271171408008421,
       e: 0.8898360011148798,
@@ -214,7 +214,7 @@ window.METEOR_CLOUD_DATA = {
     map: 'ursids_north.jpg',
     source_name: 'Tuttle',
     source_orbit: {
-      full_name: '8P/Tuttle',
+      full_name: 'Comet 8P/Tuttle',
       epoch: 2454374.5,
       a: 5.6998620708785754374048,
       e: 0.8197997470243816309221,

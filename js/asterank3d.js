@@ -65,7 +65,8 @@
     , locked_object_color = -1
 
   // Comet stuff
-  var cometOrbitDisplayed = null;
+  var cometOrbitDisplayed = null
+    , cometDisplayed = null
 
   // glsl and webgl stuff
   var attributes
@@ -208,7 +209,6 @@
     // Rendering solar system
     setupSun();
     setupPlanets();
-    setupPlanetsOrbitTooltips();
     setupSkybox();
 
     setupCloudSelectionHandler();
@@ -217,6 +217,10 @@
         loadNewViewSelection();
       }, 0);
     }
+    setTimeout(function() {
+      // TODO: this is pretty bad.
+      setupPlanetsOrbitTooltips();
+    }, 0);
 
     $(opts.container).on('mousedown', function() {
       opts.camera_fly_around = false;
@@ -427,8 +431,9 @@
       color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
       display_color: new THREE.Color(0xff69b4), // hot pink
       particle_geometry: particle_system_geometry,
-      name: cloud_obj.name
+      name: cloud_obj.source_orbit.full_name,
     });
+    cometDisplayed = comet;
     cometOrbitDisplayed = comet.getEllipse();
     if (planet_orbits_visible) {
       scene.add(cometOrbitDisplayed);
@@ -807,7 +812,7 @@
           texture_path: opts.static_prefix + 'img/texture-uranus.jpg',
           display_color: new THREE.Color(0x0099FF),
           particle_geometry: particle_system_geometry,
-          name: 'uranus'
+          name: 'Uranus'
         });
     var neptune = new Orbit3D(Ephemeris.neptune,
         {
@@ -815,7 +820,7 @@
           texture_path: opts.static_prefix + 'img/texture-neptune.jpg',
           display_color: new THREE.Color(0x3333FF),
           particle_geometry: particle_system_geometry,
-          name: 'neptune'
+          name: 'Neptune'
         });
 
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
@@ -826,39 +831,48 @@
 
   function setupPlanetsOrbitTooltips() {
     // TODO probably shouldn't be in main 3d logic.
-    var $globalTooltip = $('#global-tooltip');
-    planets.forEach(function(planet) {
-      var name = planet.opts.name;
-      name = name.slice(0, 1).toUpperCase() + name.slice(1);
-      var ellipse = planet.getFatEllipse();
-
-      domEvents.addEventListener(ellipse, 'mouseover', function(e) {
-        // Build tooltip.
-        var x = e.origDomEvent.clientX + 10;
-        var y = e.origDomEvent.clientY - 5;
-
-        $globalTooltip.css({
-          display: '',
-          left: x + 'px',
-          top: y + 'px',
-        });
-
-        var tip = name;
-        /*
-        if (point.desc) {
-          tip += '<br><span>' + point.desc + '</span>';
-        }
-        if (point.img) {
-          tip += '<img src="' + point.img + '">';
-        }
-        */
-        $globalTooltip.html(tip);
-      });
-
-      domEvents.addEventListener(ellipse, 'mouseout', function(e) {
-        $globalTooltip.hide();
-      }, false);
+    var annotatedOrbits = planets.slice();
+    annotatedOrbits.push(cometDisplayed);
+    annotatedOrbits.forEach(function(planet) {
+      annotateOrbit(planet.opts.name, planet.getFatEllipse());
     });
+  }
+
+  var hideTimeout;
+  var hideTimeoutIsForName;
+  function annotateOrbit(name, ellipse) {
+    // TODO do this for comets on change too.
+    var $globalTooltip = $('#global-tooltip');
+    domEvents.addEventListener(ellipse, 'mouseover', function(e) {
+      // Build tooltip.
+      var x = e.origDomEvent.clientX + 10;
+      var y = e.origDomEvent.clientY - 5;
+
+      var tip = name;
+      /*
+      if (point.desc) {
+        tip += '<br><span>' + point.desc + '</span>';
+      }
+      if (point.img) {
+        tip += '<img src="' + point.img + '">';
+      }
+      */
+      $globalTooltip.css({
+        top: y + 'px',
+        left: x + 'px',
+      }).html(tip).show();
+
+      if (name != hideTimeoutIsForName) {
+        clearTimeout(hideTimeout);
+      }
+    });
+
+    domEvents.addEventListener(ellipse, 'mouseout', function(e) {
+      hideTimeout = setTimeout(function() {
+        $globalTooltip.hide();
+      }, 500);
+      hideTimeoutIsForName = name;
+    }, false);
   }
 
   function setupSkybox() {
