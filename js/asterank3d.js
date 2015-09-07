@@ -206,7 +206,7 @@
     setupSkybox();
 
     setupCloudSelectionHandler();
-    if (opts.run_asteroid_query) {
+    if (!setupSelectionFromUrl()) {
       setTimeout(function() {
         loadNewViewSelection();
       }, 0);
@@ -311,6 +311,25 @@
     opts.camera_fly_around = true;
   } // end setLock
 
+  function setupSelectionFromUrl() {
+    // First option: set from hash.
+    var hash = window.location.hash.slice(1);
+    var selection = window.METEOR_CLOUD_DATA[hash];
+    if (selection) {
+      console.log('Setting from hash', selection);
+      $select.val(selection.name);
+      setTimeout(function() {
+        loadNewViewSelection();
+      }, 0);
+      return true;
+    }
+    return false;
+  }
+
+  function updateUrl() {
+    window.location.hash = $select.val();
+  }
+
   function setupCloudSelectionHandler() {
     var shower_names = [];
     for (var key in window.METEOR_CLOUD_DATA) {
@@ -341,11 +360,14 @@
       $('<option>').html(display).attr('value', key).appendTo($select);
     });
 
-    $select.on('change', loadNewViewSelection);
+    $select.on('change', function() {
+      loadNewViewSelection();
+      updateUrl();
+    });
   }
 
   function loadNewViewSelection() {
-    // Cleanup.
+    // Cleanup previous.
     me.clearRankings();
     if (cometOrbitDisplayed) {
       scene.remove(cometOrbitDisplayed);

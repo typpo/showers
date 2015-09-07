@@ -7,7 +7,6 @@
       $('#loading').hide();
       $('#not-supported').show();
     },
-    run_asteroid_query: true,
     show_dat_gui: isScreenBigEnough(),
     static_prefix: '',
     camera_position: [18.58451231886428, -350.32000584838624, 133.3893086458709],
