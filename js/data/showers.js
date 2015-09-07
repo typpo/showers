@@ -168,23 +168,50 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Geminid': {
+    // TODO: fewer particles
     source_type: 'asteroid',
     name: 'Geminid',
-    peak: 'October to November',
-    date: '10/10',
-    // TODO comet struct
-    source_name: 'Encke',
+    peak: 'mid-December',
+    date: '12/14',
+    source_name: 'Phaethon',
     source_orbit: {
-      full_name: '2P/Encke',
-      epoch: 2457260.5,
-      a: 2.215132168119717,
-      e: 0.8483353543281217,
-      q: 0.3359572353942565,
-      i: 11.78145516019895,
-      om: 334.5681964371267, // long of ascending node, aka 'node' in sbdb
-      w: 186.5460141528601, // arg of peri, aka 'peri' in sbdb
-      ma: 191.9830650931392, // mean anomaly, aka 'M' in sbdb
-      p: 1204.197975688157, // period, in days
+      full_name: '3200 Phaethon',
+      epoch: 2457000.5,
+      a: 1.271171408008421,
+      e: 0.8898360011148798,
+      q: 0.1400373255746363,
+      i: 22.23995071185812,
+      // long of ascending node, aka 'node' in sbdb
+      om: 265.2652193975989,
+      // arg of peri, aka 'peri' in sbdb
+      w: 322.143726872288,
+      // mean anomaly, aka 'M' in sbdb
+      ma: 293.7610538532383,
+      // period, in days
+      p: 523.4854325174181,
+    }
+  },
+  'Ursid': {
+    source_type: 'asteroid',
+    name: 'Geminid',
+    peak: 'mid-December',
+    date: '12/21',
+    source_name: 'Tuttle',
+    source_orbit: {
+      full_name: '8P/Tuttle',
+      epoch: 2454374.5,
+      a: 5.6998620708785754374048,
+      e: 0.8197997470243816309221,
+      q: 1.0271165870984511059305,
+      i: 54.983184844602092766763,
+      // long of ascending node, aka 'node' in sbdb
+      om: 270.3416520050764,
+      // arg of peri, aka 'peri' in sbdb
+      w: 207.5092459727414,
+      // mean anomaly, aka 'M' in sbdb
+      ma: 351.4516245290291,
+      // period, in days
+      p: 4970.441269280825,
     }
   },
 };
