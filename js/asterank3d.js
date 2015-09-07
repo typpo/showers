@@ -368,6 +368,21 @@
     });
   }
 
+  function populatePictures() {
+    // TODO this should not go in the main 3D logic.
+    var selection = window.METEOR_CLOUD_DATA[$select.val()];
+    if (!selection.pictures || selection.pictures.length < 1) {
+      return;
+    }
+
+    selection.pictures.forEach(function(pic) {
+      $div.append('<a target="_blank" href="' + pic.url +
+                  '"><img src="//wit.wurfl.io/w_180/' + pic.url + '" title="' +
+                  pic.caption + '"></a>');
+    });
+    $('#left-nav').empty().append($div);
+  }
+
   function loadNewViewSelection() {
     // Cleanup previous.
     me.clearRankings();
@@ -402,6 +417,9 @@
 
     // Add meteor cloud.
     loadParticles(cloud_obj);
+
+    // Update left bar.
+    //populatePictures();
   }
 
   function loadParticles(cloud_obj) {

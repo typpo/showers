@@ -2,6 +2,10 @@ body {
   background-color: #000;
 }
 
+a {
+  color: #ccc;
+}
+
 #container {
   position: absolute;
   top: 0;
@@ -11,11 +15,11 @@ body {
   overflow: hidden;
 }
 
-#label {
+#summary {
   z-index:99999;
   position: absolute;
   top: 0;
-  left: 20px;
+  left: 30px;
   height: 100px;
   max-width: 650px;
   margin: 5px 15px;
@@ -23,7 +27,7 @@ body {
   font-family: Helvetica, Arial, sans-serif;
 }
 
-#label .description {
+#summary .description {
   color: #ccc;
 }
 
@@ -60,3 +64,66 @@ ul.share-buttons img {
   font-size: 14px;
   color: #fff;
 }
+
+#left-nav {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 200px;
+  background-color: #000;
+  border-right: 1px solid #404040;
+  z-index: 999998;
+  overflow: auto;
+}
+
+.left-nav-image {
+  width: 180px;
+  height: auto;
+  margin-left: 5px;
+}
+
+#btn-left-nav-toggle {
+  position: absolute;
+  top: 0;
+  /* Keep synced in main.js */
+  left: 162px;
+  width: 30px;
+  height: 20px;
+
+  background-color: #404040;
+  color: #eee;
+  text-align: center;
+  padding-top: 4px;
+
+  cursor: pointer;
+  z-index: 999999;
+}
+
+#btn-left-nav-toggle:hover {
+  background-color: #505050;
+}
+
+@media screen and (max-width: 850px) {
+  #left-nav, #btn-left-nav-toggle {
+    display: none;
+  }
+}
+
+/** Scrollbar **/
+::-webkit-scrollbar {
+background:transparent;overflow:visible; width:8px;margin-left:2px;}
+::-webkit-scrollbar-thumb {
+background-color:rgba(0,0,0,0.2); /*border:solid #000;*/}
+::-webkit-scrollbar-thumb:hover {
+background:rgba(0,0,0,0.4);}
+::-webkit-scrollbar-thumb:horizontal {
+border-width:4px 6px;min-width:40px;}
+::-webkit-scrollbar-thumb:vertical {
+border-width:6px 4px;min-height:40px;}
+::-webkit-scrollbar-track-piece{background-color: #ddd;}
+::-webkit-scrollbar-corner {
+background:transparent;}
+::-webkit-scrollbar-thumb {
+background-color: #555;}
+::-webkit-scrollbar-thumb:hover {background-color: #333;}

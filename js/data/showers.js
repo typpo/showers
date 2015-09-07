@@ -74,6 +74,12 @@ window.METEOR_CLOUD_DATA = {
       ma: -0.0234598, // mean anomaly, aka 'M' in sbdb
       p: 151578.75, // period
     },
+    pictures: [
+      {
+        url: 'http://astrobob.areavoices.com/files/2012/04/Lyrids-2011-12_30April-232-1024x698.jpg',
+        caption: '',
+      },
+    ],
     full_orbit_data: window.Lyrid,
   },
   'Orionid': {
