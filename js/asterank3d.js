@@ -311,6 +311,8 @@
     opts.camera_fly_around = true;
   } // end setLock
 
+  // Returns true if this function will handle the initial state, because it
+  // found something in the url.
   function setupSelectionFromUrl() {
     // First option: set from hash.
     var hash = window.location.hash.slice(1);
