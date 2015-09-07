@@ -3,6 +3,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Perseid',
     peak: 'mid-August',
     date: '8/12',
+    map: 'perseids_north.jpg',
     // TODO comet struct
     source_name: 'Swift-Tuttle',
     source_orbit: {
@@ -24,6 +25,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Leonid',
     peak: 'mid-November',
     date: '11/18',
+    map: 'leonids_north.jpg',
     source_name: 'Tempel-Tuttle',
     source_orbit: {
       full_name: '55P/Tempel-Tuttle',
@@ -61,6 +63,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Lyrid',
     peak: 'April',
     date: '4/22',
+    map: 'lyrids_north.jpg',
     source_name: 'C/1861 G1 Thatcher',
     source_orbit: {
       full_name: 'C/1861 G1 Thatcher',
@@ -86,6 +89,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Orionid',
     peak: 'late October',
     date: '10/21',
+    map: 'orionids_north.jpg',
     source_name: 'Halley',
     source_orbit: {
       full_name: '1P/Halley',
@@ -105,6 +109,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Perseid',
     peak: 'early January',
     date: '1/3',
+    map: 'quarantids_north.jpg',
     // TODO comet struct
     source_name: 'Swift-Tuttle',
     source_orbit: {
@@ -125,7 +130,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Delta Aquariid',
     peak: 'late July',
     date: '7/28',
-    // TODO comet struct
+    map: 'delta_aquarids_north.jpg',
     source_name: 'Machholz',
     source_orbit: {
       full_name: '96P/Machholz',
@@ -182,6 +187,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Geminid',
     peak: 'mid-December',
     date: '12/14',
+    map: 'geminids_north.jpg',
     source_name: 'Phaethon',
     source_orbit: {
       full_name: '3200 Phaethon',
@@ -205,6 +211,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Geminid',
     peak: 'mid-December',
     date: '12/21',
+    map: 'ursids_north.jpg',
     source_name: 'Tuttle',
     source_orbit: {
       full_name: '8P/Tuttle',

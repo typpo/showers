@@ -318,7 +318,6 @@
     var hash = window.location.hash.slice(1);
     var selection = window.METEOR_CLOUD_DATA[hash];
     if (selection) {
-      console.log('Setting from hash', selection);
       $select.val(selection.name);
       setTimeout(function() {
         loadNewViewSelection();
@@ -383,6 +382,20 @@
     $('#left-nav').empty().append($div);
   }
 
+  function populateMinimap() {
+    var $skymap = $('#sky-map');
+    var selection = window.METEOR_CLOUD_DATA[$select.val()];
+    if (!selection.map) {
+      $skymap.hide();
+      return;
+    }
+
+    var imgpath = 'img/skymaps/' + selection.map;
+    $skymap.find('a').attr('href', imgpath);
+    $skymap.find('img').attr('src', imgpath);
+    $skymap.show();
+  }
+
   function loadNewViewSelection() {
     // Cleanup previous.
     me.clearRankings();
@@ -420,6 +433,7 @@
 
     // Update left bar.
     //populatePictures();
+    populateMinimap();
   }
 
   function loadParticles(cloud_obj) {
