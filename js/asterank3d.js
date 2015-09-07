@@ -412,6 +412,11 @@
     if (cometOrbitDisplayed) {
       scene.remove(cometOrbitDisplayed);
     }
+    if (cometOrbitDisplayed) {
+      // Clean up mouseovers.
+      domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
+      domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
+    }
 
     var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
     if (!cloud_obj) {
@@ -438,6 +443,9 @@
     if (planet_orbits_visible) {
       scene.add(cometOrbitDisplayed);
     }
+
+    // Add mouseover label.
+    annotateOrbit(comet.opts.name, comet.getFatEllipse());
 
     // Add meteor cloud.
     loadParticles(cloud_obj);
@@ -831,9 +839,7 @@
 
   function setupPlanetsOrbitTooltips() {
     // TODO probably shouldn't be in main 3d logic.
-    var annotatedOrbits = planets.slice();
-    annotatedOrbits.push(cometDisplayed);
-    annotatedOrbits.forEach(function(planet) {
+    planets.forEach(function(planet) {
       annotateOrbit(planet.opts.name, planet.getFatEllipse());
     });
   }
@@ -870,6 +876,7 @@
     domEvents.addEventListener(ellipse, 'mouseout', function(e) {
       hideTimeout = setTimeout(function() {
         $globalTooltip.hide();
+        hideTimeoutIsForName = null;
       }, 500);
       hideTimeoutIsForName = name;
     }, false);
