@@ -317,10 +317,22 @@
       shower_names.push(key);
     }
 
+    var now = new Date();
     shower_names.sort(function(a, b) {
-      var showerA = window.METEOR_CLOUD_DATA[a];
-      var showerB = window.METEOR_CLOUD_DATA[b];
-      return new Date(showerA.date) - new Date(showerB.date);
+      var showerAdate = new Date(window.METEOR_CLOUD_DATA[a].date);
+      var showerBdate = new Date(window.METEOR_CLOUD_DATA[b].date);
+
+      showerAdate.setYear(1900 + now.getYear());
+      showerBdate.setYear(1900 + now.getYear());
+
+      // If any of these are in the past, the next shower is next year.
+      if (showerAdate < now) {
+        showerAdate.setYear(1900 + now.getYear() + 1);
+      }
+      if (showerBdate < now) {
+        showerBdate.setYear(1900 + now.getYear() + 1);
+      }
+      return showerAdate - showerBdate;
     });
 
     shower_names.forEach(function(key) {
