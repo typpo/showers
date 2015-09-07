@@ -414,8 +414,10 @@
     }
     if (cometOrbitDisplayed) {
       // Clean up mouseovers.
-      domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
-      domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
+      try {
+        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
+        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
+      } catch(e) {}
     }
 
     var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
