@@ -844,32 +844,45 @@
     });
   }
 
-  var hideTimeout;
-  var hideTimeoutIsForName;
+  var hideTimeout, hideTimeoutIsForName;
+  var hoverTimeout, hoverTimeoutIsForName;
   function annotateOrbit(name, ellipse) {
-    // TODO do this for comets on change too.
+    return false;
     var $globalTooltip = $('#global-tooltip');
     domEvents.addEventListener(ellipse, 'mouseover', function(e) {
-      // Build tooltip.
-      var x = e.origDomEvent.clientX + 10;
-      var y = e.origDomEvent.clientY - 5;
+      // Wait ~100ms for user to remain hovering. This prevents tooltips from
+      // appearing when user simply passes mouse over the orbit.
+      if (!hoverTimeout) {
+        hoverTimeout = setTimeout(function() {
+          hoverTimeout = null;
+          if (hoverTimeoutIsForName != name) {
+            // Hover target changed.
+            return;
+          }
 
-      var tip = name;
-      /*
-      if (point.desc) {
-        tip += '<br><span>' + point.desc + '</span>';
-      }
-      if (point.img) {
-        tip += '<img src="' + point.img + '">';
-      }
-      */
-      $globalTooltip.css({
-        top: y + 'px',
-        left: x + 'px',
-      }).html(tip).show();
+          // Build tooltip.
+          var x = e.origDomEvent.clientX + 10;
+          var y = e.origDomEvent.clientY - 5;
 
-      if (name != hideTimeoutIsForName) {
-        clearTimeout(hideTimeout);
+          var tip = name;
+          /*
+          if (point.desc) {
+            tip += '<br><span>' + point.desc + '</span>';
+          }
+          if (point.img) {
+            tip += '<img src="' + point.img + '">';
+          }
+          */
+          $globalTooltip.css({
+            top: y + 'px',
+            left: x + 'px',
+          }).html(tip).show();
+
+          if (name != hideTimeoutIsForName) {
+            clearTimeout(hideTimeout);
+          }
+        }, 100);
+        hoverTimeoutIsForName = name;
       }
     });
 
