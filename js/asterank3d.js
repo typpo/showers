@@ -186,6 +186,9 @@
     window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
 
     THREEx.WindowResize(renderer, camera, opts.container);
+    if (THREEx.FullScreen && THREEx.FullScreen.available()) {
+      THREEx.FullScreen.bindKey();
+    }
 
     setDefaultCameraPosition();
     camera.lookAt(new THREE.Vector3(0,0,0));

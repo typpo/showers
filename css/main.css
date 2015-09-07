@@ -22,7 +22,7 @@ a {
   top: 0;
   left: 30px;
   height: 100px;
-  max-width: 650px;
+  max-width: 500px;
   margin: 5px 15px;
   color: white;
 }
@@ -146,7 +146,7 @@ ul.share-buttons img {
 }
 
 @media screen and (max-width: 850px) {
-  #left-nav, #btn-left-nav-toggle {
+  #left-nav, #btn-left-nav-toggle, #learn-more {
     display: none;
   }
 }
