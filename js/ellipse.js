@@ -12,7 +12,7 @@
 
     this.opts = opts;
     this.eph = eph;
-  }
+  };
 
   Orbit3D.prototype.createOrbit = function() {
     var pts;
@@ -39,15 +39,8 @@
     points.vertices = pts;
     points.computeLineDistances(); // Required for dotted lines.
 
-    var line = new THREE.Line(points,
-      new THREE.LineDashedMaterial({
-        color: this.opts.color,
-        linewidth: 1,
-        dashSize: 2,
-        gapSize: 0.5
-      }), THREE.LineStrip);
-    return line;
-  }
+    return points;
+  };
 
   Orbit3D.prototype.getPosAtTime = function(jed) {
     // Note: logic below must match the vertex shader.
@@ -88,14 +81,40 @@
     var Z = r * (sin(v + p - o) * sin(i))
     var ret = [X, Y, Z];
     return ret;
-  }
+  };
 
   Orbit3D.prototype.getEllipse = function() {
     if (!this.ellipse) {
-      this.ellipse = this.createOrbit(this.opts.jed);
+      var pointGeometry = this.createOrbit(this.opts.jed);
+      this.ellipse = new THREE.Line(pointGeometry,
+        new THREE.LineDashedMaterial({
+          color: this.opts.color,
+          linewidth: 1,
+          dashSize: 2,
+          gapSize: 0.5
+        }), THREE.LineStrip);
     }
     return this.ellipse;
-  }
+  };
+
+  // Returns a generously proportioned ellipse. Used for intersection.
+  Orbit3D.prototype.getFatEllipse = function() {
+    if (!this.fatEllipse) {
+      var pointGeometry = this.createOrbit(this.opts.jed);
+      /*
+      this.fatEllipse = new THREE.Line(pointGeometry,
+        new THREE.LineBasicMaterial({
+          transparent: true,
+          linewidth: 10,
+        }), THREE.LineStrip);
+       */
+      this.fatEllipse = new THREE.Mesh(pointGeometry,
+                                       new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+      }));
+    }
+    return this.fatEllipse;
+  };
 
   window.Orbit3D = Orbit3D;
 })();

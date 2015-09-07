@@ -757,7 +757,6 @@
           particle_geometry: particle_system_geometry,
           name: 'Mercury'
         });
-    scene.add(mercury.getEllipse());
     var venus = new Orbit3D(Ephemeris.venus,
         {
           color: 0xFF7733, width: 1, jed: jed, object_size: 1.7,
@@ -766,7 +765,6 @@
           particle_geometry: particle_system_geometry,
           name: 'Venus'
         });
-    scene.add(venus.getEllipse());
     var earth = new Orbit3D(Ephemeris.earth,
         {
           color: 0x009ACD, width: 1, jed: jed, object_size: 1.7,
@@ -775,7 +773,6 @@
           particle_geometry: particle_system_geometry,
           name: 'Earth'
         });
-    scene.add(earth.getEllipse());
     feature_map['earth'] = {
       orbit: earth,
       idx: 2
@@ -788,7 +785,6 @@
           particle_geometry: particle_system_geometry,
           name: 'Mars'
         });
-    scene.add(mars.getEllipse());
     var jupiter = new Orbit3D(Ephemeris.jupiter,
         {
           color: 0xFFB90F, width: 1, jed: jed, object_size: 1.7,
@@ -797,7 +793,6 @@
           particle_geometry: particle_system_geometry,
           name: 'Jupiter'
         });
-    scene.add(jupiter.getEllipse());
     var saturn = new Orbit3D(Ephemeris.saturn,
         {
           color: 0x336633, width: 1, jed: jed, object_size: 1.7,
@@ -806,7 +801,6 @@
           particle_geometry: particle_system_geometry,
           name: 'Saturn'
         });
-    scene.add(saturn.getEllipse());
     var uranus = new Orbit3D(Ephemeris.uranus,
         {
           color: 0x0099FF, width: 1, jed: jed, object_size: 1.7,
@@ -815,7 +809,6 @@
           particle_geometry: particle_system_geometry,
           name: 'uranus'
         });
-    scene.add(uranus.getEllipse());
     var neptune = new Orbit3D(Ephemeris.neptune,
         {
           color: 0x3333FF, width: 1, jed: jed, object_size: 1.7,
@@ -824,9 +817,11 @@
           particle_geometry: particle_system_geometry,
           name: 'neptune'
         });
-    scene.add(neptune.getEllipse());
 
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
+    planets.forEach(function(planet) {
+      scene.add(planet.getEllipse());
+    });
   }
 
   function setupPlanetsOrbitTooltips() {
@@ -835,7 +830,7 @@
     planets.forEach(function(planet) {
       var name = planet.opts.name;
       name = name.slice(0, 1).toUpperCase() + name.slice(1);
-      var ellipse = planet.getEllipse();
+      var ellipse = planet.getFatEllipse();
 
       domEvents.addEventListener(ellipse, 'mouseover', function(e) {
         // Build tooltip.
