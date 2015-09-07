@@ -100,6 +100,10 @@ ul.share-buttons img {
   z-index: 999999;
 }
 
+#btn-left-nav-toggle:hover {
+  background-color: #505050;
+}
+
 #sky-map {
   position: absolute;
   right: 0;
@@ -141,8 +145,31 @@ ul.share-buttons img {
   display: block;
 }
 
-#btn-left-nav-toggle:hover {
-  background-color: #505050;
+#global-tooltip {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+
+  width: 300px;
+}
+
+#global-tooltip span {
+  font-size: 16px;
+  margin-top: -10px;
+ -webkit-text-stroke-width: 0.5px;
+ color: #eee;
+}
+
+#global-tooltip img {
+  width: 100%;
+  height: auto;
 }
 
 @media screen and (max-width: 850px) {

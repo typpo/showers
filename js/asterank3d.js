@@ -72,8 +72,9 @@
     , uniforms
     , particleSystem
 
-  // DOM selections.
-  var $select = $('#shower-select');
+  // DOM related.
+  var $select = $('#shower-select')
+    , domEvents
 
   // Initialization
   init();
@@ -189,6 +190,7 @@
     if (THREEx.FullScreen && THREEx.FullScreen.available()) {
       THREEx.FullScreen.bindKey();
     }
+    domEvents = new THREEx.DomEvents(camera, renderer.domElement);
 
     setDefaultCameraPosition();
     camera.lookAt(new THREE.Vector3(0,0,0));
@@ -206,6 +208,7 @@
     // Rendering solar system
     setupSun();
     setupPlanets();
+    setupPlanetsOrbitTooltips();
     setupSkybox();
 
     setupCloudSelectionHandler();
@@ -824,6 +827,43 @@
     scene.add(neptune.getEllipse());
 
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
+  }
+
+  function setupPlanetsOrbitTooltips() {
+    // TODO probably shouldn't be in main 3d logic.
+    var $globalTooltip = $('#global-tooltip');
+    planets.forEach(function(planet) {
+      var name = planet.opts.name;
+      name = name.slice(0, 1).toUpperCase() + name.slice(1);
+      var ellipse = planet.getEllipse();
+
+      domEvents.addEventListener(ellipse, 'mouseover', function(e) {
+        // Build tooltip.
+        var x = e.origDomEvent.clientX + 10;
+        var y = e.origDomEvent.clientY - 5;
+
+        $globalTooltip.css({
+          display: '',
+          left: x + 'px',
+          top: y + 'px',
+        });
+
+        var tip = name;
+        /*
+        if (point.desc) {
+          tip += '<br><span>' + point.desc + '</span>';
+        }
+        if (point.img) {
+          tip += '<img src="' + point.img + '">';
+        }
+        */
+        $globalTooltip.html(tip);
+      });
+
+      domEvents.addEventListener(ellipse, 'mouseout', function(e) {
+        $globalTooltip.hide();
+      }, false);
+    });
   }
 
   function setupSkybox() {
