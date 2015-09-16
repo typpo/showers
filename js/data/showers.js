@@ -109,7 +109,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Perseid',
     peak: 'early January',
     date: '1/3',
-    map: 'quarantids_north.jpg',
+    map: 'quadrantids_north.jpg',
     // TODO comet struct
     source_name: 'Swift-Tuttle',
     source_orbit: {

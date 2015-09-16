@@ -20,7 +20,7 @@
     var time = this.opts.jed;
     var pts = [];
     var limit = this.eph.p + 1;
-    var parts = this.eph.e > .20 ? 600 : 300;   // Extra precision for high eccentricity.
+    var parts = this.eph.e > .20 ? 1200 : 300;   // Extra precision for high eccentricity.
     parts = this.eph.a > 10 ? parts + 10000 : parts;
     var delta = Math.ceil(limit / parts);
     var prev;

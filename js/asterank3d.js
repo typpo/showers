@@ -375,7 +375,7 @@
       $('<option>').html(display).attr('value', key).appendTo($select);
     });
 
-    $select.append('<option>View all</option>');
+    $select.append('<option value="View all">See all at once</option>');
 
     $select.on('change', function() {
       if ($(this).val() == 'View all') {
@@ -433,6 +433,8 @@
 
   function loadNewViewSelection() {
     cleanUpPreviousViewSelection();
+    $('#view-all-summary').hide();
+    $('#normal-summary').show();
 
     var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
     if (!cloud_obj) {
