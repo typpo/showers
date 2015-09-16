@@ -434,6 +434,19 @@
     $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
     $('#meteor-shower-object-name').html(cloud_obj.source_name);
 
+    // Add it to visualization.
+    addCloudObj(cloud_obj);
+
+    // Set up button handlers.
+    // TODO do this outside of main 3D logic.
+    setupControlHandlers();
+
+    // Update left bar.
+    //populatePictures();
+    populateMinimap();
+  }
+
+  function addCloudObj(cloud_obj) {
     // Add new comet.
     var comet = new Orbit3D(cloud_obj.source_orbit, {
       color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
@@ -452,14 +465,6 @@
 
     // Add meteor cloud.
     loadParticles(cloud_obj);
-
-    // Set up button handlers.
-    // TODO do this outside of main 3D logic.
-    setupControlHandlers();
-
-    // Update left bar.
-    //populatePictures();
-    populateMinimap();
   }
 
   function loadParticles(cloud_obj) {
@@ -469,31 +474,35 @@
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
       setTimeout(function() {
-        me.processAsteroidRankings(cloud_obj.full_orbit_data);
+        me.setupParticlesFromData(cloud_obj.full_orbit_data);
       }, 0);
     } else if (cloud_obj.source_orbit) {
       // We only have the comet's orbit, no meteor-specific data.
-      var base = cloud_obj.source_orbit;
-      var data = [base];
-      var between = function(min, max) {
-        return Math.random() * (min - max) + max;
-      }
-      for (var i=0; i < 500; i++) {
-        var variant = $.extend(true, {}, base);
-        variant.epoch = Math.random() * variant.epoch;
-        variant.a = variant.a * between(0.4, 1.1);
-        variant.e = variant.e * between(0.99, 1.01);
-        variant.i = variant.i * between(0.99, 1.01);
-        //variant.ma = variant.ma * between(0.99, 1.01);
-        //variant.p = 2 * Math.PI *
-         // Math.sqrt(Math.pow(variant.a, 3) / 132712440018/86400);
-        delete variant.p;
-        data.push(variant);
-      }
+      var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
       setTimeout(function() {
-        me.processAsteroidRankings(data);
+        me.setupParticlesFromData(data);
       }, 0);
     }
+  }
+
+  function simulateMeteorShowerFromBaseOrbit(base) {
+    var data = [base];
+    var between = function(min, max) {
+      return Math.random() * (min - max) + max;
+    }
+    for (var i=0; i < 500; i++) {
+      var variant = $.extend(true, {}, base);
+      variant.epoch = Math.random() * variant.epoch;
+      variant.a = variant.a * between(0.4, 1.1);
+      variant.e = variant.e * between(0.99, 1.01);
+      variant.i = variant.i * between(0.99, 1.01);
+      //variant.ma = variant.ma * between(0.99, 1.01);
+      //variant.p = 2 * Math.PI *
+       // Math.sqrt(Math.pow(variant.a, 3) / 132712440018/86400);
+      delete variant.p;
+      data.push(variant);
+    }
+    return data;
   }
 
   function setupControlHandlers() {
@@ -515,7 +524,22 @@
     });
 
     $('#view-all').on('click', function() {
-      // TODO
+      var everything = {
+        full_orbit_data: [],
+      };
+      for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
+        var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
+        if (cloud_obj.full_orbit_data) {
+          everything.full_orbit_data.push.apply(
+            everything.full_orbit_data, cloud_obj.full_orbit_data);
+        } else {
+          everything.full_orbit_data.push.apply(
+            everything.full_orbit_data,
+            simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
+        }
+        addCloudObj(cloud_obj);
+      }
+      loadParticles(everything);
     });
   }
 
@@ -713,7 +737,7 @@
     return isWebGLSupported();
   };
 
-  me.processAsteroidRankings = function(data) {
+  me.setupParticlesFromData = function(data) {
     if (!data) {
       alert('Sorry, something went wrong and the server failed to return data.');
       return;
@@ -731,9 +755,6 @@
 
     for (var i=0; i < n; i++) {
       var roid = data[i];
-      if (roid.a >= 999) {
-        continue;
-      }
       var locked = false;
       var orbit;
       if (opts.custom_object_fn) {
@@ -779,7 +800,7 @@
     $('#loading').hide();
 
     if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
-  };    // end processAsteroidRankings
+  };    // end setupParticlesFromData
 
   /** Util functions **/
 
