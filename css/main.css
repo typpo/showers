@@ -38,6 +38,18 @@ a {
   cursor: pointer;
 }
 
+#summary.minimized .shower-details-container {
+  display: none;
+}
+
+#summary.minimized .hide-summary {
+  display: none;
+}
+
+#summary.maximized .show-summary {
+  display: none;
+}
+
 ul.share-buttons {
   display: inline;
   list-style: none;
@@ -64,19 +76,6 @@ ul.share-buttons img {
   margin-top: 14px;
   font-size: 12px;
 }
-
-#summary.minimized .shower-details-container {
-  display: none;
-}
-
-#summary.minimized .hide-summary {
-  display: none;
-}
-
-#summary.maximized .show-summary {
-  display: none;
-}
-
 .shower-details-container select {
   color: #fff;
   background-color: #1b1b1b;
@@ -198,6 +197,14 @@ ul.share-buttons img {
 #global-tooltip img {
   width: 100%;
   height: auto;
+}
+
+#faq-modal {
+  color: #eee;
+}
+
+#faq-modal h2 {
+  color: #fff;
 }
 
 @media screen and (max-width: 850px) {
