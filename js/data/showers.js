@@ -106,7 +106,7 @@ window.METEOR_CLOUD_DATA = {
   },
   'Quadrantid': {
     source_type: 'asteroid',
-    name: 'Perseid',
+    name: 'Quadrantid',
     peak: 'early January',
     date: '1/3',
     map: 'quadrantids_north.jpg',
