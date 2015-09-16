@@ -376,7 +376,7 @@
       $('<option>').html(display).attr('value', key).appendTo($select);
     });
 
-    $select.append('<option value="View all">See all at once</option>');
+    $select.append('<option value="View all">Everything at once</option>');
 
     $select.on('change', function() {
       if ($(this).val() == 'View all') {
@@ -698,8 +698,10 @@
     var now = new Date().getTime();
     if (now - display_date_last_updated > 500 && typeof datgui !== 'undefined') {
       var georgian_date = fromJED(jed);
-      datgui['Date'] = georgian_date.getMonth()+1 + "/"
+      var datestr = georgian_date.getMonth()+1 + "/"
         + georgian_date.getDate() + "/" + georgian_date.getFullYear();
+      datgui['Date'] = datestr;
+      $('#current-date').html(datestr);
       display_date_last_updated = now;
     }
 
