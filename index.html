@@ -27,9 +27,15 @@
 </head>
 <body>
   <div id="summary" class="maximized">
-    <h2>Upcoming: <span id="meteor-shower-name"></span> meteor shower</h2>
-    <span class="description">
-      This shower peaks in <span id="meteor-shower-peak"></span>, when Earth intersects the dust cloud left by <span id="meteor-shower-source-type">comet</span> <span id="meteor-shower-object-name"></span>.
+    <span id="normal-summary">
+      <h2>Upcoming: <span id="meteor-shower-name"></span> meteor shower</h2>
+      <span class="description">
+        This shower peaks in <span id="meteor-shower-peak"></span>, when Earth intersects the dust cloud left by <span id="meteor-shower-source-type">comet</span> <span id="meteor-shower-object-name"></span>.
+      </span>
+    </span>
+    <span id="view-all-summary" style="display:none">
+      <h2>All major meteor showers</h2>
+      These showers occur at various points of the year, and originate from multiple comets and asteroids.
     </span>
 
     <ul class="share-buttons">
@@ -46,7 +52,6 @@
         <span id="restore-view" class="button">View of Solar System</span>
         <span id="lock-earth" class="button">Follow Earth</span>
         <span id="lock-earth-view" class="button">Watch from Earth</span>
-        <span id="view-all" class="button">View all!</span>
       </p>
       <p>
         <a href="http://www.amsmeteors.org/meteor-showers/" target="_blank">

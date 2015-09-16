@@ -327,6 +327,9 @@
   function setupSelectionFromUrl() {
     // First option: set from hash.
     var hash = window.location.hash.slice(1);
+    if (!hash) {
+      return false;
+    }
     var selection = window.METEOR_CLOUD_DATA[hash];
     if (selection) {
       $select.val(selection.name);
@@ -372,9 +375,15 @@
       $('<option>').html(display).attr('value', key).appendTo($select);
     });
 
+    $select.append('<option>View all</option>');
+
     $select.on('change', function() {
-      loadNewViewSelection();
-      updateUrl();
+      if ($(this).val() == 'View all') {
+        viewAll();
+      } else {
+        loadNewViewSelection();
+        updateUrl();
+      }
     });
   }
 
@@ -456,7 +465,7 @@
       color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
       display_color: new THREE.Color(0xff69b4), // hot pink
       particle_geometry: particle_system_geometry,
-      name: cloud_obj.source_orbit.full_name,
+      name: cloud_obj.source_name,
     });
     cometDisplayed = comet;
     cometOrbitDisplayed = comet.getEllipse();
@@ -526,26 +535,29 @@
       locked_mode = 'VIEW_FROM';
       setLock('earth');
     });
+  }
 
-    $('#view-all').on('click', function() {
-      cleanUpPreviousViewSelection();
-      var everything = {
-        full_orbit_data: [],
-      };
-      for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
-        var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
-        if (cloud_obj.full_orbit_data) {
-          everything.full_orbit_data.push.apply(
-            everything.full_orbit_data, cloud_obj.full_orbit_data);
-        } else {
-          everything.full_orbit_data.push.apply(
-            everything.full_orbit_data,
-            simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
-        }
-        addCloudObj(cloud_obj);
+  function viewAll() {
+    $('#view-all-summary').show();
+    $('#normal-summary').hide();
+    window.location.hash = '';
+
+    cleanUpPreviousViewSelection();
+    var everything = {
+      full_orbit_data: [],
+    };
+    for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
+      var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
+      if (cloud_obj.full_orbit_data) {
+        everything.full_orbit_data.push.apply(
+          everything.full_orbit_data, cloud_obj.full_orbit_data);
+      } else {
+        everything.full_orbit_data.push.apply(
+          everything.full_orbit_data,
+          simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
       }
-      loadParticles(everything);
-    });
+    }
+    loadParticles(everything);
   }
 
   function createParticleSystem() {
