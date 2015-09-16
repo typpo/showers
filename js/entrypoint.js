@@ -10,7 +10,7 @@
     show_dat_gui: isScreenBigEnough(),
     static_prefix: '',
     camera_position: [18.58451231886428, -350.32000584838624, 133.3893086458709],
-    camera_fly_around: false
+    camera_fly_around: true,
   });
 
   // Other wiring

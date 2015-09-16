@@ -66,6 +66,16 @@ ul.share-buttons img {
   color: #fff;
 }
 
+button {
+  padding: 7px;
+  background-color: #202020;
+  cursor: pointer;
+  border-radius: 5px;
+
+  font-size: 14px;
+  color: #fff;
+}
+
 #left-nav {
   position: absolute;
   left: 0;

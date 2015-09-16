@@ -63,6 +63,7 @@
     , locked_object_idx = -1
     , locked_object_size = -1
     , locked_object_color = -1
+    , locked_mode = 'FOLLOW'
 
   // Comet stuff
   var cometOrbitDisplayed = null
@@ -452,6 +453,9 @@
     // Add meteor cloud.
     loadParticles(cloud_obj);
 
+    // Set up button handlers.
+    setupControlHandlers();
+
     // Update left bar.
     //populatePictures();
     populateMinimap();
@@ -489,6 +493,22 @@
         me.processAsteroidRankings(data);
       }, 0);
     }
+  }
+
+  function setupControlHandlers() {
+    $('#restore-view').on('click', function() {
+      clearLock();
+      setDefaultCameraPosition();
+    });
+    $('#lock-earth').on('click', function() {
+      locked_mode = 'FOLLOW';
+      setLock('earth');
+    });
+
+    $('#lock-earth-view').on('click', function() {
+      locked_mode = 'VIEW_FROM';
+      setLock('earth');
+    });
   }
 
   function createParticleSystem() {
@@ -596,8 +616,16 @@
       if (locked_object) {
         // Follow locked object
         var pos = locked_object.getPosAtTime(jed);
-        cam.position.set(pos[0]+1, pos[1]+1, pos[2]-1);
-        cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
+        if (locked_mode == 'FOLLOW') {
+          // TODO make this an enum
+          cam.position.set(pos[0]+2, pos[1]+2, pos[2]-2);
+          //cam.position.set(pos[0], pos[1], pos[2]);
+          cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
+        } else {
+          // VIEW_FROM
+          cam.position.set(pos[0], pos[1], pos[2]);
+          cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
+        }
       } else {
         setNeutralCameraPosition();
       }
