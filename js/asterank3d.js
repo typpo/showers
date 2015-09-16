@@ -412,7 +412,6 @@
     }
 
     var imgpath = 'img/skymaps/' + selection.map;
-    $skymap.find('a').attr('href', imgpath);
     $skymap.find('img').attr('src', imgpath);
     $skymap.show();
   }
