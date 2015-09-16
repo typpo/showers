@@ -134,7 +134,7 @@ ul.share-buttons img {
 
 #sky-map {
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: 0;
 
   width: 150px;
@@ -166,6 +166,14 @@ ul.share-buttons img {
 
 #sky-map:hover span {
   display: block;
+}
+
+#instructions {
+  font-size: 12px;
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  color: #eee;
 }
 
 #global-tooltip {
@@ -204,7 +212,7 @@ ul.share-buttons img {
 }
 
 @media screen and (max-width: 850px) {
-  #left-nav, #btn-left-nav-toggle, #learn-more, #sky-map {
+  #left-nav, #btn-left-nav-toggle, #learn-more, #sky-map, #instructions {
     display: none;
   }
 }
