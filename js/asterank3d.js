@@ -86,7 +86,7 @@
 
   function initGUI() {
     var ViewUI = function() {
-      this['Display date'] = '12/26/2012';
+      this['Date'] = '12/26/2012';
       this['Speed'] = opts.jed_delta;
       //this['Meteoroid speed'] = opts.meteoroid_factor;
       this['Show orbits'] = planet_orbits_visible;
@@ -96,7 +96,7 @@
     window.onload = function() {
       var text = new ViewUI();
       var gui = new dat.GUI({width: 300});
-      gui.add(text, 'Display date').onChange(function(val) {
+      gui.add(text, 'Date').onChange(function(val) {
         var newdate = new Date(Date.parse(val));
         if (newdate) {
           var newjed = toJED(newdate);
@@ -106,8 +106,8 @@
           }
         }
       }).listen();
-      gui.add(text, 'Speed', 0, 30).onChange(function(val) {
-        opts.jed_delta = val / 30;
+      gui.add(text, 'Speed', 0, 2).onChange(function(val) {
+        opts.jed_delta = val;
         var was_moving = object_movement_on;
         object_movement_on = opts.jed_delta > 0;
       });
@@ -407,7 +407,7 @@
     $skymap.show();
   }
 
-  function loadNewViewSelection() {
+  function cleanUpPreviousViewSelection() {
     // Cleanup previous.
     me.clearRankings();
     if (cometOrbitDisplayed) {
@@ -420,6 +420,10 @@
         domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
       } catch(e) {}
     }
+  }
+
+  function loadNewViewSelection() {
+    cleanUpPreviousViewSelection();
 
     var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
     if (!cloud_obj) {
@@ -524,6 +528,7 @@
     });
 
     $('#view-all').on('click', function() {
+      cleanUpPreviousViewSelection();
       var everything = {
         full_orbit_data: [],
       };
