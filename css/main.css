@@ -18,18 +18,24 @@ a {
 }
 
 #summary {
-  z-index:99999;
+  z-index: 99999;
   position: absolute;
   top: 0;
-  left: 30px;
-  height: 100px;
   max-width: 500px;
-  margin: 5px 15px;
   color: white;
+  background-color: rgba(238, 238, 238, 0.14);
+  padding: 20px;
 }
 
 #summary .description {
   color: #ccc;
+}
+
+#summary .toggle-summary {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  cursor: pointer;
 }
 
 ul.share-buttons {
@@ -50,30 +56,46 @@ ul.share-buttons img {
   height: auto;
 }
 
-.shower-select-container {
-  margin-top: 14px;
-  color: #ccc;
+#learn-more {
+  font-size: 12px;
 }
 
-.shower-select-container select {
-  background-color: #202020;
+.shower-details-container {
+  margin-top: 14px;
+  font-size: 12px;
+}
+
+#summary.minimized .shower-details-container {
+  display: none;
+}
+
+#summary.minimized .hide-summary {
+  display: none;
+}
+
+#summary.maximized .show-summary {
+  display: none;
+}
+
+.shower-details-container select {
+  color: #fff;
+  background-color: #1b1b1b;
   cursor: pointer;
   padding: 5px;
   border-radius: 5px;
   line-height: 2.5;
-
-  font-size: 14px;
-  color: #fff;
 }
 
-button {
-  padding: 7px;
-  background-color: #202020;
-  cursor: pointer;
-  border-radius: 5px;
+.button:hover {
+  background-color: #303030;
+}
 
-  font-size: 14px;
-  color: #fff;
+.button {
+  background-color: #1b1b1b;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  line-height: 2.5;
 }
 
 #left-nav {
