@@ -151,11 +151,6 @@ ul.share-buttons img {
   cursor: pointer;
 }
 
-#sky-map:hover {
-  width: 400px;
-  height: 400px;
-}
-
 #sky-map img {
   width: 100%;
   height: 100%;
