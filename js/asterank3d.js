@@ -73,6 +73,7 @@
   var attributes
     , uniforms
     , particleSystem
+    , num_particles_per_shower = 500
 
   // DOM related.
   var $select = $('#shower-select')
@@ -505,7 +506,7 @@
     var between = function(min, max) {
       return Math.random() * (min - max) + max;
     }
-    for (var i=0; i < 500; i++) {
+    for (var i=0; i < num_particles_per_shower; i++) {
       var variant = $.extend(true, {}, base);
       variant.epoch = Math.random() * variant.epoch;
       variant.a = variant.a * between(0.4, 1.1);
