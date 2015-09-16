@@ -1,5 +1,11 @@
 body {
   background-color: #000;
+  font-family: Helvetica, Arial, sans-serif;
+  overflow: hidden;
+}
+
+a {
+  color: #ccc;
 }
 
 #container {
@@ -7,17 +13,206 @@ body {
   top: 0;
   left: 0;
   height: 100%;
-  width: 100%
+  width: 100%;
+  overflow: hidden;
 }
 
-#label {
-  z-index:99999;
+#summary {
+  z-index: 99999;
   position: absolute;
   top: 0;
-  left: 0;
-  height: 100px;
-  width: 650px;
-  margin: 5px 15px;
+  max-width: 500px;
   color: white;
-  font-family: Helvetica, Arial, sans-serif;
+  background-color: rgba(238, 238, 238, 0.14);
+  padding-left: 20px;
+}
+
+#summary .description {
+  color: #ccc;
+}
+
+#summary .toggle-summary {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  cursor: pointer;
+}
+
+#summary.minimized .shower-details-container {
+  display: none;
+}
+
+#summary.minimized .hide-summary {
+  display: none;
+}
+
+#summary.maximized .show-summary {
+  display: none;
+}
+
+ul.share-buttons {
+  display: inline;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  vertical-align: sub;
+  margin-left: 8px;
+}
+
+ul.share-buttons li {
+  display: inline;
+}
+
+ul.share-buttons img {
+  width: 20px;
+  height: auto;
+}
+
+.shower-details-container {
+  margin-top: 14px;
+  font-size: 12px;
+}
+.shower-details-container select {
+  color: #fff;
+  background-color: #1b1b1b;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  line-height: 2.5;
+}
+
+.button:hover {
+  background-color: #303030;
+}
+
+.button {
+  background-color: #1b1b1b;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  line-height: 2.5;
+}
+
+#left-nav {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 200px;
+  background-color: #000;
+  border-right: 1px solid #404040;
+  z-index: 999998;
+  overflow: auto;
+}
+
+.left-nav-image {
+  width: 180px;
+  height: auto;
+  margin-left: 5px;
+}
+
+#btn-left-nav-toggle {
+  position: absolute;
+  top: 0;
+  /* Keep synced in main.js */
+  left: 162px;
+  width: 30px;
+  height: 20px;
+
+  background-color: #404040;
+  color: #eee;
+  text-align: center;
+  padding-top: 4px;
+
+  cursor: pointer;
+  z-index: 999999;
+}
+
+#btn-left-nav-toggle:hover {
+  background-color: #505050;
+}
+
+#sky-map {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 150px;
+  height: 150px;
+
+  border-left: 1px solid #000;
+  border-top: 1px solid #000;
+
+  cursor: pointer;
+}
+
+#sky-map img {
+  width: 100%;
+  height: 100%;
+}
+
+#sky-map span {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: #ccc;
+  font-size: 10px;
+
+  background-color: #000;
+  padding: 2px;
+
+  display: none;
+}
+
+#sky-map:hover span {
+  display: block;
+}
+
+#instructions {
+  font-size: 12px;
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  color: #eee;
+}
+
+#global-tooltip {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+
+  width: 300px;
+}
+
+#global-tooltip span {
+  font-size: 16px;
+  margin-top: -10px;
+ -webkit-text-stroke-width: 0.5px;
+ color: #eee;
+}
+
+#global-tooltip img {
+  width: 100%;
+  height: auto;
+}
+
+#faq-modal {
+  color: #ccc;
+}
+
+#faq-modal h2 {
+  color: #eee;
+}
+
+@media screen and (max-width: 850px) {
+  #left-nav, #btn-left-nav-toggle, #learn-more, #sky-map, #instructions {
+    display: none;
+  }
 }

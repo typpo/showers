@@ -12,7 +12,7 @@
 
     this.opts = opts;
     this.eph = eph;
-  }
+  };
 
   Orbit3D.prototype.createOrbit = function() {
     var pts;
@@ -20,7 +20,8 @@
     var time = this.opts.jed;
     var pts = [];
     var limit = this.eph.p + 1;
-    var parts = this.eph.e > .20 ? 300 : 100;   // Extra precision for high eccentricity.
+    var parts = this.eph.e > .20 ? 1200 : 300;   // Extra precision for high eccentricity.
+    parts = this.eph.a > 10 ? parts + 10000 : parts;
     var delta = Math.ceil(limit / parts);
     var prev;
     for (var i=0; i <= parts; i++, time+=delta) {
@@ -38,15 +39,8 @@
     points.vertices = pts;
     points.computeLineDistances(); // Required for dotted lines.
 
-    var line = new THREE.Line(points,
-      new THREE.LineDashedMaterial({
-        color: this.opts.color,
-        linewidth: 2.5,
-        dashSize: 2,
-        gapSize: 0.5
-      }), THREE.LineStrip);
-    return line;
-  }
+    return points;
+  };
 
   Orbit3D.prototype.getPosAtTime = function(jed) {
     // Note: logic below must match the vertex shader.
@@ -87,14 +81,34 @@
     var Z = r * (sin(v + p - o) * sin(i))
     var ret = [X, Y, Z];
     return ret;
-  }
+  };
 
   Orbit3D.prototype.getEllipse = function() {
     if (!this.ellipse) {
-      this.ellipse = this.createOrbit(this.opts.jed);
+      var pointGeometry = this.createOrbit(this.opts.jed);
+      this.ellipse = new THREE.Line(pointGeometry,
+        new THREE.LineDashedMaterial({
+          color: this.opts.color,
+          linewidth: 1,
+          dashSize: 2,
+          gapSize: 0.5
+        }), THREE.LineStrip);
     }
     return this.ellipse;
-  }
+  };
+
+  // Returns a generously proportioned ellipse. Used for intersection.
+  Orbit3D.prototype.getFatEllipse = function() {
+    if (!this.fatEllipse) {
+      var pointGeometry = this.createOrbit(this.opts.jed);
+      this.fatEllipse = new THREE.Line(pointGeometry,
+        new THREE.LineBasicMaterial({
+          transparent: true,
+          linewidth: 10,
+        }), THREE.LineStrip);
+    }
+    return this.fatEllipse;
+  };
 
   window.Orbit3D = Orbit3D;
 })();

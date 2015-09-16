@@ -7,15 +7,14 @@
       $('#loading').hide();
       $('#not-supported').show();
     },
-    run_asteroid_query: true,
-    show_dat_gui: true,
+    show_dat_gui: isScreenBigEnough(),
     static_prefix: '',
-    //camera_position: [18.58451231886428, -350.32000584838624, 133.3893086458709],
-    camera_position: [38.58451231886428, -360.32000584838624, 193.3893086458709],
-    camera_fly_around: false
+    camera_position: [18.58451231886428, -350.32000584838624, 133.3893086458709],
+    camera_fly_around: true,
   });
 
   // Other wiring
+  // TODO move to ui.js
   $('#hide_sidebar').on('click', function() {
     $('#sidebar').hide();
     $('#show_sidebar_container').show();
@@ -24,4 +23,8 @@
     $('#sidebar').show();
     $('#show_sidebar_container').hide();
   });
+
+  function isScreenBigEnough() {
+    return $(window).width() > 760;
+  }
 })();

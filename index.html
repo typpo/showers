@@ -1,22 +1,112 @@
 ﻿<!doctype html>
 <html>
 <head>
-  <title>Meteor showers</title>
+  <title>Meteor showers from space</title>
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@iwebst">
+  <meta name="twitter:title" content="Meteor showers from space">
+  <meta name="twitter:description" content="Watch Earth fly into clouds of meteors.">
+  <meta name="twitter:creator" content="@iwebst">
+  <meta name="twitter:image" content="http://i.imgur.com/n5U34ah.png">
+
+  <meta property="og:title" content="Meteor showers from space" />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="http://i.imgur.com/n5U34ah.png" />
+  <meta property="og:description" content="Watch Earth fly into clouds of meteors." />
 
   <!-- Allow fullscreen app install -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
 
   <link type="text/css" href="css/main.css" rel="stylesheet" />
+  <link type="text/css" href="css/jquery.modal.css" rel="stylesheet" />
 
 </head>
 <body>
-  <div id="label"><h2>Alpha Capricornid meteor shower (Comet 169P/NEAT)</h2></div>
+  <div id="summary" class="maximized">
+    <span id="normal-summary">
+      <h2>Upcoming: <span id="meteor-shower-name"></span> meteor shower</h2>
+      <span class="description">
+        This shower peaks in <span id="meteor-shower-peak"></span>, when Earth intersects the dust cloud left by <span id="meteor-shower-source-type">comet</span> <span id="meteor-shower-object-name"></span>.  <a href="#faq-modal" rel="modal:open">Learn more</a>.
+      </span>
+    </span>
+    <span id="view-all-summary" style="display:none">
+      <h2>All major meteor showers</h2>
+      These showers occur at various points of the year, and originate from multiple comets and asteroids.
+    </span>
+
+    <ul class="share-buttons">
+      <li><a href="https://www.facebook.com/sharer/sharer.php?u=http://www.ianww.com/meteor-showers" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Facebook.png"></a></li>
+      <li><a href="https://twitter.com/intent/tweet?source=http://www.ianww.com/meteor-showers&text=:http://ianww.com/meteor-showers&via=iwebst" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Twitter.png"></a></li>
+      <li><a href="mailto:?subject=&body=http://www.ianww.com/meteor-showers" target="_blank" title="Email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Email.png"></a></li>
+    </ul>
+
+    <div class="shower-details-container">
+      <p>
+        View <select id="shower-select"></select> on <span id="current-date"></span>.
+      </p>
+      <p>
+        <span id="restore-view" class="button">View Solar System</span>
+        <span id="lock-earth" class="button">Follow Earth</span>
+        <span id="lock-earth-view" class="button">Watch from Earth</span>
+      </p>
+    </div>
+    <div>
+      <span class="hide-summary toggle-summary">-</span>
+      <span class="show-summary toggle-summary">+</span>
+    </div>
+  </div>
+
   <!-- Three.JS Container -->
   <div id="container"></div>
+
+  <div id="sky-map" style="display: none">
+    <img src="img/skymaps/perseids_north.jpg">
+    <span>Source: meteorshowersonline.com</span>
+  </div>
+
+  <div id="global-tooltip"></div>
+
+  <div id="skymap-modal" class="modal">
+  </div>
+
+  <div id="faq-modal" class="modal">
+    <h2>What am I looking at?</h2>
+    <p>
+      On Earth, meteors are called "shooting stars" because they are brief streaks of light that rarely occur.  In space, meteoroids look much different, manifesting as streams or clouds of debris.
+    </p>
+    <p>
+      This visualization shows what meteor showers look like from space: beautiful bands of rock and dust that stretch across our entire solar system, and in some cases far beyond.  With accurate orbital dynamics, you can explore as Earth passes through various meteor showers throughout the year.
+
+    </p>
+    <h2>Where do meteor showers come from?</h2>
+    <p>
+      Meteoroids are space debris, remnants of the tails of comets or collisions between large asteroids.
+    </p>
+    <h2>How can I see a meteor shower?</h2>
+    <p>
+      There are many major meteor showers every year.  This visualization shows most of them.  Find out when the next meteor shower is by looking at the meteor shower menu.  Then, Google for the shower or check out the <a href="http://www.amsmeteors.org/meteor-showers/">American Meteor Society</a> website to find out what you can do to maximize your chances of seeing a meteor.
+    </p>
+    <h2>Where should I go next?</h2>
+    <p>
+      If you like these sorts of interactive visualizations, take a look at <a href="http://ianww.com/pluto">Pluto</a>, <a href="http://dinosaurpictures.org/ancient-earth/#600">ancient Earth</a>, or <a href="http://asterank.com">asteroids</a>!
+    <p>
+  </div>
+
+  <div id="instructions">
+    Click and drag to turn. Scroll to zoom.
+  </div>
+
+
+  <!-- Nav and other interesting things -->
+<!--
+  <div id="left-nav"></div>
+  <div id="btn-left-nav-toggle">-</div>
+-->
 
 <!--
   <div id="loading-container">
@@ -162,24 +252,41 @@
   </script>
 
   <!-- Include vendor scripts -->
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  <script type="text/javascript" src="lib/jquery.min.js"></script>
+  <script type="text/javascript" src="lib/jquery.modal.min.js"></script>
   <script type="text/javascript" src="lib/three.min.js"></script>
+  <script type="text/javascript" src="lib/THREEx.WindowResize.js"></script>
+  <script type="text/javascript" src="lib/THREEx.FullScreen.js"></script>
   <script type="text/javascript" src="lib/TrackballControls.js"></script>
-  <script type="text/javascript" src="lib/detector.min.js"></script>
+  <script type="text/javascript" src="lib/Detector.js"></script>
   <script type="text/javascript" src="lib/stats.min.js"></script>
   <script type="text/javascript" src="lib/screenfull.min.js"></script>
   <script type="text/javascript" src="lib/threex.domevents.js"></script>
   <script type="text/javascript" src="lib/dat.gui.js"></script>
-  <script type="text/javascript" src="lib/template.js"></script>
 
   <!-- Include Three.JS scene controller script -->
-  <script type="text/javascript" src="js/data.js"></script>
+  <script type="text/javascript" src="js/data/capricornid.js" defer></script>
+  <script type="text/javascript" src="js/data/lyrid.js" defer></script>
+  <script type="text/javascript" src="js/data/showers.js"></script>
   <script type="text/javascript" src="js/util.js"></script>
   <script type="text/javascript" src="js/ephemeris.js"></script>
   <script type="text/javascript" src="js/ellipse.js"></script>
-  <script type="text/javascript" src="js/main.js"></script>
-  <script type="text/javascript" src="js/full3d_loader.js"></script>
+  <script type="text/javascript" src="js/asterank3d.js"></script>
+  <script type="text/javascript" src="js/entrypoint.js"></script>
+  <script type="text/javascript" src="js/ui.js"></script>
 
+<!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
+  for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
+  mixpanel.init("33c7e2f25d35df78f45321ffd7525b2b");</script><!-- end Mixpanel -->
+<script>mixpanel.track('meteors');</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-52596552-1', 'auto');
+  ga('send', 'pageview');
+</script>
   <noscript>
     <p>You need javascript enabled in order to use this web application.</p>
   </noscript>
