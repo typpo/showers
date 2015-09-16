@@ -14,6 +14,7 @@
   });
 
   // Other wiring
+  // TODO move to ui.js
   $('#hide_sidebar').on('click', function() {
     $('#sidebar').hide();
     $('#show_sidebar_container').show();

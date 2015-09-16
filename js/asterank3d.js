@@ -698,7 +698,7 @@
     var now = new Date().getTime();
     if (now - display_date_last_updated > 500 && typeof datgui !== 'undefined') {
       var georgian_date = fromJED(jed);
-      datgui['Display date'] = georgian_date.getMonth()+1 + "/"
+      datgui['Date'] = georgian_date.getMonth()+1 + "/"
         + georgian_date.getDate() + "/" + georgian_date.getFullYear();
       display_date_last_updated = now;
     }
