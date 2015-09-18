@@ -331,6 +331,14 @@
     if (!hash) {
       return false;
     }
+
+    if (hash == 'all') {
+      setTimeout(function() {
+        viewAll();
+      }, 0);
+      return true;
+    }
+
     var selection = window.METEOR_CLOUD_DATA[hash];
     if (selection) {
       $select.val(selection.name);
@@ -542,7 +550,7 @@
   function viewAll() {
     $('#view-all-summary').show();
     $('#normal-summary').hide();
-    window.location.hash = '';
+    window.location.hash = '#all';
 
     cleanUpPreviousViewSelection();
     var everything = {
