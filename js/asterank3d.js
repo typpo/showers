@@ -548,8 +548,11 @@
     var everything = {
       full_orbit_data: [],
     };
+    var seen_sources = {};
     for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
       var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
+      if (seen_sources[cloud_obj.source_orbit.full_name]) continue;
+
       if (cloud_obj.full_orbit_data) {
         everything.full_orbit_data.push.apply(
           everything.full_orbit_data, cloud_obj.full_orbit_data);
@@ -558,6 +561,7 @@
           everything.full_orbit_data,
           simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
       }
+      seen_sources[cloud_obj.source_orbit.full_name] = true;
     }
     loadParticles(everything);
   }
