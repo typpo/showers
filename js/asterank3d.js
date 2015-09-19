@@ -80,487 +80,6 @@
   var $select = $('#shower-select')
     , domEvents
 
-  function initGUI() {
-    var ViewUI = function() {
-      this['Date'] = '12/26/2012';
-      this['Speed'] = opts.jed_delta;
-      //this['Meteoroid speed'] = opts.meteoroid_factor;
-      this['Show orbits'] = planet_orbits_visible;
-      this['Show Milky Way'] = opts.milky_way_visible;
-    };
-
-    window.onload = function() {
-      var text = new ViewUI();
-      var gui = new dat.GUI({width: 300});
-      gui.add(text, 'Date').onChange(function(val) {
-        var newdate = new Date(Date.parse(val));
-        if (newdate) {
-          var newjed = toJED(newdate);
-          changeJED(newjed);
-          if (!object_movement_on) {
-            render(true); // force rerender even if simulation isn't running
-          }
-        }
-      }).listen();
-      gui.add(text, 'Speed', 0, 2).onChange(function(val) {
-        opts.jed_delta = val;
-        var was_moving = object_movement_on;
-        object_movement_on = opts.jed_delta > 0;
-      });
-      /*
-      gui.add(text, 'Meteoroid speed', 1, 30).onChange(function(val) {
-        opts.meteoroid_factor = val;
-        for (var i = 0; i < added_objects.length; i++) {
-          if (i >= planets.length) {
-            // Adjust artificial speed for comet particles.
-            attributes.P.value[i] =
-              attributes.realP.value[i] / opts.meteoroid_factor;
-          }
-        }
-        attributes.P.needsUpdate = true;
-      });
-      */
-      gui.add(text, 'Show orbits').onChange(function() {
-        togglePlanetOrbits();
-      });
-      gui.add(text, 'Show Milky Way').onChange(function() {
-        toggleMilkyWay();
-      });
-      window.datgui = text;
-    }; // end window onload
-  } // end initGUI
-
-  function togglePlanetOrbits() {
-    if (planet_orbits_visible) {
-      for (var i=0; i < planets.length; i++) {
-        scene.remove(planets[i].getEllipse());
-      }
-      scene.remove(cometOrbitDisplayed);
-    }
-    else {
-      for (var i=0; i < planets.length; i++) {
-        scene.add(planets[i].getEllipse());
-      }
-      scene.add(cometOrbitDisplayed);
-    }
-    planet_orbits_visible = !planet_orbits_visible;
-  }
-
-  function toggleMilkyWay() {
-    skyBox.visible = opts.milky_way_visible = !opts.milky_way_visible;
-  }
-
-  function changeJED(new_jed) {
-    jed = new_jed;
-  }
-
-  function setHighlight(full_name) {
-    // Colors the object differently, but doesn't follow it.
-    var mapped_obj = feature_map[full_name];
-    var orbit_obj = mapped_obj.orbit;
-    if (!mapped_obj || !orbit_obj) {
-      alert("Sorry, something went wrong and I can't highlight this object.");
-      return;
-    }
-    var idx = mapped_obj.idx; // this is the object's position in the added_objects array
-    attributes.value_color.value[idx] = new THREE.Color(0x0000ff);
-    attributes.size.value[idx] = 30.0;
-    attributes.locked.value[idx] = 1.0;
-    setAttributeNeedsUpdateFlags();
-  }
-
-  // Returns true if this function will handle the initial state, because it
-  // found something in the url.
-  function setupSelectionFromUrl() {
-    // First option: set from hash.
-    var hash = window.location.hash.slice(1);
-    if (!hash) {
-      return false;
-    }
-
-    if (hash == 'all') {
-      $select.val('View all');
-      onVisualsReady(viewAll);
-      return true;
-    }
-
-    var selection = window.METEOR_CLOUD_DATA[hash];
-    if (selection) {
-      $select.val(selection.name);
-      onVisualsReady(loadNewViewSelection);
-      return true;
-    }
-    return false;
-  }
-
-  function updateUrl() {
-    window.location.hash = $select.val();
-  }
-
-  function setupCloudSelectionHandler() {
-    var shower_names = [];
-    for (var key in window.METEOR_CLOUD_DATA) {
-      shower_names.push(key);
-    }
-
-    var now = new Date();
-    shower_names.sort(function(a, b) {
-      var showerAdate = new Date(window.METEOR_CLOUD_DATA[a].date);
-      var showerBdate = new Date(window.METEOR_CLOUD_DATA[b].date);
-
-      showerAdate.setYear(1900 + now.getYear());
-      showerBdate.setYear(1900 + now.getYear());
-
-      // If any of these are in the past, the next shower is next year.
-      if (showerAdate < now) {
-        showerAdate.setYear(1900 + now.getYear() + 1);
-      }
-      if (showerBdate < now) {
-        showerBdate.setYear(1900 + now.getYear() + 1);
-      }
-      return showerAdate - showerBdate;
-    });
-
-    shower_names.forEach(function(key) {
-      var shower = window.METEOR_CLOUD_DATA[key];
-      var display = key + ' - ' + shower.peak;
-      $('<option>').html(display).attr('value', key).appendTo($select);
-    });
-
-    $select.append('<option value="View all">Everything at once</option>');
-
-    $select.on('change', function() {
-      if ($(this).val() == 'View all') {
-        viewAll();
-      } else {
-        loadNewViewSelection();
-        updateUrl();
-      }
-    });
-  }
-
-  function populatePictures() {
-    // TODO this should not go in the main 3D logic.
-    var selection = window.METEOR_CLOUD_DATA[$select.val()];
-    if (!selection.pictures || selection.pictures.length < 1) {
-      return;
-    }
-
-    selection.pictures.forEach(function(pic) {
-      $div.append('<a target="_blank" href="' + pic.url +
-                  '"><img src="//wit.wurfl.io/w_180/' + pic.url + '" title="' +
-                  pic.caption + '"></a>');
-    });
-    $('#left-nav').empty().append($div);
-  }
-
-  function populateMinimap() {
-    var $skymap = $('#sky-map');
-    var selection = window.METEOR_CLOUD_DATA[$select.val()];
-    if (!selection.map) {
-      $skymap.hide();
-      return;
-    }
-
-    var imgpath = 'img/skymaps/' + selection.map;
-    $skymap.find('img').attr('src', imgpath);
-    $skymap.show();
-  }
-
-  function cleanUpPreviousViewSelection() {
-    // Cleanup previous.
-    me.clearRankings();
-    if (cometOrbitDisplayed) {
-      scene.remove(cometOrbitDisplayed);
-    }
-    if (cometOrbitDisplayed) {
-      // Clean up mouseovers.
-      try {
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
-      } catch(e) {}
-    }
-  }
-
-  function loadNewViewSelection() {
-    cleanUpPreviousViewSelection();
-    $('#view-all-summary').hide();
-    $('#normal-summary').show();
-
-    var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
-    if (!cloud_obj) {
-      console.error('Tried to load key', key);
-      alert("Something went wrong - couldn't load data for this meteor shower!");
-      return;
-    }
-
-    // Update caption
-    $('#meteor-shower-name').html(cloud_obj.name);
-    $('#meteor-shower-peak').html(cloud_obj.peak);
-    $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
-    $('#meteor-shower-object-name').html(cloud_obj.source_name);
-
-    // Add it to visualization.
-    addCloudObj(cloud_obj);
-
-    // Update left bar.
-    //populatePictures();
-    populateMinimap();
-  }
-
-  function addCloudObj(cloud_obj) {
-    // Add new comet.
-    var comet = new Orbit3D(cloud_obj.source_orbit, {
-      color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
-      display_color: new THREE.Color(0xff69b4), // hot pink
-      particle_geometry: particle_system_geometry,
-      name: cloud_obj.source_name,
-    });
-    cometDisplayed = comet;
-    cometOrbitDisplayed = comet.getEllipse();
-    if (planet_orbits_visible) {
-      scene.add(cometOrbitDisplayed);
-    }
-
-    // Add mouseover label.
-    annotateOrbit(comet.opts.name, comet.getFatEllipse());
-
-    // Add meteor cloud.
-    loadParticles(cloud_obj);
-  }
-
-  function loadParticles(cloud_obj) {
-    // TODO loader
-    //$('#loading').show();
-    //$('#loading-text').html('asteroids database');
-    if (cloud_obj.full_orbit_data) {
-      // We have real data on meteor showers.
-      onVisualsReady(
-        me.setupParticlesFromData, cloud_obj.full_orbit_data);
-    } else if (cloud_obj.source_orbit) {
-      // We only have the comet's orbit, no meteor-specific data.
-      var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
-      onVisualsReady(me.setupParticlesFromData, data);
-    }
-  }
-
-  function simulateMeteorShowerFromBaseOrbit(base) {
-    var data = [base];
-    var between = function(min, max) {
-      return Math.random() * (min - max) + max;
-    }
-    for (var i=0; i < num_particles_per_shower; i++) {
-      var variant = $.extend(true, {}, base);
-      variant.epoch = Math.random() * variant.epoch;
-      variant.a = variant.a * between(0.4, 1.1);
-      variant.e = variant.e * between(0.99, 1.01);
-      variant.i = variant.i * between(0.99, 1.01);
-      //variant.ma = variant.ma * between(0.99, 1.01);
-      //variant.p = 2 * Math.PI *
-       // Math.sqrt(Math.pow(variant.a, 3) / 132712440018/86400);
-      delete variant.p;
-      data.push(variant);
-    }
-    return data;
-  }
-
-  function viewAll() {
-    $('#view-all-summary').show();
-    $('#normal-summary').hide();
-    window.location.hash = '#all';
-
-    cleanUpPreviousViewSelection();
-    var everything = {
-      full_orbit_data: [],
-    };
-    var seen_sources = {};
-    for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
-      var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
-      if (seen_sources[cloud_obj.source_orbit.full_name]) continue;
-
-      if (cloud_obj.full_orbit_data) {
-        everything.full_orbit_data.push.apply(
-          everything.full_orbit_data, cloud_obj.full_orbit_data);
-      } else {
-        everything.full_orbit_data.push.apply(
-          everything.full_orbit_data,
-          simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
-      }
-      seen_sources[cloud_obj.source_orbit.full_name] = true;
-    }
-    loadParticles(everything);
-  }
-
-  function createParticleSystem() {
-    // Attributes
-    attributes = {
-      a: { type: 'f', value: [] },
-      e: { type: 'f', value: [] },
-      i: { type: 'f', value: [] },
-      o: { type: 'f', value: [] },
-      ma: { type: 'f', value: [] },
-      n: { type: 'f', value: [] },
-      w: { type: 'f', value: [] },
-      P: { type: 'f', value: [] },
-      realP: { type: 'f', value: [] },
-      epoch: { type: 'f', value: [] },
-      size: { type: 'f', value: [] },
-      value_color : { type: 'c', value: [] },
-
-      // Attributes can't be bool or int in some versions of opengl
-      locked: { type: 'f', value: [] },
-      is_planet: { type: 'f', value: [] }
-    };
-
-    uniforms = {
-      color: { type: 'c', value: new THREE.Color(0xffffff) },
-      jed: { type: 'f', value: jed },
-      earth_i: { type: 'f', value: Ephemeris.earth.i },
-      earth_om: { type: 'f', value: Ephemeris.earth.om },
-      planet_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4.png') },
-      small_roid_texture:
-        { type: 't', value: loadTexture(opts.object_texture_path) },
-      small_roid_circled_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png') }
-    };
-    var particle_system_shader_material = new THREE.ShaderMaterial( {
-      uniforms:       uniforms,
-      attributes:     attributes,
-      vertexShader:   document.getElementById('orbit-vertex-shader').textContent,
-      fragmentShader: document.getElementById('orbit-fragment-shader').textContent
-    });
-    particle_system_shader_material.depthTest = false;
-    particle_system_shader_material.vertexColor = true;
-    particle_system_shader_material.transparent = true;
-    particle_system_shader_material.blending = THREE.AdditiveBlending;
-
-    for (var i = 0; i < added_objects.length; i++) {
-      if (i < planets.length) {
-        attributes.size.value[i] = 150;
-        attributes.is_planet.value[i] = 1.0;
-      } else {
-        attributes.size.value[i] = added_objects[i].opts.object_size;
-        attributes.is_planet.value[i] = 0.0;
-      }
-
-      attributes.a.value[i] = added_objects[i].eph.a;
-      attributes.e.value[i] = added_objects[i].eph.e;
-      attributes.i.value[i] = added_objects[i].eph.i;
-      attributes.o.value[i] = added_objects[i].eph.om;
-      attributes.ma.value[i] = added_objects[i].eph.ma || 0; // TODO
-      attributes.n.value[i] = added_objects[i].eph.n || -1.0;
-      attributes.w.value[i] = added_objects[i].eph.w_bar ||
-        (added_objects[i].eph.w + added_objects[i].eph.om);
-      attributes.realP.value[i] = attributes.P.value[i] =
-        added_objects[i].eph.p || Math.sqrt(
-          Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
-      if (i >= planets.length) {
-        // Artificial speed for non-planets.
-        attributes.P.value[i] /= opts.meteoroid_factor;
-      }
-      attributes.epoch.value[i] = added_objects[i].eph.epoch ||
-        Math.random() * 2451545.0; // TODO
-      attributes.value_color.value[i] = added_objects[i].opts.display_color ||
-        new THREE.Color(0xff00ff); // TODO
-      attributes.locked.value[i] = 0.0;
-      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
-    }  // end added_objects loop
-    setAttributeNeedsUpdateFlags();
-
-    particleSystem = new THREE.ParticleSystem(
-      particle_system_geometry,
-      particle_system_shader_material
-    );
-    window.ps = particleSystem;
-
-    // add it to the scene
-    scene.add(particleSystem);
-  }
-
-  function setAttributeNeedsUpdateFlags() {
-    attributes.value_color.needsUpdate = true;
-    attributes.locked.needsUpdate = true;
-    attributes.size.needsUpdate = true;
-  }
-
-  function animate() {
-    // Animation loop
-    if (!particles_loaded) {
-      render();
-      requestAnimFrame(animate);
-      return;
-    }
-
-    if (opts.camera_fly_around) {
-      if (locked_object) {
-        // Follow locked object
-        var pos = locked_object.getPosAtTime(jed);
-        if (locked_mode == 'FOLLOW') {
-          cam.position.set(pos[0]+2, pos[1]+2, pos[2]-2);
-          //cam.position.set(pos[0], pos[1], pos[2]);
-          cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
-        } else /* mode VIEW_FROM */ {
-          // TODO Reset camera target if user clicks off follow.
-          cam.position.set(pos[0], pos[1], pos[2]);
-          if (cometDisplayed) {
-            var cometPos = cometDisplayed.getPosAtTime(jed);;
-            cameraControls.target =
-              new THREE.Vector3(cometPos[0], cometPos[1], cometPos[2]);
-          }
-        }
-      } else {
-        me.setNeutralCameraPosition();
-      }
-    }
-
-    render();
-    requestAnimFrame(animate);
-  }
-
-  function render(force) {
-    // render the scene at this timeframe
-
-    // update camera controls
-    cameraControls.update();
-
-    // update display date
-    var now = new Date().getTime();
-    if (now - display_date_last_updated > 500 && typeof datgui !== 'undefined') {
-      var georgian_date = fromJED(jed);
-      var datestr = georgian_date.getMonth()+1 + "/"
-        + georgian_date.getDate() + "/" + georgian_date.getFullYear();
-      datgui['Date'] = datestr;
-      $('#current-date').html(datestr);
-      display_date_last_updated = now;
-    }
-
-    if (object_movement_on || force) {
-      // update shader vals for asteroid cloud
-      uniforms.jed.value = jed;
-      jed += opts.jed_delta;
-    }
-
-    // actually render the scene
-    renderer.render(scene, camera);
-  }
-
-  function loadTexture(path) {
-    if (typeof passthrough_vars !== 'undefined' && passthrough_vars.offline_mode) {
-      // same origin policy workaround
-      var b64_data = $('img[data-src="' + path + '"]').attr('src');
-
-      var new_image = document.createElement( 'img' );
-      var texture = new THREE.Texture( new_image );
-      new_image.onload = function()  {
-        texture.needsUpdate = true;
-      };
-      new_image.src = b64_data;
-      return texture;
-    }
-    return THREE.ImageUtils.loadTexture(path);
-  }
-
   /** Public functions **/
 
   me.init = function() {
@@ -793,6 +312,490 @@
 
     if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
   };    // end setupParticlesFromData
+
+  /** Core private functions **/
+
+  function initGUI() {
+    var ViewUI = function() {
+      this['Date'] = '12/26/2012';
+      this['Speed'] = opts.jed_delta;
+      //this['Meteoroid speed'] = opts.meteoroid_factor;
+      this['Show orbits'] = planet_orbits_visible;
+      this['Show Milky Way'] = opts.milky_way_visible;
+    };
+
+    window.onload = function() {
+      var text = new ViewUI();
+      var gui = new dat.GUI({width: 300});
+      gui.add(text, 'Date').onChange(function(val) {
+        var newdate = new Date(Date.parse(val));
+        if (newdate) {
+          var newjed = toJED(newdate);
+          changeJED(newjed);
+          if (!object_movement_on) {
+            render(true); // force rerender even if simulation isn't running
+          }
+        }
+      }).listen();
+      gui.add(text, 'Speed', 0, 2).onChange(function(val) {
+        opts.jed_delta = val;
+        var was_moving = object_movement_on;
+        object_movement_on = opts.jed_delta > 0;
+      });
+      /*
+      gui.add(text, 'Meteoroid speed', 1, 30).onChange(function(val) {
+        opts.meteoroid_factor = val;
+        for (var i = 0; i < added_objects.length; i++) {
+          if (i >= planets.length) {
+            // Adjust artificial speed for comet particles.
+            attributes.P.value[i] =
+              attributes.realP.value[i] / opts.meteoroid_factor;
+          }
+        }
+        attributes.P.needsUpdate = true;
+      });
+      */
+      gui.add(text, 'Show orbits').onChange(function() {
+        togglePlanetOrbits();
+      });
+      gui.add(text, 'Show Milky Way').onChange(function() {
+        toggleMilkyWay();
+      });
+      window.datgui = text;
+    }; // end window onload
+  } // end initGUI
+
+  function togglePlanetOrbits() {
+    if (planet_orbits_visible) {
+      for (var i=0; i < planets.length; i++) {
+        scene.remove(planets[i].getEllipse());
+      }
+      scene.remove(cometOrbitDisplayed);
+    }
+    else {
+      for (var i=0; i < planets.length; i++) {
+        scene.add(planets[i].getEllipse());
+      }
+      scene.add(cometOrbitDisplayed);
+    }
+    planet_orbits_visible = !planet_orbits_visible;
+  }
+
+  function toggleMilkyWay() {
+    skyBox.visible = opts.milky_way_visible = !opts.milky_way_visible;
+  }
+
+  function changeJED(new_jed) {
+    jed = new_jed;
+  }
+
+  function setHighlight(full_name) {
+    // Colors the object differently, but doesn't follow it.
+    var mapped_obj = feature_map[full_name];
+    var orbit_obj = mapped_obj.orbit;
+    if (!mapped_obj || !orbit_obj) {
+      alert("Sorry, something went wrong and I can't highlight this object.");
+      return;
+    }
+    var idx = mapped_obj.idx; // this is the object's position in the added_objects array
+    attributes.value_color.value[idx] = new THREE.Color(0x0000ff);
+    attributes.size.value[idx] = 30.0;
+    attributes.locked.value[idx] = 1.0;
+    setAttributeNeedsUpdateFlags();
+  }
+
+  // Returns true if this function will handle the initial state, because it
+  // found something in the url.
+  function setupSelectionFromUrl() {
+    // First option: set from hash.
+    var hash = window.location.hash.slice(1);
+    if (!hash) {
+      return false;
+    }
+
+    if (hash == 'all') {
+      $select.val('View all');
+      onVisualsReady(viewAll);
+      return true;
+    }
+
+    var selection = window.METEOR_CLOUD_DATA[hash];
+    if (selection) {
+      $select.val(selection.name);
+      onVisualsReady(loadNewViewSelection);
+      return true;
+    }
+    return false;
+  }
+
+  function setupCloudSelectionHandler() {
+    var shower_names = [];
+    for (var key in window.METEOR_CLOUD_DATA) {
+      shower_names.push(key);
+    }
+
+    var now = new Date();
+    shower_names.sort(function(a, b) {
+      var showerAdate = new Date(window.METEOR_CLOUD_DATA[a].date);
+      var showerBdate = new Date(window.METEOR_CLOUD_DATA[b].date);
+
+      showerAdate.setYear(1900 + now.getYear());
+      showerBdate.setYear(1900 + now.getYear());
+
+      // If any of these are in the past, the next shower is next year.
+      if (showerAdate < now) {
+        showerAdate.setYear(1900 + now.getYear() + 1);
+      }
+      if (showerBdate < now) {
+        showerBdate.setYear(1900 + now.getYear() + 1);
+      }
+      return showerAdate - showerBdate;
+    });
+
+    shower_names.forEach(function(key) {
+      var shower = window.METEOR_CLOUD_DATA[key];
+      var display = key + ' - ' + shower.peak;
+      $('<option>').html(display).attr('value', key).appendTo($select);
+    });
+
+    $select.append('<option value="View all">Everything at once</option>');
+
+    $select.on('change', function() {
+      if ($(this).val() == 'View all') {
+        viewAll();
+      } else {
+        loadNewViewSelection();
+        window.location.hash = $select.val();
+      }
+    });
+  }
+
+  function populatePictures() {
+    // TODO this should not go in the main 3D logic.
+    var selection = window.METEOR_CLOUD_DATA[$select.val()];
+    if (!selection.pictures || selection.pictures.length < 1) {
+      return;
+    }
+
+    selection.pictures.forEach(function(pic) {
+      $div.append('<a target="_blank" href="' + pic.url +
+                  '"><img src="//wit.wurfl.io/w_180/' + pic.url + '" title="' +
+                  pic.caption + '"></a>');
+    });
+    $('#left-nav').empty().append($div);
+  }
+
+  function populateMinimap() {
+    var $skymap = $('#sky-map');
+    var selection = window.METEOR_CLOUD_DATA[$select.val()];
+    if (!selection.map) {
+      $skymap.hide();
+      return;
+    }
+
+    var imgpath = 'img/skymaps/' + selection.map;
+    $skymap.find('img').attr('src', imgpath);
+    $skymap.show();
+  }
+
+  function cleanUpPreviousViewSelection() {
+    // Cleanup previous.
+    me.clearRankings();
+    if (cometOrbitDisplayed) {
+      scene.remove(cometOrbitDisplayed);
+    }
+    if (cometOrbitDisplayed) {
+      // Clean up mouseovers.
+      try {
+        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
+        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
+      } catch(e) {}
+    }
+  }
+
+  function loadNewViewSelection() {
+    cleanUpPreviousViewSelection();
+    $('#view-all-summary').hide();
+    $('#normal-summary').show();
+
+    var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
+    if (!cloud_obj) {
+      console.error('Tried to load key', key);
+      alert("Something went wrong - couldn't load data for this meteor shower!");
+      return;
+    }
+
+    // Update caption
+    $('#meteor-shower-name').html(cloud_obj.name);
+    $('#meteor-shower-peak').html(cloud_obj.peak);
+    $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
+    $('#meteor-shower-object-name').html(cloud_obj.source_name);
+
+    // Add it to visualization.
+    addCloudObj(cloud_obj);
+
+    // Update left bar.
+    //populatePictures();
+    populateMinimap();
+  }
+
+  // Takes a cloud object and creates an orbit from it.  Adds the orbit, its
+  // particles, and other annotations to the simulation.
+  function addCloudObj(cloud_obj) {
+    // Add new comet.
+    var comet = new Orbit3D(cloud_obj.source_orbit, {
+      color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+      display_color: new THREE.Color(0xff69b4), // hot pink
+      particle_geometry: particle_system_geometry,
+      name: cloud_obj.source_name,
+    });
+    cometDisplayed = comet;
+    cometOrbitDisplayed = comet.getEllipse();
+    if (planet_orbits_visible) {
+      scene.add(cometOrbitDisplayed);
+    }
+
+    // Add mouseover label.
+    annotateOrbit(comet.opts.name, comet.getFatEllipse());
+
+    // Add meteor cloud.
+    loadParticles(cloud_obj);
+  }
+
+  // Adds particles to the simulation.
+  function loadParticles(cloud_obj) {
+    // TODO loader
+    //$('#loading').show();
+    //$('#loading-text').html('asteroids database');
+    if (cloud_obj.full_orbit_data) {
+      // We have real data on meteor showers.
+      onVisualsReady(
+        me.setupParticlesFromData, cloud_obj.full_orbit_data);
+    } else if (cloud_obj.source_orbit) {
+      // We only have the comet's orbit, no meteor-specific data.
+      var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
+      onVisualsReady(me.setupParticlesFromData, data);
+    }
+  }
+
+  // Creates a meteor cloud based on the orbit of a comet or asteroid, or any
+  // kepler orbit.
+  function simulateMeteorShowerFromBaseOrbit(base) {
+    var data = [base];
+    var between = function(min, max) {
+      return Math.random() * (min - max) + max;
+    }
+    for (var i=0; i < num_particles_per_shower; i++) {
+      var variant = $.extend(true, {}, base);
+      variant.epoch = Math.random() * variant.epoch;
+      variant.a = variant.a * between(0.4, 1.1);
+      variant.e = variant.e * between(0.99, 1.01);
+      variant.i = variant.i * between(0.99, 1.01);
+      //variant.ma = variant.ma * between(0.99, 1.01);
+      //variant.p = 2 * Math.PI *
+       // Math.sqrt(Math.pow(variant.a, 3) / 132712440018/86400);
+      delete variant.p;
+      data.push(variant);
+    }
+    return data;
+  }
+
+  // Loads every meteor shower at once.
+  function viewAll() {
+    $('#view-all-summary').show();
+    $('#normal-summary').hide();
+    window.location.hash = '#all';
+
+    cleanUpPreviousViewSelection();
+    var everything = {
+      full_orbit_data: [],
+    };
+    var seen_sources = {};
+    for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
+      var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
+      if (seen_sources[cloud_obj.source_orbit.full_name]) continue;
+
+      if (cloud_obj.full_orbit_data) {
+        everything.full_orbit_data.push.apply(
+          everything.full_orbit_data, cloud_obj.full_orbit_data);
+      } else {
+        everything.full_orbit_data.push.apply(
+          everything.full_orbit_data,
+          simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
+      }
+      seen_sources[cloud_obj.source_orbit.full_name] = true;
+    }
+    loadParticles(everything);
+  }
+
+  function createParticleSystem() {
+    // Attributes
+    attributes = {
+      a: { type: 'f', value: [] },
+      e: { type: 'f', value: [] },
+      i: { type: 'f', value: [] },
+      o: { type: 'f', value: [] },
+      ma: { type: 'f', value: [] },
+      n: { type: 'f', value: [] },
+      w: { type: 'f', value: [] },
+      P: { type: 'f', value: [] },
+      realP: { type: 'f', value: [] },
+      epoch: { type: 'f', value: [] },
+      size: { type: 'f', value: [] },
+      value_color : { type: 'c', value: [] },
+
+      // Attributes can't be bool or int in some versions of opengl
+      locked: { type: 'f', value: [] },
+      is_planet: { type: 'f', value: [] }
+    };
+
+    uniforms = {
+      color: { type: 'c', value: new THREE.Color(0xffffff) },
+      jed: { type: 'f', value: jed },
+      earth_i: { type: 'f', value: Ephemeris.earth.i },
+      earth_om: { type: 'f', value: Ephemeris.earth.om },
+      planet_texture:
+        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4.png') },
+      small_roid_texture:
+        { type: 't', value: loadTexture(opts.object_texture_path) },
+      small_roid_circled_texture:
+        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png') }
+    };
+    var particle_system_shader_material = new THREE.ShaderMaterial( {
+      uniforms:       uniforms,
+      attributes:     attributes,
+      vertexShader:   document.getElementById('orbit-vertex-shader').textContent,
+      fragmentShader: document.getElementById('orbit-fragment-shader').textContent
+    });
+    particle_system_shader_material.depthTest = false;
+    particle_system_shader_material.vertexColor = true;
+    particle_system_shader_material.transparent = true;
+    particle_system_shader_material.blending = THREE.AdditiveBlending;
+
+    for (var i = 0; i < added_objects.length; i++) {
+      if (i < planets.length) {
+        attributes.size.value[i] = 150;
+        attributes.is_planet.value[i] = 1.0;
+      } else {
+        attributes.size.value[i] = added_objects[i].opts.object_size;
+        attributes.is_planet.value[i] = 0.0;
+      }
+
+      attributes.a.value[i] = added_objects[i].eph.a;
+      attributes.e.value[i] = added_objects[i].eph.e;
+      attributes.i.value[i] = added_objects[i].eph.i;
+      attributes.o.value[i] = added_objects[i].eph.om;
+      attributes.ma.value[i] = added_objects[i].eph.ma || 0; // TODO
+      attributes.n.value[i] = added_objects[i].eph.n || -1.0;
+      attributes.w.value[i] = added_objects[i].eph.w_bar ||
+        (added_objects[i].eph.w + added_objects[i].eph.om);
+      attributes.realP.value[i] = attributes.P.value[i] =
+        added_objects[i].eph.p || Math.sqrt(
+          Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
+      if (i >= planets.length) {
+        // Artificial speed for non-planets.
+        attributes.P.value[i] /= opts.meteoroid_factor;
+      }
+      attributes.epoch.value[i] = added_objects[i].eph.epoch ||
+        Math.random() * 2451545.0; // TODO
+      attributes.value_color.value[i] = added_objects[i].opts.display_color ||
+        new THREE.Color(0xff00ff); // TODO
+      attributes.locked.value[i] = 0.0;
+      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
+    }  // end added_objects loop
+    setAttributeNeedsUpdateFlags();
+
+    particleSystem = new THREE.ParticleSystem(
+      particle_system_geometry,
+      particle_system_shader_material
+    );
+    window.ps = particleSystem;
+
+    // add it to the scene
+    scene.add(particleSystem);
+  }
+
+  function setAttributeNeedsUpdateFlags() {
+    attributes.value_color.needsUpdate = true;
+    attributes.locked.needsUpdate = true;
+    attributes.size.needsUpdate = true;
+  }
+
+  // Main animation loop
+  function animate() {
+    if (!particles_loaded) {
+      render();
+      requestAnimFrame(animate);
+      return;
+    }
+
+    if (opts.camera_fly_around) {
+      if (locked_object) {
+        // Follow locked object
+        var pos = locked_object.getPosAtTime(jed);
+        if (locked_mode == 'FOLLOW') {
+          cam.position.set(pos[0]+2, pos[1]+2, pos[2]-2);
+          //cam.position.set(pos[0], pos[1], pos[2]);
+          cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
+        } else /* mode VIEW_FROM */ {
+          // TODO Reset camera target if user clicks off follow.
+          cam.position.set(pos[0], pos[1], pos[2]);
+          if (cometDisplayed) {
+            var cometPos = cometDisplayed.getPosAtTime(jed);;
+            cameraControls.target =
+              new THREE.Vector3(cometPos[0], cometPos[1], cometPos[2]);
+          }
+        }
+      } else {
+        me.setNeutralCameraPosition();
+      }
+    }
+
+    render();
+    requestAnimFrame(animate);
+  }
+
+  // Render the scene at this timeframe.
+  function render(force) {
+    // Update camera controls.
+    cameraControls.update();
+
+    // Update display date.
+    var now = new Date().getTime();
+    if (now - display_date_last_updated > 500 && typeof datgui !== 'undefined') {
+      var georgian_date = fromJED(jed);
+      var datestr = georgian_date.getMonth()+1 + "/"
+        + georgian_date.getDate() + "/" + georgian_date.getFullYear();
+      datgui['Date'] = datestr;
+      $('#current-date').html(datestr);
+      display_date_last_updated = now;
+    }
+
+    if (object_movement_on || force) {
+      // Update shader vals for asteroid cloud.
+      uniforms.jed.value = jed;
+      jed += opts.jed_delta;
+    }
+
+    // Actually render the scene.
+    renderer.render(scene, camera);
+  }
+
+  function loadTexture(path) {
+    if (typeof passthrough_vars !== 'undefined' && passthrough_vars.offline_mode) {
+      // same origin policy workaround
+      var b64_data = $('img[data-src="' + path + '"]').attr('src');
+
+      var new_image = document.createElement( 'img' );
+      var texture = new THREE.Texture( new_image );
+      new_image.onload = function()  {
+        texture.needsUpdate = true;
+      };
+      new_image.src = b64_data;
+      return texture;
+    }
+    return THREE.ImageUtils.loadTexture(path);
+  }
 
   /** Util functions **/
 
