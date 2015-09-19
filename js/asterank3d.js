@@ -677,7 +677,7 @@
     for (var i = 0; i < added_objects.length; i++) {
       var obj = added_objects[i];
       if (i < planets.length) {
-        attributes.size.value[i] = 150;
+        attributes.size.value[i] = 100;
         attributes.is_planet.value[i] = 1.0;
       } else {
         attributes.size.value[i] = obj.opts.object_size;
