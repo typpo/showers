@@ -588,7 +588,13 @@
     for (var i=0; i < num_particles_per_shower; i++) {
       var variant = $.extend(true, {}, base);
       variant.epoch = Math.random() * variant.epoch;
-      variant.a = variant.a * between(0.4, 1.1);
+      if (base.a > 5) {
+        // Further out than jupiter, fill in more.
+        variant.a = variant.a * between(0.4, 1.2);
+      } else {
+        // Inside jupiter, there's more of a tail.
+        variant.a = variant.a * between(0.8, 1.2);
+      }
       variant.e = variant.e * between(0.99, 1.01);
       variant.i = variant.i * between(0.99, 1.01);
       // No set period when semimajor axis, etc. are being changed.
