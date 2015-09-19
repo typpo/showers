@@ -36,18 +36,19 @@
     </span>
     <span id="view-all-summary" style="display:none">
       <h2>All major meteor showers</h2>
-      These showers occur at various points of the year, and originate from multiple comets and asteroids.
+      These showers occur at various points of the year and originate from multiple comets and asteroids.
     </span>
 
     <ul class="share-buttons">
       <li><a href="https://www.facebook.com/sharer/sharer.php?u=http://www.ianww.com/meteor-showers" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Facebook.png"></a></li>
       <li><a href="https://twitter.com/intent/tweet?source=http://www.ianww.com/meteor-showers&text=:http://ianww.com/meteor-showers&via=iwebst" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Twitter.png"></a></li>
+      <li><a href="https://plus.google.com/share?url=http://www.ianww.com/meteor-showers" title="Share on Google+" target="_blank"><img src="img/flat_web_icon_set/black/Google+.png"></a></li>
       <li><a href="mailto:?subject=&body=http://www.ianww.com/meteor-showers" target="_blank" title="Email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Email.png"></a></li>
     </ul>
 
     <div class="shower-details-container">
       <p>
-        View <select id="shower-select"></select> on <span id="current-date"></span>.
+        View <select id="shower-select"></select> on <span id="current-date" title="Adjust this date at the top right"></span>.
       </p>
       <p>
         <span id="restore-view" class="button">View Solar System</span>
@@ -272,8 +273,8 @@
   <script type="text/javascript" src="js/ephemeris.js"></script>
   <script type="text/javascript" src="js/ellipse.js"></script>
   <script type="text/javascript" src="js/asterank3d.js"></script>
-  <script type="text/javascript" src="js/entrypoint.js"></script>
   <script type="text/javascript" src="js/ui.js"></script>
+  <script type="text/javascript" src="js/entrypoint.js"></script>
 
 <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
   for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
@@ -288,7 +289,7 @@
   ga('send', 'pageview');
 </script>
   <noscript>
-    <p>You need javascript enabled in order to use this web application.</p>
+    <p>You need Javascript enabled in order to use this web application.</p>
   </noscript>
 </body>
 </html>

@@ -13,7 +13,7 @@
   opts.meteoroid_factor = opts.meteoroid_factor || 6;
   opts.custom_object_fn = opts.custom_object_fn || null;
   opts.object_texture_path = opts.object_texture_path ||
-    opts.static_prefix + "img/cloud4.png";
+    opts.static_prefix + 'img/cloud4.png';
   opts.not_supported_callback = opts.not_supported_callback || function() {};
   opts.sun_scale = opts.sun_scale || 50;
   opts.show_dat_gui = opts.show_dat_gui || false;
@@ -63,6 +63,7 @@
     , locked_object_idx = -1
     , locked_object_size = -1
     , locked_object_color = -1
+    // TODO make this an enum
     , locked_mode = 'FOLLOW'
 
   // Comet stuff
@@ -79,11 +80,240 @@
   var $select = $('#shower-select')
     , domEvents
 
-  // Initialization
-  init();
-  if (opts.show_dat_gui) {
-    initGUI();
+  /** Public functions **/
+
+  me.init = function() {
+    if (opts.show_dat_gui) {
+      initGUI();
+    }
+
+    // Sets up the scene
+    $('#loading-text').html('renderer');
+    if (isWebGLSupported()){
+      renderer = new THREE.WebGLRenderer({
+        antialias		: true	// to get smoother output
+        //preserveDrawingBuffer	: true	// to allow screenshot
+      });
+      renderer.setClearColor(0x000000, 1);
+      using_webgl = true;
+      window.gl = renderer.getContext();
+    }
+    else {
+      opts.not_supported_callback();
+      return;
+    }
+    var $container = $(opts.container);
+    var containerHeight = $container.height();
+    var containerWidth = $container.width();
+    renderer.setSize(containerWidth, containerHeight);
+    opts.container.appendChild(renderer.domElement);
+
+    // create a scene
+    scene = new THREE.Scene();
+
+    // put a camera in the scene
+    var cameraH	= 3;
+    var cameraW	= cameraH / containerHeight * containerWidth;
+    window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
+
+    THREEx.WindowResize(renderer, camera, opts.container);
+    if (THREEx.FullScreen && THREEx.FullScreen.available()) {
+      THREEx.FullScreen.bindKey();
+    }
+    domEvents = new THREEx.DomEvents(camera, renderer.domElement);
+
+    me.setDefaultCameraPosition();
+    camera.lookAt(new THREE.Vector3(0,0,0));
+    scene.add(camera);
+
+    cameraControls = new THREE.TrackballControls(camera, opts.container);
+    cameraControls.staticMoving = true;
+    cameraControls.panSpeed = 2;
+    cameraControls.zoomSpeed = 3;
+    cameraControls.rotateSpeed = 3;
+    cameraControls.maxDistance = 2200;
+    cameraControls.dynamicDampingFactor = 0.5;
+    window.cc = cameraControls;
+
+    // Rendering solar system
+    setupSun();
+    setupPlanets();
+    setupSkybox();
+
+    setupCloudSelectionHandler();
+    if (!setupSelectionFromUrl()) {
+      onVisualsReady(loadNewViewSelection);
+    }
+    // TODO: this is pretty bad.
+    onVisualsReady(setupPlanetsOrbitTooltips);
+
+    $(opts.container).on('mousedown', function() {
+      opts.camera_fly_around = false;
+    });
+
+    window.renderer = renderer;
+  };  // end init
+
+  me.clearRankings = function() {
+    // Remove any old setup
+    me.clearLock(true);
+    if (particleSystem) {
+      scene.remove(particleSystem);
+      particleSystem = null;
+    }
+
+    if (last_hovered) {
+      scene.remove(last_hovered);
+    }
+  };
+
+  // Camera locking fns
+  me.setLockMode = function(mode) {
+    locked_mode = mode;
+  };
+
+  me.clearLock = function(set_default_camera) {
+    if (!locked_object) return;
+
+    if (set_default_camera) {
+      me.setDefaultCameraPosition();
+    }
+
+    cameraControls.target = new THREE.Vector3(0, 0, 0);
+
+    // restore color and size
+    attributes.value_color.value[locked_object_idx] = locked_object_color;
+    attributes.size.value[locked_object_idx] = locked_object_size;
+    attributes.locked.value[locked_object_idx] = 0.0;
+    setAttributeNeedsUpdateFlags();
+    if (locked_object_idx >= planets.length) {
+      // not a planet
+      scene.remove(locked_object_ellipse);
+    }
+
+    locked_object = null;
+    locked_object_ellipse = null;
+    locked_object_idx = -1;
+    locked_object_size = -1;
+    locked_object_color = null;
+
+    // reset camera pos so subsequent locks don't get into crazy positions
+    me.setNeutralCameraPosition();
+  };   // end clearLock
+
+  me.setLock = function(full_name) {
+    if (locked_object) {
+      me.clearLock();
+    }
+
+    var mapped_obj = feature_map[full_name];
+    if (!mapped_obj) {
+      alert("Sorry, something went wrong and I can't lock on this object.");
+      return;
+    }
+    var orbit_obj = mapped_obj['orbit'];
+    if (!orbit_obj) {
+      alert("Sorry, something went wrong and I can't lock on this object.");
+      return;
+    }
+    locked_object = orbit_obj;
+    locked_object_idx = mapped_obj['idx']; // this is the object's position in the added_objects array
+    locked_object_color = attributes.value_color.value[locked_object_idx];
+    attributes.value_color.value[locked_object_idx] = full_name === 'earth' ?
+      new THREE.Color(0x00ff00) : new THREE.Color(0xff0000);
+    locked_object_size = attributes.size.value[locked_object_idx];
+    attributes.size.value[locked_object_idx] = 30.0;
+    attributes.locked.value[locked_object_idx] = 1.0;
+    setAttributeNeedsUpdateFlags();
+
+    locked_object_ellipse = locked_object.getEllipse();
+    scene.add(locked_object_ellipse);
+    opts.camera_fly_around = true;
+  }; // end setLock
+
+  me.isWebGLSupported = function() {
+    return isWebGLSupported();
+  };
+
+  me.setNeutralCameraPosition = function() {
+    // Follow floating path around
+    var timer = 0.0001 * Date.now();
+    cam.position.x = opts.default_camera_position[0] + Math.sin(timer) * 25;
+    //cam.position.y = Math.sin( timer ) * 100;
+    cam.position.z = opts.default_camera_position[2] + Math.cos(timer) * 20;
   }
+
+  me.setDefaultCameraPosition = function() {
+    cam.position.set(opts.default_camera_position[0], opts.default_camera_position[1],
+        opts.default_camera_position[2]);
+  }
+
+  me.setupParticlesFromData = function(data) {
+    if (!data) {
+      alert('Sorry, something went wrong and the server failed to return data.');
+      return;
+    }
+    var n = data.length;
+    // add planets
+    added_objects = planets.slice();
+    particle_system_geometry = new THREE.Geometry();
+
+    for (var i=0; i < planets.length; i++) {
+      // FIXME this is a workaround for the poor handling of PSG vertices in ellipse.js
+      // needs to be cleaned up
+      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
+    }
+
+    for (var i=0; i < n; i++) {
+      var roid = data[i];
+      var locked = false;
+      var orbit;
+      if (opts.custom_object_fn) {
+        var orbit_params = opts.custom_object_fn(roid);
+        orbit_params.particle_geometry = particle_system_geometry; // will add itself to this geometry
+        orbit_params.jed = jed;
+        orbit = new Orbit3D(roid, orbit_params);
+      }
+      else {
+        var display_color = /*i < NUM_BIG_PARTICLES ?
+            opts.top_object_color :*/ displayColorForObject(roid);
+        orbit = new Orbit3D(roid, {
+          color: 0xcccccc,
+          display_color: display_color,
+          width: 2,
+          object_size: i < NUM_BIG_PARTICLES ? 50 : 30, //1.5,
+          jed: jed,
+          particle_geometry: particle_system_geometry // will add itself to this geometry
+        });
+      }
+
+      // Add it to featured list
+      feature_map[roid.full_name] = {
+        'orbit': orbit,
+        'idx': added_objects.length
+      };
+
+      // Add to list of objects in scene
+      added_objects.push(orbit);
+    } // end asteroid results for loop
+
+    jed = toJED(new Date());  // reset date
+    if (!particles_loaded) {
+      particles_loaded = true;
+    }
+    createParticleSystem();   // initialize and start the simulation
+
+    if (!first_loaded) {
+      animate();
+      first_loaded = true;
+    }
+
+    $('#loading').hide();
+
+    if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
+  };    // end setupParticlesFromData
+
+  /** Core private functions **/
 
   function initGUI() {
     var ViewUI = function() {
@@ -159,100 +389,11 @@
     jed = new_jed;
   }
 
-  function init() {
-    // Sets up the scene
-    $('#loading-text').html('renderer');
-    if (isWebGLSupported()){
-      renderer = new THREE.WebGLRenderer({
-        antialias		: true	// to get smoother output
-        //preserveDrawingBuffer	: true	// to allow screenshot
-      });
-      renderer.setClearColor(0x000000, 1);
-      using_webgl = true;
-      window.gl = renderer.getContext();
-    }
-    else {
-      opts.not_supported_callback();
-      return;
-    }
-    var $container = $(opts.container);
-    var containerHeight = $container.height();
-    var containerWidth = $container.width();
-    renderer.setSize(containerWidth, containerHeight);
-    opts.container.appendChild(renderer.domElement);
-
-    // create a scene
-    scene = new THREE.Scene();
-
-    // put a camera in the scene
-    var cameraH	= 3;
-    var cameraW	= cameraH / containerHeight * containerWidth;
-    window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
-
-    THREEx.WindowResize(renderer, camera, opts.container);
-    if (THREEx.FullScreen && THREEx.FullScreen.available()) {
-      THREEx.FullScreen.bindKey();
-    }
-    domEvents = new THREEx.DomEvents(camera, renderer.domElement);
-
-    setDefaultCameraPosition();
-    camera.lookAt(new THREE.Vector3(0,0,0));
-    scene.add(camera);
-
-    cameraControls = new THREE.TrackballControls(camera, opts.container);
-    cameraControls.staticMoving = true;
-    cameraControls.panSpeed = 2;
-    cameraControls.zoomSpeed = 3;
-    cameraControls.rotateSpeed = 3;
-    cameraControls.maxDistance = 2200;
-    cameraControls.dynamicDampingFactor = 0.5;
-    window.cc = cameraControls;
-
-    // Rendering solar system
-    setupSun();
-    setupPlanets();
-    setupSkybox();
-
-    setupCloudSelectionHandler();
-    if (!setupSelectionFromUrl()) {
-      setTimeout(function() {
-        loadNewViewSelection();
-      }, 0);
-    }
-    setTimeout(function() {
-      // TODO: this is pretty bad.
-      setupPlanetsOrbitTooltips();
-    }, 0);
-
-    $(opts.container).on('mousedown', function() {
-      opts.camera_fly_around = false;
-    });
-
-    window.renderer = renderer;
-  }  // end init
-
-  function setNeutralCameraPosition() {
-    // Follow floating path around
-    var timer = 0.0001 * Date.now();
-    cam.position.x = opts.default_camera_position[0] + Math.sin(timer) * 25;
-    //cam.position.y = Math.sin( timer ) * 100;
-    cam.position.z = opts.default_camera_position[2] + Math.cos(timer) * 20;
-  }
-
-  function setDefaultCameraPosition() {
-    cam.position.set(opts.default_camera_position[0], opts.default_camera_position[1],
-        opts.default_camera_position[2]);
-  }
-
   function setHighlight(full_name) {
     // Colors the object differently, but doesn't follow it.
     var mapped_obj = feature_map[full_name];
-    if (!mapped_obj) {
-      alert("Sorry, something went wrong and I can't highlight this object.");
-      return;
-    }
     var orbit_obj = mapped_obj.orbit;
-    if (!orbit_obj) {
+    if (!mapped_obj || !orbit_obj) {
       alert("Sorry, something went wrong and I can't highlight this object.");
       return;
     }
@@ -263,66 +404,6 @@
     setAttributeNeedsUpdateFlags();
   }
 
-  // Camera locking fns
-  function clearLock(set_default_camera) {
-    if (!locked_object) return;
-
-    if (set_default_camera) {
-      setDefaultCameraPosition();
-    }
-
-    cameraControls.target = new THREE.Vector3(0,0,0);
-
-    // restore color and size
-    attributes.value_color.value[locked_object_idx] = locked_object_color;
-    attributes.size.value[locked_object_idx] = locked_object_size;
-    attributes.locked.value[locked_object_idx] = 0.0;
-    setAttributeNeedsUpdateFlags();
-    if (locked_object_idx >= planets.length) {
-      // not a planet
-      scene.remove(locked_object_ellipse);
-    }
-
-    locked_object = null;
-    locked_object_ellipse = null;
-    locked_object_idx = -1;
-    locked_object_size = -1;
-    locked_object_color = null;
-
-    // reset camera pos so subsequent locks don't get into crazy positions
-    setNeutralCameraPosition();
-  }   // end clearLock
-
-  function setLock(full_name) {
-    if (locked_object) {
-      clearLock();
-    }
-
-    var mapped_obj = feature_map[full_name];
-    if (!mapped_obj) {
-      alert("Sorry, something went wrong and I can't lock on this object.");
-      return;
-    }
-    var orbit_obj = mapped_obj['orbit'];
-    if (!orbit_obj) {
-      alert("Sorry, something went wrong and I can't lock on this object.");
-      return;
-    }
-    locked_object = orbit_obj;
-    locked_object_idx = mapped_obj['idx']; // this is the object's position in the added_objects array
-    locked_object_color = attributes.value_color.value[locked_object_idx];
-    attributes.value_color.value[locked_object_idx] = full_name === 'earth' ?
-      new THREE.Color(0x00ff00) : new THREE.Color(0xff0000);
-    locked_object_size = attributes.size.value[locked_object_idx];
-    attributes.size.value[locked_object_idx] = 30.0;
-    attributes.locked.value[locked_object_idx] = 1.0;
-    setAttributeNeedsUpdateFlags();
-
-    locked_object_ellipse = locked_object.getEllipse();
-    scene.add(locked_object_ellipse);
-    opts.camera_fly_around = true;
-  } // end setLock
-
   // Returns true if this function will handle the initial state, because it
   // found something in the url.
   function setupSelectionFromUrl() {
@@ -331,19 +412,20 @@
     if (!hash) {
       return false;
     }
+
+    if (hash == 'all') {
+      $select.val('View all');
+      onVisualsReady(viewAll);
+      return true;
+    }
+
     var selection = window.METEOR_CLOUD_DATA[hash];
     if (selection) {
       $select.val(selection.name);
-      setTimeout(function() {
-        loadNewViewSelection();
-      }, 0);
+      onVisualsReady(loadNewViewSelection);
       return true;
     }
     return false;
-  }
-
-  function updateUrl() {
-    window.location.hash = $select.val();
   }
 
   function setupCloudSelectionHandler() {
@@ -375,7 +457,6 @@
       var display = key + ' - ' + shower.peak;
       $('<option>').html(display).attr('value', key).appendTo($select);
     });
-
     $select.append('<option value="View all">Everything at once</option>');
 
     $select.on('change', function() {
@@ -383,7 +464,7 @@
         viewAll();
       } else {
         loadNewViewSelection();
-        updateUrl();
+        window.location.hash = $select.val();
       }
     });
   }
@@ -452,15 +533,13 @@
     // Add it to visualization.
     addCloudObj(cloud_obj);
 
-    // Set up button handlers.
-    // TODO do this outside of main 3D logic.
-    setupControlHandlers();
-
     // Update left bar.
     //populatePictures();
     populateMinimap();
   }
 
+  // Takes a cloud object and creates an orbit from it.  Adds the orbit, its
+  // particles, and other annotations to the simulation.
   function addCloudObj(cloud_obj) {
     // Add new comet.
     var comet = new Orbit3D(cloud_obj.source_orbit, {
@@ -482,74 +561,58 @@
     loadParticles(cloud_obj);
   }
 
+  // Adds particles to the simulation.
   function loadParticles(cloud_obj) {
     // TODO loader
     //$('#loading').show();
     //$('#loading-text').html('asteroids database');
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
-      setTimeout(function() {
-        me.setupParticlesFromData(cloud_obj.full_orbit_data);
-      }, 0);
+      onVisualsReady(
+        me.setupParticlesFromData, cloud_obj.full_orbit_data);
     } else if (cloud_obj.source_orbit) {
       // We only have the comet's orbit, no meteor-specific data.
       var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
-      setTimeout(function() {
-        me.setupParticlesFromData(data);
-      }, 0);
+      onVisualsReady(me.setupParticlesFromData, data);
     }
   }
 
+  // Creates a meteor cloud based on the orbit of a comet or asteroid, or any
+  // kepler orbit.
   function simulateMeteorShowerFromBaseOrbit(base) {
     var data = [base];
     var between = function(min, max) {
       return Math.random() * (min - max) + max;
     }
+
     for (var i=0; i < num_particles_per_shower; i++) {
       var variant = $.extend(true, {}, base);
       variant.epoch = Math.random() * variant.epoch;
       variant.a = variant.a * between(0.4, 1.1);
       variant.e = variant.e * between(0.99, 1.01);
       variant.i = variant.i * between(0.99, 1.01);
-      //variant.ma = variant.ma * between(0.99, 1.01);
-      //variant.p = 2 * Math.PI *
-       // Math.sqrt(Math.pow(variant.a, 3) / 132712440018/86400);
+      // No set period when semimajor axis, etc. are being changed.
       delete variant.p;
       data.push(variant);
     }
     return data;
   }
 
-  function setupControlHandlers() {
-    $('#restore-view').on('click', function() {
-      clearLock();
-      // TODO shouldn't have to call these both.
-      setDefaultCameraPosition();
-      setNeutralCameraPosition();
-    });
-
-    $('#lock-earth').on('click', function() {
-      locked_mode = 'FOLLOW';
-      setLock('earth');
-    });
-
-    $('#lock-earth-view').on('click', function() {
-      locked_mode = 'VIEW_FROM';
-      setLock('earth');
-    });
-  }
-
+  // Loads every meteor shower at once.
   function viewAll() {
     $('#view-all-summary').show();
     $('#normal-summary').hide();
-    window.location.hash = '';
+    window.location.hash = '#all';
 
     cleanUpPreviousViewSelection();
     var everything = {
       full_orbit_data: [],
     };
+    var already_added = {};
     for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
       var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
+      if (already_added[cloud_obj.source_orbit.full_name]) continue;
+
       if (cloud_obj.full_orbit_data) {
         everything.full_orbit_data.push.apply(
           everything.full_orbit_data, cloud_obj.full_orbit_data);
@@ -558,6 +621,7 @@
           everything.full_orbit_data,
           simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
       }
+      already_added[cloud_obj.source_orbit.full_name] = true;
     }
     loadParticles(everything);
   }
@@ -588,12 +652,16 @@
       jed: { type: 'f', value: jed },
       earth_i: { type: 'f', value: Ephemeris.earth.i },
       earth_om: { type: 'f', value: Ephemeris.earth.om },
-      planet_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4.png') },
+      planet_texture: {
+        type: 't',
+        value: loadTexture(opts.static_prefix + 'img/cloud4.png')
+      },
       small_roid_texture:
         { type: 't', value: loadTexture(opts.object_texture_path) },
-      small_roid_circled_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png') }
+      small_roid_circled_texture: {
+        type: 't',
+        value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png')
+      }
     };
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
@@ -607,32 +675,33 @@
     particle_system_shader_material.blending = THREE.AdditiveBlending;
 
     for (var i = 0; i < added_objects.length; i++) {
+      var obj = added_objects[i];
       if (i < planets.length) {
         attributes.size.value[i] = 150;
         attributes.is_planet.value[i] = 1.0;
       } else {
-        attributes.size.value[i] = added_objects[i].opts.object_size;
+        attributes.size.value[i] = obj.opts.object_size;
         attributes.is_planet.value[i] = 0.0;
       }
 
-      attributes.a.value[i] = added_objects[i].eph.a;
-      attributes.e.value[i] = added_objects[i].eph.e;
-      attributes.i.value[i] = added_objects[i].eph.i;
-      attributes.o.value[i] = added_objects[i].eph.om;
-      attributes.ma.value[i] = added_objects[i].eph.ma || 0; // TODO
-      attributes.n.value[i] = added_objects[i].eph.n || -1.0;
-      attributes.w.value[i] = added_objects[i].eph.w_bar ||
-        (added_objects[i].eph.w + added_objects[i].eph.om);
+      attributes.a.value[i] = obj.eph.a;
+      attributes.e.value[i] = obj.eph.e;
+      attributes.i.value[i] = obj.eph.i;
+      attributes.o.value[i] = obj.eph.om;
+      attributes.ma.value[i] = obj.eph.ma || 0; // TODO
+      attributes.n.value[i] = obj.eph.n || -1.0;
+      attributes.w.value[i] = obj.eph.w_bar ||
+        (obj.eph.w + obj.eph.om);
       attributes.realP.value[i] = attributes.P.value[i] =
-        added_objects[i].eph.p || Math.sqrt(
-          Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
+        obj.eph.p || Math.sqrt(
+          Math.pow(obj.eph.a, 3)) * 365.256;  // TODO
       if (i >= planets.length) {
-        // Artificial speed for non-planets.
+        // Artificially speed up non-planets.
         attributes.P.value[i] /= opts.meteoroid_factor;
       }
-      attributes.epoch.value[i] = added_objects[i].eph.epoch ||
+      attributes.epoch.value[i] = obj.eph.epoch ||
         Math.random() * 2451545.0; // TODO
-      attributes.value_color.value[i] = added_objects[i].opts.display_color ||
+      attributes.value_color.value[i] = obj.opts.display_color ||
         new THREE.Color(0xff00ff); // TODO
       attributes.locked.value[i] = 0.0;
       particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
@@ -645,7 +714,6 @@
     );
     window.ps = particleSystem;
 
-    // add it to the scene
     scene.add(particleSystem);
   }
 
@@ -655,48 +723,47 @@
     attributes.size.needsUpdate = true;
   }
 
+  // Main animation loop
   function animate() {
-    // Animation loop
     if (!particles_loaded) {
       render();
       requestAnimFrame(animate);
       return;
     }
-
     if (opts.camera_fly_around) {
       if (locked_object) {
         // Follow locked object
         var pos = locked_object.getPosAtTime(jed);
         if (locked_mode == 'FOLLOW') {
-          // TODO make this an enum
           cam.position.set(pos[0]+2, pos[1]+2, pos[2]-2);
           //cam.position.set(pos[0], pos[1], pos[2]);
           cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
-        } else {
-          // VIEW_FROM
+        } else /* mode VIEW_FROM */ {
+          // TODO Reset camera target if user clicks off follow.
           cam.position.set(pos[0], pos[1], pos[2]);
-          var cometPos = cometDisplayed.getPosAtTime(jed);;
-          cameraControls.target =
-            new THREE.Vector3(cometPos[0], cometPos[1], cometPos[2]);
+          if (cometDisplayed) {
+            var cometPos = cometDisplayed.getPosAtTime(jed);;
+            cameraControls.target =
+              new THREE.Vector3(cometPos[0], cometPos[1], cometPos[2]);
+          }
         }
       } else {
-        setNeutralCameraPosition();
+        me.setNeutralCameraPosition();
       }
     }
-
     render();
     requestAnimFrame(animate);
   }
 
+  // Render the scene at this timeframe.
   function render(force) {
-    // render the scene at this timeframe
-
-    // update camera controls
+    // Update camera controls.
     cameraControls.update();
 
-    // update display date
+    // Update display date.
     var now = new Date().getTime();
-    if (now - display_date_last_updated > 500 && typeof datgui !== 'undefined') {
+    if (now - display_date_last_updated > 500 &&
+        typeof datgui !== 'undefined') {
       var georgian_date = fromJED(jed);
       var datestr = georgian_date.getMonth()+1 + "/"
         + georgian_date.getDate() + "/" + georgian_date.getFullYear();
@@ -706,124 +773,14 @@
     }
 
     if (object_movement_on || force) {
-      // update shader vals for asteroid cloud
+      // Update shader vals for asteroid cloud.
       uniforms.jed.value = jed;
       jed += opts.jed_delta;
     }
 
-    // actually render the scene
+    // Actually render the scene.
     renderer.render(scene, camera);
   }
-
-  function loadTexture(path) {
-    if (typeof passthrough_vars !== 'undefined' && passthrough_vars.offline_mode) {
-      // same origin policy workaround
-      var b64_data = $('img[data-src="' + path + '"]').attr('src');
-
-      var new_image = document.createElement( 'img' );
-      var texture = new THREE.Texture( new_image );
-      new_image.onload = function()  {
-        texture.needsUpdate = true;
-      };
-      new_image.src = b64_data;
-      return texture;
-    }
-    return THREE.ImageUtils.loadTexture(path);
-  }
-
-  /** Public functions **/
-
-  me.clearRankings = function() {
-    // Remove any old setup
-    clearLock(true);
-    if (particleSystem) {
-      scene.remove(particleSystem);
-      particleSystem = null;
-    }
-
-    if (last_hovered) {
-      scene.remove(last_hovered);
-    }
-  };
-
-  me.clearLock = function() {
-    return clearLock(true);
-  };
-
-  me.setLock = function(full_name) {
-    return setLock(full_name);
-  };
-
-  me.isWebGLSupported = function() {
-    return isWebGLSupported();
-  };
-
-  me.setupParticlesFromData = function(data) {
-    if (!data) {
-      alert('Sorry, something went wrong and the server failed to return data.');
-      return;
-    }
-    var n = data.length;
-    // add planets
-    added_objects = planets.slice();
-    particle_system_geometry = new THREE.Geometry();
-
-    for (var i=0; i < planets.length; i++) {
-      // FIXME this is a workaround for the poor handling of PSG vertices in ellipse.js
-      // needs to be cleaned up
-      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
-    }
-
-    for (var i=0; i < n; i++) {
-      var roid = data[i];
-      var locked = false;
-      var orbit;
-      if (opts.custom_object_fn) {
-        var orbit_params = opts.custom_object_fn(roid);
-        orbit_params.particle_geometry = particle_system_geometry; // will add itself to this geometry
-        orbit_params.jed = jed;
-        orbit = new Orbit3D(roid, orbit_params);
-      }
-      else {
-        var display_color = /*i < NUM_BIG_PARTICLES ?
-            opts.top_object_color :*/ displayColorForObject(roid);
-        orbit = new Orbit3D(roid, {
-          color: 0xcccccc,
-          display_color: display_color,
-          width: 2,
-          object_size: i < NUM_BIG_PARTICLES ? 50 : 30, //1.5,
-          jed: jed,
-          particle_geometry: particle_system_geometry // will add itself to this geometry
-        });
-      }
-
-      // Add it to featured list
-      feature_map[roid.full_name] = {
-        'orbit': orbit,
-        'idx': added_objects.length
-      };
-
-      // Add to list of objects in scene
-      added_objects.push(orbit);
-    } // end asteroid results for loop
-
-    jed = toJED(new Date());  // reset date
-    if (!particles_loaded) {
-      particles_loaded = true;
-    }
-    createParticleSystem();   // initialize and start the simulation
-
-    if (!first_loaded) {
-      animate();
-      first_loaded = true;
-    }
-
-    $('#loading').hide();
-
-    if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
-  };    // end setupParticlesFromData
-
-  /** Util functions **/
 
   function setupSun() {
     // Sun is at 0,0
@@ -839,7 +796,6 @@
     sprite.scale.y = opts.sun_scale;
     sprite.scale.z = 1;
     scene.add(sprite);
-
   }
 
   function setupPlanets() {
@@ -980,7 +936,9 @@
   function setupSkybox() {
     var geometry = new THREE.SphereGeometry(2800, 60, 40);
     var uniforms = {
-      texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
+      texture: {
+        type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg')
+      }
     };
 
     var material = new THREE.ShaderMaterial( {
@@ -997,6 +955,35 @@
     skyBox.renderDepth = 1000.0;
     scene.add(skyBox);
     window.skyBox = skyBox;
+  }
+
+  function onVisualsReady() {
+    var args = Array.prototype.slice.call(arguments);
+    var fn = args[0];
+    args.shift();
+
+    setTimeout(function() {
+      fn.apply(me, args);
+    }, 0);
+  }
+
+  /** Util functions **/
+
+  function loadTexture(path) {
+    if (typeof passthrough_vars !== 'undefined' &&
+        passthrough_vars.offline_mode) {
+      // same origin policy workaround
+      var b64_data = $('img[data-src="' + path + '"]').attr('src');
+
+      var new_image = document.createElement( 'img' );
+      var texture = new THREE.Texture( new_image );
+      new_image.onload = function()  {
+        texture.needsUpdate = true;
+      };
+      new_image.src = b64_data;
+      return texture;
+    }
+    return THREE.ImageUtils.loadTexture(path);
   }
 
   function isWebGLSupported() {

@@ -114,7 +114,7 @@ ul.share-buttons img {
 #btn-left-nav-toggle {
   position: absolute;
   top: 0;
-  /* Keep synced in main.js */
+  /* Keep synced in asterank3d.js */
   left: 162px;
   width: 30px;
   height: 20px;
@@ -180,6 +180,7 @@ ul.share-buttons img {
   position: absolute;
   top: 30px;
   left: 30px;
+  width: 300px;
 
   color: white;
   font-size: 24px;
@@ -187,8 +188,6 @@ ul.share-buttons img {
 
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: black;
-
-  width: 300px;
 }
 
 #global-tooltip span {
@@ -214,5 +213,14 @@ ul.share-buttons img {
 @media screen and (max-width: 850px) {
   #left-nav, #btn-left-nav-toggle, #learn-more, #sky-map, #instructions {
     display: none;
+  }
+
+  #summary {
+    padding-right: 20px;
+    font-size: 12px;
+  }
+
+  h2 {
+    font-size: 14px;
   }
 }

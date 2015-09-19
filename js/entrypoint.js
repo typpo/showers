@@ -1,4 +1,4 @@
-;(function() {
+;$(function() {
   'use strict';
 
   var asterank3d = new Asterank3D({
@@ -13,6 +13,8 @@
     camera_fly_around: true,
   });
 
+  asterank3d.init();
+
   // Other wiring
   // TODO move to ui.js
   $('#hide_sidebar').on('click', function() {
@@ -24,7 +26,10 @@
     $('#show_sidebar_container').hide();
   });
 
+  var ui = new MeteorsUi(asterank3d);
+  ui.init();
+
   function isScreenBigEnough() {
     return $(window).width() > 760;
   }
-})();
+});
