@@ -329,6 +329,7 @@
     }
 
     if (hash == 'all') {
+      $select.val('View all');
       onVisualsReady(viewAll);
       return true;
     }
