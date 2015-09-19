@@ -13,6 +13,8 @@
     camera_fly_around: true,
   });
 
+  asterank3d.init();
+
   // Other wiring
   // TODO move to ui.js
   $('#hide_sidebar').on('click', function() {

@@ -9,7 +9,25 @@ function MeteorsUi(visualization) {
     });
 
     // Set up button handlers.
-    // TODO do this outside of main 3D logic.
-    visualization.setupControlHandlers();
+    setupControlHandlers();
   }
+
+  function setupControlHandlers() {
+    $('#restore-view').on('click', function() {
+      visualization.clearLock();
+      // TODO shouldn't have to call these both.
+      visualization.setDefaultCameraPosition();
+      visualization.setNeutralCameraPosition();
+    });
+
+    $('#lock-earth').on('click', function() {
+      visualization.setLockMode('FOLLOW');
+      visualization.setLock('earth');
+    });
+
+    $('#lock-earth-view').on('click', function() {
+      visualization.setLockMode('VIEW_FROM');
+      visualization.setLock('earth');
+    });
+  };
 }

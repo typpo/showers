@@ -63,6 +63,7 @@
     , locked_object_idx = -1
     , locked_object_size = -1
     , locked_object_color = -1
+    // TODO make this an enum
     , locked_mode = 'FOLLOW'
 
   // Comet stuff
@@ -78,12 +79,6 @@
   // DOM related.
   var $select = $('#shower-select')
     , domEvents
-
-  // Initialization
-  init();
-  if (opts.show_dat_gui) {
-    initGUI();
-  }
 
   function initGUI() {
     var ViewUI = function() {
@@ -159,96 +154,11 @@
     jed = new_jed;
   }
 
-  function init() {
-    // Sets up the scene
-    $('#loading-text').html('renderer');
-    if (isWebGLSupported()){
-      renderer = new THREE.WebGLRenderer({
-        antialias		: true	// to get smoother output
-        //preserveDrawingBuffer	: true	// to allow screenshot
-      });
-      renderer.setClearColor(0x000000, 1);
-      using_webgl = true;
-      window.gl = renderer.getContext();
-    }
-    else {
-      opts.not_supported_callback();
-      return;
-    }
-    var $container = $(opts.container);
-    var containerHeight = $container.height();
-    var containerWidth = $container.width();
-    renderer.setSize(containerWidth, containerHeight);
-    opts.container.appendChild(renderer.domElement);
-
-    // create a scene
-    scene = new THREE.Scene();
-
-    // put a camera in the scene
-    var cameraH	= 3;
-    var cameraW	= cameraH / containerHeight * containerWidth;
-    window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
-
-    THREEx.WindowResize(renderer, camera, opts.container);
-    if (THREEx.FullScreen && THREEx.FullScreen.available()) {
-      THREEx.FullScreen.bindKey();
-    }
-    domEvents = new THREEx.DomEvents(camera, renderer.domElement);
-
-    setDefaultCameraPosition();
-    camera.lookAt(new THREE.Vector3(0,0,0));
-    scene.add(camera);
-
-    cameraControls = new THREE.TrackballControls(camera, opts.container);
-    cameraControls.staticMoving = true;
-    cameraControls.panSpeed = 2;
-    cameraControls.zoomSpeed = 3;
-    cameraControls.rotateSpeed = 3;
-    cameraControls.maxDistance = 2200;
-    cameraControls.dynamicDampingFactor = 0.5;
-    window.cc = cameraControls;
-
-    // Rendering solar system
-    setupSun();
-    setupPlanets();
-    setupSkybox();
-
-    setupCloudSelectionHandler();
-    if (!setupSelectionFromUrl()) {
-      onVisualsReady(loadNewViewSelection);
-    }
-    // TODO: this is pretty bad.
-    onVisualsReady(setupPlanetsOrbitTooltips);
-
-    $(opts.container).on('mousedown', function() {
-      opts.camera_fly_around = false;
-    });
-
-    window.renderer = renderer;
-  }  // end init
-
-  function setNeutralCameraPosition() {
-    // Follow floating path around
-    var timer = 0.0001 * Date.now();
-    cam.position.x = opts.default_camera_position[0] + Math.sin(timer) * 25;
-    //cam.position.y = Math.sin( timer ) * 100;
-    cam.position.z = opts.default_camera_position[2] + Math.cos(timer) * 20;
-  }
-
-  function setDefaultCameraPosition() {
-    cam.position.set(opts.default_camera_position[0], opts.default_camera_position[1],
-        opts.default_camera_position[2]);
-  }
-
   function setHighlight(full_name) {
     // Colors the object differently, but doesn't follow it.
     var mapped_obj = feature_map[full_name];
-    if (!mapped_obj) {
-      alert("Sorry, something went wrong and I can't highlight this object.");
-      return;
-    }
     var orbit_obj = mapped_obj.orbit;
-    if (!orbit_obj) {
+    if (!mapped_obj || !orbit_obj) {
       alert("Sorry, something went wrong and I can't highlight this object.");
       return;
     }
@@ -258,66 +168,6 @@
     attributes.locked.value[idx] = 1.0;
     setAttributeNeedsUpdateFlags();
   }
-
-  // Camera locking fns
-  function clearLock(set_default_camera) {
-    if (!locked_object) return;
-
-    if (set_default_camera) {
-      setDefaultCameraPosition();
-    }
-
-    cameraControls.target = new THREE.Vector3(0,0,0);
-
-    // restore color and size
-    attributes.value_color.value[locked_object_idx] = locked_object_color;
-    attributes.size.value[locked_object_idx] = locked_object_size;
-    attributes.locked.value[locked_object_idx] = 0.0;
-    setAttributeNeedsUpdateFlags();
-    if (locked_object_idx >= planets.length) {
-      // not a planet
-      scene.remove(locked_object_ellipse);
-    }
-
-    locked_object = null;
-    locked_object_ellipse = null;
-    locked_object_idx = -1;
-    locked_object_size = -1;
-    locked_object_color = null;
-
-    // reset camera pos so subsequent locks don't get into crazy positions
-    setNeutralCameraPosition();
-  }   // end clearLock
-
-  function setLock(full_name) {
-    if (locked_object) {
-      clearLock();
-    }
-
-    var mapped_obj = feature_map[full_name];
-    if (!mapped_obj) {
-      alert("Sorry, something went wrong and I can't lock on this object.");
-      return;
-    }
-    var orbit_obj = mapped_obj['orbit'];
-    if (!orbit_obj) {
-      alert("Sorry, something went wrong and I can't lock on this object.");
-      return;
-    }
-    locked_object = orbit_obj;
-    locked_object_idx = mapped_obj['idx']; // this is the object's position in the added_objects array
-    locked_object_color = attributes.value_color.value[locked_object_idx];
-    attributes.value_color.value[locked_object_idx] = full_name === 'earth' ?
-      new THREE.Color(0x00ff00) : new THREE.Color(0xff0000);
-    locked_object_size = attributes.size.value[locked_object_idx];
-    attributes.size.value[locked_object_idx] = 30.0;
-    attributes.locked.value[locked_object_idx] = 1.0;
-    setAttributeNeedsUpdateFlags();
-
-    locked_object_ellipse = locked_object.getEllipse();
-    scene.add(locked_object_ellipse);
-    opts.camera_fly_around = true;
-  } // end setLock
 
   // Returns true if this function will handle the initial state, because it
   // found something in the url.
@@ -647,12 +497,11 @@
         // Follow locked object
         var pos = locked_object.getPosAtTime(jed);
         if (locked_mode == 'FOLLOW') {
-          // TODO make this an enum
           cam.position.set(pos[0]+2, pos[1]+2, pos[2]-2);
           //cam.position.set(pos[0], pos[1], pos[2]);
           cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
-        } else {
-          // VIEW_FROM
+        } else /* mode VIEW_FROM */ {
+          // TODO Reset camera target if user clicks off follow.
           cam.position.set(pos[0], pos[1], pos[2]);
           if (cometDisplayed) {
             var cometPos = cometDisplayed.getPosAtTime(jed);;
@@ -661,7 +510,7 @@
           }
         }
       } else {
-        setNeutralCameraPosition();
+        me.setNeutralCameraPosition();
       }
     }
 
@@ -714,9 +563,81 @@
 
   /** Public functions **/
 
+  me.init = function() {
+    if (opts.show_dat_gui) {
+      initGUI();
+    }
+
+    // Sets up the scene
+    $('#loading-text').html('renderer');
+    if (isWebGLSupported()){
+      renderer = new THREE.WebGLRenderer({
+        antialias		: true	// to get smoother output
+        //preserveDrawingBuffer	: true	// to allow screenshot
+      });
+      renderer.setClearColor(0x000000, 1);
+      using_webgl = true;
+      window.gl = renderer.getContext();
+    }
+    else {
+      opts.not_supported_callback();
+      return;
+    }
+    var $container = $(opts.container);
+    var containerHeight = $container.height();
+    var containerWidth = $container.width();
+    renderer.setSize(containerWidth, containerHeight);
+    opts.container.appendChild(renderer.domElement);
+
+    // create a scene
+    scene = new THREE.Scene();
+
+    // put a camera in the scene
+    var cameraH	= 3;
+    var cameraW	= cameraH / containerHeight * containerWidth;
+    window.cam = camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 1, 5000);
+
+    THREEx.WindowResize(renderer, camera, opts.container);
+    if (THREEx.FullScreen && THREEx.FullScreen.available()) {
+      THREEx.FullScreen.bindKey();
+    }
+    domEvents = new THREEx.DomEvents(camera, renderer.domElement);
+
+    me.setDefaultCameraPosition();
+    camera.lookAt(new THREE.Vector3(0,0,0));
+    scene.add(camera);
+
+    cameraControls = new THREE.TrackballControls(camera, opts.container);
+    cameraControls.staticMoving = true;
+    cameraControls.panSpeed = 2;
+    cameraControls.zoomSpeed = 3;
+    cameraControls.rotateSpeed = 3;
+    cameraControls.maxDistance = 2200;
+    cameraControls.dynamicDampingFactor = 0.5;
+    window.cc = cameraControls;
+
+    // Rendering solar system
+    setupSun();
+    setupPlanets();
+    setupSkybox();
+
+    setupCloudSelectionHandler();
+    if (!setupSelectionFromUrl()) {
+      onVisualsReady(loadNewViewSelection);
+    }
+    // TODO: this is pretty bad.
+    onVisualsReady(setupPlanetsOrbitTooltips);
+
+    $(opts.container).on('mousedown', function() {
+      opts.camera_fly_around = false;
+    });
+
+    window.renderer = renderer;
+  };  // end init
+
   me.clearRankings = function() {
     // Remove any old setup
-    clearLock(true);
+    me.clearLock(true);
     if (particleSystem) {
       scene.remove(particleSystem);
       particleSystem = null;
@@ -727,17 +648,86 @@
     }
   };
 
-  me.clearLock = function() {
-    return clearLock(true);
+  // Camera locking fns
+  me.setLockMode = function(mode) {
+    locked_mode = mode;
   };
 
+  me.clearLock = function(set_default_camera) {
+    if (!locked_object) return;
+
+    if (set_default_camera) {
+      me.setDefaultCameraPosition();
+    }
+
+    cameraControls.target = new THREE.Vector3(0, 0, 0);
+
+    // restore color and size
+    attributes.value_color.value[locked_object_idx] = locked_object_color;
+    attributes.size.value[locked_object_idx] = locked_object_size;
+    attributes.locked.value[locked_object_idx] = 0.0;
+    setAttributeNeedsUpdateFlags();
+    if (locked_object_idx >= planets.length) {
+      // not a planet
+      scene.remove(locked_object_ellipse);
+    }
+
+    locked_object = null;
+    locked_object_ellipse = null;
+    locked_object_idx = -1;
+    locked_object_size = -1;
+    locked_object_color = null;
+
+    // reset camera pos so subsequent locks don't get into crazy positions
+    me.setNeutralCameraPosition();
+  };   // end clearLock
+
   me.setLock = function(full_name) {
-    return setLock(full_name);
-  };
+    if (locked_object) {
+      me.clearLock();
+    }
+
+    var mapped_obj = feature_map[full_name];
+    if (!mapped_obj) {
+      alert("Sorry, something went wrong and I can't lock on this object.");
+      return;
+    }
+    var orbit_obj = mapped_obj['orbit'];
+    if (!orbit_obj) {
+      alert("Sorry, something went wrong and I can't lock on this object.");
+      return;
+    }
+    locked_object = orbit_obj;
+    locked_object_idx = mapped_obj['idx']; // this is the object's position in the added_objects array
+    locked_object_color = attributes.value_color.value[locked_object_idx];
+    attributes.value_color.value[locked_object_idx] = full_name === 'earth' ?
+      new THREE.Color(0x00ff00) : new THREE.Color(0xff0000);
+    locked_object_size = attributes.size.value[locked_object_idx];
+    attributes.size.value[locked_object_idx] = 30.0;
+    attributes.locked.value[locked_object_idx] = 1.0;
+    setAttributeNeedsUpdateFlags();
+
+    locked_object_ellipse = locked_object.getEllipse();
+    scene.add(locked_object_ellipse);
+    opts.camera_fly_around = true;
+  }; // end setLock
 
   me.isWebGLSupported = function() {
     return isWebGLSupported();
   };
+
+  me.setNeutralCameraPosition = function() {
+    // Follow floating path around
+    var timer = 0.0001 * Date.now();
+    cam.position.x = opts.default_camera_position[0] + Math.sin(timer) * 25;
+    //cam.position.y = Math.sin( timer ) * 100;
+    cam.position.z = opts.default_camera_position[2] + Math.cos(timer) * 20;
+  }
+
+  me.setDefaultCameraPosition = function() {
+    cam.position.set(opts.default_camera_position[0], opts.default_camera_position[1],
+        opts.default_camera_position[2]);
+  }
 
   me.setupParticlesFromData = function(data) {
     if (!data) {
@@ -803,25 +793,6 @@
 
     if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
   };    // end setupParticlesFromData
-
-  me.setupControlHandlers = function() {
-    $('#restore-view').on('click', function() {
-      clearLock();
-      // TODO shouldn't have to call these both.
-      setDefaultCameraPosition();
-      setNeutralCameraPosition();
-    });
-
-    $('#lock-earth').on('click', function() {
-      locked_mode = 'FOLLOW';
-      setLock('earth');
-    });
-
-    $('#lock-earth-view').on('click', function() {
-      locked_mode = 'VIEW_FROM';
-      setLock('earth');
-    });
-  };
 
   /** Util functions **/
 
