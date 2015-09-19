@@ -24,6 +24,9 @@
     $('#show_sidebar_container').hide();
   });
 
+  var ui = new MeteorsUi(asterank3d);
+  ui.init();
+
   function isScreenBigEnough() {
     return $(window).width() > 760;
   }

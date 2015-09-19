@@ -452,10 +452,6 @@
     // Add it to visualization.
     addCloudObj(cloud_obj);
 
-    // Set up button handlers.
-    // TODO do this outside of main 3D logic.
-    setupControlHandlers();
-
     // Update left bar.
     //populatePictures();
     populateMinimap();
@@ -515,25 +511,6 @@
       data.push(variant);
     }
     return data;
-  }
-
-  function setupControlHandlers() {
-    $('#restore-view').on('click', function() {
-      clearLock();
-      // TODO shouldn't have to call these both.
-      setDefaultCameraPosition();
-      setNeutralCameraPosition();
-    });
-
-    $('#lock-earth').on('click', function() {
-      locked_mode = 'FOLLOW';
-      setLock('earth');
-    });
-
-    $('#lock-earth-view').on('click', function() {
-      locked_mode = 'VIEW_FROM';
-      setLock('earth');
-    });
   }
 
   function viewAll() {
@@ -676,9 +653,11 @@
         } else {
           // VIEW_FROM
           cam.position.set(pos[0], pos[1], pos[2]);
-          var cometPos = cometDisplayed.getPosAtTime(jed);;
-          cameraControls.target =
-            new THREE.Vector3(cometPos[0], cometPos[1], cometPos[2]);
+          if (cometDisplayed) {
+            var cometPos = cometDisplayed.getPosAtTime(jed);;
+            cameraControls.target =
+              new THREE.Vector3(cometPos[0], cometPos[1], cometPos[2]);
+          }
         }
       } else {
         setNeutralCameraPosition();
@@ -823,6 +802,25 @@
 
     if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
   };    // end setupParticlesFromData
+
+  me.setupControlHandlers = function() {
+    $('#restore-view').on('click', function() {
+      clearLock();
+      // TODO shouldn't have to call these both.
+      setDefaultCameraPosition();
+      setNeutralCameraPosition();
+    });
+
+    $('#lock-earth').on('click', function() {
+      locked_mode = 'FOLLOW';
+      setLock('earth');
+    });
+
+    $('#lock-earth-view').on('click', function() {
+      locked_mode = 'VIEW_FROM';
+      setLock('earth');
+    });
+  };
 
   /** Util functions **/
 
@@ -1010,7 +1008,7 @@
     args.shift();
 
     setTimeout(function() {
-      fn.apply(this, args);
+      fn.apply(me, args);
     }, 0);
   }
 }
