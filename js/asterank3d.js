@@ -13,7 +13,7 @@
   opts.meteoroid_factor = opts.meteoroid_factor || 6;
   opts.custom_object_fn = opts.custom_object_fn || null;
   opts.object_texture_path = opts.object_texture_path ||
-    opts.static_prefix + "img/cloud4.png";
+    opts.static_prefix + 'img/cloud4.png';
   opts.not_supported_callback = opts.not_supported_callback || function() {};
   opts.sun_scale = opts.sun_scale || 50;
   opts.show_dat_gui = opts.show_dat_gui || false;
@@ -584,6 +584,7 @@
     var between = function(min, max) {
       return Math.random() * (min - max) + max;
     }
+
     for (var i=0; i < num_particles_per_shower; i++) {
       var variant = $.extend(true, {}, base);
       variant.epoch = Math.random() * variant.epoch;
@@ -607,10 +608,10 @@
     var everything = {
       full_orbit_data: [],
     };
-    var seen_sources = {};
+    var already_added = {};
     for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
       var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
-      if (seen_sources[cloud_obj.source_orbit.full_name]) continue;
+      if (already_added[cloud_obj.source_orbit.full_name]) continue;
 
       if (cloud_obj.full_orbit_data) {
         everything.full_orbit_data.push.apply(
@@ -620,7 +621,7 @@
           everything.full_orbit_data,
           simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
       }
-      seen_sources[cloud_obj.source_orbit.full_name] = true;
+      already_added[cloud_obj.source_orbit.full_name] = true;
     }
     loadParticles(everything);
   }
@@ -651,12 +652,16 @@
       jed: { type: 'f', value: jed },
       earth_i: { type: 'f', value: Ephemeris.earth.i },
       earth_om: { type: 'f', value: Ephemeris.earth.om },
-      planet_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4.png') },
+      planet_texture: {
+        type: 't',
+        value: loadTexture(opts.static_prefix + 'img/cloud4.png')
+      },
       small_roid_texture:
         { type: 't', value: loadTexture(opts.object_texture_path) },
-      small_roid_circled_texture:
-        { type: 't', value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png') }
+      small_roid_circled_texture: {
+        type: 't',
+        value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png')
+      }
     };
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
@@ -670,32 +675,33 @@
     particle_system_shader_material.blending = THREE.AdditiveBlending;
 
     for (var i = 0; i < added_objects.length; i++) {
+      var obj = added_objects[i];
       if (i < planets.length) {
         attributes.size.value[i] = 150;
         attributes.is_planet.value[i] = 1.0;
       } else {
-        attributes.size.value[i] = added_objects[i].opts.object_size;
+        attributes.size.value[i] = obj.opts.object_size;
         attributes.is_planet.value[i] = 0.0;
       }
 
-      attributes.a.value[i] = added_objects[i].eph.a;
-      attributes.e.value[i] = added_objects[i].eph.e;
-      attributes.i.value[i] = added_objects[i].eph.i;
-      attributes.o.value[i] = added_objects[i].eph.om;
-      attributes.ma.value[i] = added_objects[i].eph.ma || 0; // TODO
-      attributes.n.value[i] = added_objects[i].eph.n || -1.0;
-      attributes.w.value[i] = added_objects[i].eph.w_bar ||
-        (added_objects[i].eph.w + added_objects[i].eph.om);
+      attributes.a.value[i] = obj.eph.a;
+      attributes.e.value[i] = obj.eph.e;
+      attributes.i.value[i] = obj.eph.i;
+      attributes.o.value[i] = obj.eph.om;
+      attributes.ma.value[i] = obj.eph.ma || 0; // TODO
+      attributes.n.value[i] = obj.eph.n || -1.0;
+      attributes.w.value[i] = obj.eph.w_bar ||
+        (obj.eph.w + obj.eph.om);
       attributes.realP.value[i] = attributes.P.value[i] =
-        added_objects[i].eph.p || Math.sqrt(
-          Math.pow(added_objects[i].eph.a, 3)) * 365.256;  // TODO
+        obj.eph.p || Math.sqrt(
+          Math.pow(obj.eph.a, 3)) * 365.256;  // TODO
       if (i >= planets.length) {
-        // Artificial speed for non-planets.
+        // Artificially speed up non-planets.
         attributes.P.value[i] /= opts.meteoroid_factor;
       }
-      attributes.epoch.value[i] = added_objects[i].eph.epoch ||
+      attributes.epoch.value[i] = obj.eph.epoch ||
         Math.random() * 2451545.0; // TODO
-      attributes.value_color.value[i] = added_objects[i].opts.display_color ||
+      attributes.value_color.value[i] = obj.opts.display_color ||
         new THREE.Color(0xff00ff); // TODO
       attributes.locked.value[i] = 0.0;
       particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
@@ -756,7 +762,8 @@
 
     // Update display date.
     var now = new Date().getTime();
-    if (now - display_date_last_updated > 500 && typeof datgui !== 'undefined') {
+    if (now - display_date_last_updated > 500 &&
+        typeof datgui !== 'undefined') {
       var georgian_date = fromJED(jed);
       var datestr = georgian_date.getMonth()+1 + "/"
         + georgian_date.getDate() + "/" + georgian_date.getFullYear();
@@ -929,7 +936,9 @@
   function setupSkybox() {
     var geometry = new THREE.SphereGeometry(2800, 60, 40);
     var uniforms = {
-      texture: { type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg') }
+      texture: {
+        type: 't', value: loadTexture(opts.static_prefix + 'img/eso_dark.jpg')
+      }
     };
 
     var material = new THREE.ShaderMaterial( {
@@ -961,7 +970,8 @@
   /** Util functions **/
 
   function loadTexture(path) {
-    if (typeof passthrough_vars !== 'undefined' && passthrough_vars.offline_mode) {
+    if (typeof passthrough_vars !== 'undefined' &&
+        passthrough_vars.offline_mode) {
       // same origin policy workaround
       var b64_data = $('img[data-src="' + path + '"]').attr('src');
 
