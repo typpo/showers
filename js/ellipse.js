@@ -45,7 +45,6 @@
   Orbit3D.prototype.getPosAtTime = function(jed) {
     // Note: logic below must match the vertex shader.
     // This position calculation is used to create orbital ellipses.
-
     var e = this.eph.e;
     var a = this.eph.a;
     var i = (this.eph.i) * pi/180;

@@ -8,14 +8,14 @@ function MeteorsUi(visualization) {
       $('#skymap-modal').empty().append($(this).clone()).modal();
     });
 
-    // Set up button handlers.
-    setupControlHandlers();
+    setupButtonHandlers();
+    setupModalPlugin();
   }
 
-  function setupControlHandlers() {
+  function setupButtonHandlers() {
     $('#restore-view').on('click', function() {
       visualization.clearLock();
-      // TODO shouldn't have to call these both.
+      // TODO shouldn't really have to call these both.
       visualization.setDefaultCameraPosition();
       visualization.setNeutralCameraPosition();
     });
@@ -29,5 +29,10 @@ function MeteorsUi(visualization) {
       visualization.setLockMode('VIEW_FROM');
       visualization.setLock('earth');
     });
-  };
+  }
+
+  function setupModalPlugin() {
+    $.modal.defaults.opacity = 0.4;
+    $.modal.defaults.zIndex = 9999999;
+  }
 }

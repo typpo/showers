@@ -457,7 +457,6 @@
       var display = key + ' - ' + shower.peak;
       $('<option>').html(display).attr('value', key).appendTo($select);
     });
-
     $select.append('<option value="View all">Everything at once</option>');
 
     $select.on('change', function() {
@@ -591,9 +590,7 @@
       variant.a = variant.a * between(0.4, 1.1);
       variant.e = variant.e * between(0.99, 1.01);
       variant.i = variant.i * between(0.99, 1.01);
-      //variant.ma = variant.ma * between(0.99, 1.01);
-      //variant.p = 2 * Math.PI *
-       // Math.sqrt(Math.pow(variant.a, 3) / 132712440018/86400);
+      // No set period when semimajor axis, etc. are being changed.
       delete variant.p;
       data.push(variant);
     }
@@ -711,7 +708,6 @@
     );
     window.ps = particleSystem;
 
-    // add it to the scene
     scene.add(particleSystem);
   }
 
@@ -728,7 +724,6 @@
       requestAnimFrame(animate);
       return;
     }
-
     if (opts.camera_fly_around) {
       if (locked_object) {
         // Follow locked object
@@ -750,7 +745,6 @@
         me.setNeutralCameraPosition();
       }
     }
-
     render();
     requestAnimFrame(animate);
   }
@@ -781,24 +775,6 @@
     renderer.render(scene, camera);
   }
 
-  function loadTexture(path) {
-    if (typeof passthrough_vars !== 'undefined' && passthrough_vars.offline_mode) {
-      // same origin policy workaround
-      var b64_data = $('img[data-src="' + path + '"]').attr('src');
-
-      var new_image = document.createElement( 'img' );
-      var texture = new THREE.Texture( new_image );
-      new_image.onload = function()  {
-        texture.needsUpdate = true;
-      };
-      new_image.src = b64_data;
-      return texture;
-    }
-    return THREE.ImageUtils.loadTexture(path);
-  }
-
-  /** Util functions **/
-
   function setupSun() {
     // Sun is at 0,0
     $('#loading-text').html('sun');
@@ -813,7 +789,6 @@
     sprite.scale.y = opts.sun_scale;
     sprite.scale.z = 1;
     scene.add(sprite);
-
   }
 
   function setupPlanets() {
@@ -973,10 +948,6 @@
     window.skyBox = skyBox;
   }
 
-  function isWebGLSupported() {
-    return WEB_GL_ENABLED && Detector.webgl;
-  }
-
   function onVisualsReady() {
     var args = Array.prototype.slice.call(arguments);
     var fn = args[0];
@@ -985,5 +956,27 @@
     setTimeout(function() {
       fn.apply(me, args);
     }, 0);
+  }
+
+  /** Util functions **/
+
+  function loadTexture(path) {
+    if (typeof passthrough_vars !== 'undefined' && passthrough_vars.offline_mode) {
+      // same origin policy workaround
+      var b64_data = $('img[data-src="' + path + '"]').attr('src');
+
+      var new_image = document.createElement( 'img' );
+      var texture = new THREE.Texture( new_image );
+      new_image.onload = function()  {
+        texture.needsUpdate = true;
+      };
+      new_image.src = b64_data;
+      return texture;
+    }
+    return THREE.ImageUtils.loadTexture(path);
+  }
+
+  function isWebGLSupported() {
+    return WEB_GL_ENABLED && Detector.webgl;
   }
 }

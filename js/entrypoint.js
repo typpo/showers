@@ -1,4 +1,4 @@
-;(function() {
+;$(function() {
   'use strict';
 
   var asterank3d = new Asterank3D({
@@ -32,4 +32,4 @@
   function isScreenBigEnough() {
     return $(window).width() > 760;
   }
-})();
+});
