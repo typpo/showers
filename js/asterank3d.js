@@ -678,7 +678,6 @@
     particle_system_shader_material.depthTest = false;
     particle_system_shader_material.vertexColor = true;
     particle_system_shader_material.transparent = true;
-    particle_system_shader_material.blending = THREE.AdditiveBlending;
 
     for (var i = 0; i < added_objects.length; i++) {
       var obj = added_objects[i];
@@ -710,7 +709,7 @@
       attributes.value_color.value[i] = obj.opts.display_color ||
         new THREE.Color(0xff00ff); // TODO
       attributes.locked.value[i] = 0.0;
-      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
+      particle_system_geometry.vertices.push(new THREE.Vector3(0, 0, 0));
     }  // end added_objects loop
     setAttributeNeedsUpdateFlags();
 
