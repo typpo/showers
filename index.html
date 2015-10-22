@@ -172,12 +172,12 @@
         E1 = M + e * sin(E0);
         lastdiff = abs(E1-E0);
         E0 = E1;
-        if (lastdiff > 0.0000001) {
+        if (lastdiff < 0.0000001) {
           break;
         }
       }
-      float E = E0;
 
+      float E = E0;
       float v = 2.0 * atan(sqrt((1.0+e)/(1.0-e)) * tan(E/2.0));
 
       // radius vector, in AU
