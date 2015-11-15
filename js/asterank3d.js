@@ -434,7 +434,7 @@
       shower_names.push(key);
     }
 
-    var now = new Date();
+    var now = new Date(2015, 7, 1);
     shower_names.sort(function(a, b) {
       var showerAdate = new Date(window.METEOR_CLOUD_DATA[a].date);
       var showerBdate = new Date(window.METEOR_CLOUD_DATA[b].date);
