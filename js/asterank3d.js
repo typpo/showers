@@ -514,6 +514,8 @@
 
   function loadNewViewSelection() {
     cleanUpPreviousViewSelection();
+    num_particles_per_shower = 2000;
+
     $('#view-all-summary').hide();
     $('#normal-summary').show();
 
@@ -611,6 +613,7 @@
     window.location.hash = '#all';
 
     cleanUpPreviousViewSelection();
+    num_particles_per_shower = 500;
     var everything = {
       full_orbit_data: [],
     };
