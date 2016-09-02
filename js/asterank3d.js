@@ -127,12 +127,12 @@
     scene.add(camera);
 
     cameraControls = new THREE.TrackballControls(camera, opts.container);
-    cameraControls.staticMoving = true;
-    cameraControls.panSpeed = 2;
-    cameraControls.zoomSpeed = 3;
-    cameraControls.rotateSpeed = 3;
     cameraControls.maxDistance = 2200;
-    cameraControls.dynamicDampingFactor = 0.5;
+    cameraControls.rotateSpeed = 3;
+    cameraControls.zoomSpeed = 0.08;
+    cameraControls.panSpeed = 0.6;
+    //cameraControls.dynamicDampingFactor = 0.5;
+    //cameraControls.staticMoving = true;
     window.cc = cameraControls;
 
     // Rendering solar system
