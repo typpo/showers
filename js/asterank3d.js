@@ -128,9 +128,16 @@
 
     cameraControls = new THREE.TrackballControls(camera, opts.container);
     cameraControls.maxDistance = 2200;
-    cameraControls.rotateSpeed = 3;
-    cameraControls.zoomSpeed = 0.08;
-    cameraControls.panSpeed = 0.6;
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      cameraControls.rotateSpeed = 3;
+      cameraControls.zoomSpeed = 0.08;
+      cameraControls.panSpeed = 0.6;
+    } else {
+      cameraControls.rotateSpeed = 5;
+      cameraControls.zoomSpeed = 0.08;
+      cameraControls.panSpeed = 0.6;
+    }
     //cameraControls.dynamicDampingFactor = 0.5;
     //cameraControls.staticMoving = true;
     window.cc = cameraControls;
