@@ -200,7 +200,7 @@
       vec3 newpos = getAstroPos();
       vec4 mvPosition = modelViewMatrix * vec4(newpos, 1.0);
       gl_Position = projectionMatrix * mvPosition;
-      gl_PointSize = size;
+      gl_PointSize = size * (400.0 / -mvPosition.z);
     }
   </script>
   <script type="x-shader/x-fragment" id="orbit-fragment-shader">
