@@ -128,8 +128,7 @@
 
     cameraControls = new THREE.TrackballControls(camera, opts.container);
     cameraControls.maxDistance = 2200;
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
+    if (window.isMobile) {
       cameraControls.rotateSpeed = 3;
       cameraControls.zoomSpeed = 0.08;
       cameraControls.panSpeed = 0.6;
@@ -544,7 +543,9 @@
 
     // Update left bar.
     //populatePictures();
-    populateMinimap();
+    if (!window.isMobile) {
+      populateMinimap();
+    }
   }
 
   // Takes a cloud object and creates an orbit from it.  Adds the orbit, its

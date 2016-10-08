@@ -55,3 +55,5 @@ function getParameterByName(name)
   else
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
+window.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

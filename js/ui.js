@@ -4,9 +4,13 @@ function MeteorsUi(visualization) {
       $('#summary').toggleClass('minimized').toggleClass('maximized');
     });
 
-    $('#sky-map img').on('click', function() {
-      $('#skymap-modal').empty().append($(this).clone()).modal();
-    });
+    if (window.isMobile) {
+      $('#sky-map').hide();
+    } else {
+      $('#sky-map img').on('click', function() {
+        $('#skymap-modal').empty().append($(this).clone()).modal();
+      });
+    }
 
     setupButtonHandlers();
     setupModalPlugin();
