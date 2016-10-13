@@ -440,7 +440,8 @@
       shower_names.push(key);
     }
 
-    var now = new Date(2015, 7, 1);
+    // Show the upcoming meteor shower that's closest to today.
+    var now = new Date();
     shower_names.sort(function(a, b) {
       var showerAdate = new Date(window.METEOR_CLOUD_DATA[a].date);
       var showerBdate = new Date(window.METEOR_CLOUD_DATA[b].date);
