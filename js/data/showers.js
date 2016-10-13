@@ -130,7 +130,7 @@ window.METEOR_CLOUD_DATA = {
     date: '1/3',
     map: 'quadrantids_north.jpg',
     // TODO comet struct
-    source_name: 'Swift-Tuttle',
+    source_name: '2003 EH1',
     source_orbit: {
       full_name: 'Asteroid 2003 EH1',
       epoch: 2457000.5,
@@ -226,8 +226,8 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Ursid': {
-    source_type: 'asteroid',
-    name: 'Geminid',
+    source_type: 'comet',
+    name: 'Ursid',
     peak: 'mid-December',
     date: '12/21',
     map: 'ursids_north.jpg',
