@@ -1,5 +1,5 @@
 window.METEOR_CLOUD_DATA = {
-  'Perseid': {
+  'Perseids': {
     name: 'Perseid',
     peak: 'mid-August',
     date: '8/12',
@@ -21,7 +21,7 @@ window.METEOR_CLOUD_DATA = {
       Q: 51.22462284058444, // aphelion
     }
   },
-  'Leonid': {
+  'Leonids': {
     name: 'Leonid',
     peak: 'mid-November',
     date: '11/18',
@@ -40,7 +40,7 @@ window.METEOR_CLOUD_DATA = {
       p: 12141.56115249823, // period
     }
   },
-  'Capricornid': {
+  'Capricornids': {
     name: 'Capricornid',
     peak: 'late July',
     date: '7/31',
@@ -59,7 +59,7 @@ window.METEOR_CLOUD_DATA = {
     },
     full_orbit_data: window.Capricornid,
   },
-  'Lyrid': {
+  'Lyrids': {
     name: 'Lyrid',
     peak: 'April',
     date: '4/22',
@@ -85,7 +85,7 @@ window.METEOR_CLOUD_DATA = {
     ],
     full_orbit_data: window.Lyrid,
   },
-  'Orionid': {
+  'Orionids': {
     name: 'Orionid',
     peak: 'late October',
     date: '10/21',
@@ -104,7 +104,7 @@ window.METEOR_CLOUD_DATA = {
       p: 27509.1290731861, // period
     }
   },
-  'Eta Aquariid': {
+  'Eta Aquariids': {
     name: 'Eta Aquariid',
     peak: 'early May',
     date: '5/5',
@@ -123,7 +123,7 @@ window.METEOR_CLOUD_DATA = {
       p: 27509.1290731861, // period
     }
   },
-  'Quadrantid': {
+  'Quadrantids': {
     source_type: 'asteroid',
     name: 'Quadrantid',
     peak: 'early January',
@@ -145,7 +145,7 @@ window.METEOR_CLOUD_DATA = {
       Q: 5.054905873457415, // aphelion
     }
   },
-  'Delta Aquariid': {
+  'Delta Aquariids': {
     name: 'Delta Aquariid',
     peak: 'late July',
     date: '7/28',
@@ -164,7 +164,7 @@ window.METEOR_CLOUD_DATA = {
       p: 1930.229059113251, // period, in days
     }
   },
-  'Southern Taurid': {
+  'Southern Taurids': {
     name: 'Southern Taurid',
     peak: 'October',
     date: '10/10',
@@ -182,7 +182,7 @@ window.METEOR_CLOUD_DATA = {
       p: 1204.197975688157, // period, in days
     }
   },
-  'Northern Taurid': {
+  'Northern Taurids': {
     name: 'Northern Taurid',
     peak: 'November',
     date: '11/12',
@@ -200,7 +200,7 @@ window.METEOR_CLOUD_DATA = {
       p: 1204.197975688157, // period, in days
     }
   },
-  'Geminid': {
+  'Geminids': {
     // TODO: fewer particles
     source_type: 'asteroid',
     name: 'Geminid',
@@ -225,7 +225,7 @@ window.METEOR_CLOUD_DATA = {
       p: 523.4854325174181,
     }
   },
-  'Ursid': {
+  'Ursids': {
     source_type: 'comet',
     name: 'Ursid',
     peak: 'mid-December',
