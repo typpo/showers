@@ -40,8 +40,8 @@ window.METEOR_CLOUD_DATA = {
       p: 12141.56115249823, // period
     }
   },
-  'Capricornids': {
-    name: 'Capricornid',
+  'Alpha Capricornids': {
+    name: 'Alpha Capricornid',
     peak: 'late July',
     date: '7/31',
     source_name: '169P/NEAT',
