@@ -24,7 +24,7 @@ def process(f, output_dir):
 
     for iau_num, data in d.iteritems():
         processed_json = process_lines(data)
-        with open(os.path.join(output_dir, 'iau_%s' % iau_num), 'w') as shower_file:
+        with open(os.path.join(output_dir, 'iau_%s.json' % iau_num), 'w') as shower_file:
             shower_file.write(processed_json)
 
     print json.dumps(counts, indent=2)

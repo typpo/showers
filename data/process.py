@@ -6,7 +6,7 @@ import json
 
 def process(f):
     reader = csv.DictReader(f, delimiter=',')
-    print process_lines(reader)
+    print 'window.ORBIT_DATA=%s' % process_lines(reader)
 
 def process_lines(lines):
     d = []
@@ -19,7 +19,7 @@ def process_lines(lines):
         obj['q'] = line['q']
         obj['om'] = line['Node']
         d.append(obj)
-    return 'window.ORBIT_DATA=%s' % json.dumps(d, indent=2)
+    return json.dumps(d, indent=2)
 
 if __name__ == '__main__':
     with open(sys.argv[1]) as f:

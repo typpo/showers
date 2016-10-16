@@ -147,6 +147,7 @@
     setupSkybox();
 
     setupCloudSelectionHandler();
+    setupIAUInputHandler();
     if (!setupSelectionFromUrl()) {
       onVisualsReady(loadNewViewSelection);
     }
@@ -434,6 +435,16 @@
     return false;
   }
 
+  function setupIAUInputHandler() {
+    $('#btn-iau-input').on('click', function() {
+      var iau_num = prompt('What IAU number do you want to view?', '20');
+      if (!iau_num && iau_num !== '0') {
+        return;
+      }
+      loadNewIAUSelection(iau_num);
+    });
+  }
+
   function setupCloudSelectionHandler() {
     var shower_names = [];
     for (var key in window.METEOR_CLOUD_DATA) {
@@ -519,6 +530,12 @@
     }
   }
 
+  function loadNewIAUSelection(iau_num) {
+    $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
+      loadParticlesFromOrbitData(data);
+    });
+  }
+
   function loadNewViewSelection() {
     cleanUpPreviousViewSelection();
     num_particles_per_shower = 1500;
@@ -579,13 +596,16 @@
     //$('#loading-text').html('asteroids database');
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
-      onVisualsReady(
-        me.setupParticlesFromData, cloud_obj.full_orbit_data);
+      loadParticlesFromOrbitData(cloud_obj.full_orbit_data);
     } else if (cloud_obj.source_orbit) {
       // We only have the comet's orbit, no meteor-specific data.
       var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
       onVisualsReady(me.setupParticlesFromData, data);
     }
+  }
+
+  function loadParticlesFromOrbitData(orbit_data) {
+    onVisualsReady(me.setupParticlesFromData, orbit_data);
   }
 
   // Creates a meteor cloud based on the orbit of a comet or asteroid, or any
