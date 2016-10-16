@@ -4,6 +4,7 @@
 import csv
 import json
 import os
+import random
 import sys
 from collections import defaultdict
 
@@ -23,7 +24,10 @@ def process(f, output_dir):
             print line_count, '...'
 
     for iau_num, data in d.iteritems():
-        processed_json = process_lines(data)
+        if len(data) > 10000:
+            # Downsample to 10k data points
+            random.shuffle(data)
+        processed_json = process_lines(data[:10000])
         with open(os.path.join(output_dir, 'iau_%s.json' % iau_num), 'w') as shower_file:
             shower_file.write(processed_json)
 
