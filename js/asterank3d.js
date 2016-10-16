@@ -437,7 +437,7 @@
 
   function setupIAUInputHandler() {
     $('#btn-iau-input').on('click', function() {
-      var iau_num = prompt('What IAU number do you want to view?', '20');
+      var iau_num = prompt('What IAU meteor shower number would you like to view?', '20');
       if (!iau_num && iau_num !== '0') {
         return;
       }
@@ -532,6 +532,7 @@
 
   function loadNewIAUSelection(iau_num) {
     cleanUpPreviousViewSelection();
+    // TODO(ian): alert('Sorry, that IAU shower is not available in the CAMS 2013 database.');
     $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
       loadParticlesFromOrbitData(data);
     });
