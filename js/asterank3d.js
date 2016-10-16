@@ -531,6 +531,7 @@
   }
 
   function loadNewIAUSelection(iau_num) {
+    cleanUpPreviousViewSelection();
     $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
       loadParticlesFromOrbitData(data);
     });

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Example: python process_cams_data.py cams_2013.csv cams_splits/
 
 import csv
 import sys
@@ -11,14 +12,17 @@ def process(f):
 def process_lines(lines):
     d = []
     for line in lines:
-        obj = {}
-        obj['a'] = line['a']
-        obj['e'] = line['e']
-        obj['i'] = line['i']
-        obj['w'] = line['w']
-        obj['q'] = line['q']
-        obj['om'] = line['Node']
-        d.append(obj)
+        try:
+            obj = {}
+            obj['a'] = float(line['a'])
+            obj['e'] = float(line['e'])
+            obj['i'] = float(line['i'])
+            obj['w'] = float(line['w'])
+            obj['q'] = float(line['q'])
+            obj['om'] = float(line['Node'])
+            d.append(obj)
+        except ValueError:
+            print 'Invalid line:', line
     return json.dumps(d, indent=2)
 
 if __name__ == '__main__':
