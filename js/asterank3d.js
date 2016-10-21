@@ -532,9 +532,10 @@
 
   function loadNewIAUSelection(iau_num) {
     cleanUpPreviousViewSelection();
-    // TODO(ian): alert('Sorry, that IAU shower is not available in the CAMS 2013 database.');
     $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
       loadParticlesFromOrbitData(data);
+    }).fail(function(err) {
+      alert('Sorry, we could not find that IAU shower in our CAMS 2013 database.');
     });
   }
 
