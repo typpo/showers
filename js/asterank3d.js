@@ -442,6 +442,13 @@
       if (!iau_num && iau_num !== '0') {
         return;
       }
+
+      $('#iau-summary').show();
+      $('#view-all-summary').hide();
+      $('#normal-summary').hide();
+
+      $('#iau-shower-number').html(iau_num);
+
       lastIauNumber = iau_num;
       cleanUpPreviousViewSelection();
       loadNewIAUSelection(iau_num);
@@ -545,6 +552,7 @@
     cleanUpPreviousViewSelection();
     num_particles_per_shower = 1500;
 
+    $('#iau-summary').hide();
     $('#view-all-summary').hide();
     $('#normal-summary').show();
 
@@ -644,6 +652,7 @@
 
   // Loads every meteor shower at once.
   function viewAll() {
+    $('#iau-summary').hide();
     $('#view-all-summary').show();
     $('#normal-summary').hide();
     populateMinimap();
