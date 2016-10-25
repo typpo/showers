@@ -1,9 +1,10 @@
 window.METEOR_CLOUD_DATA = {
   'Perseids': {
-    name: 'Perseid',
+    name: 'Perseids',
     peak: 'mid-August',
     date: '8/12',
     map: 'perseids_north.jpg',
+    iau_number: 7,
     // TODO comet struct
     source_name: 'Swift-Tuttle',
     source_orbit: {
@@ -22,7 +23,7 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Leonids': {
-    name: 'Leonid',
+    name: 'Leonids',
     peak: 'mid-November',
     date: '11/18',
     map: 'leonids_north.jpg',
@@ -41,7 +42,7 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Alpha Capricornids': {
-    name: 'Alpha Capricornid',
+    name: 'Alpha Capricornids',
     peak: 'late July',
     date: '7/31',
     source_name: '169P/NEAT',
@@ -60,7 +61,7 @@ window.METEOR_CLOUD_DATA = {
     full_orbit_data: window.Capricornid,
   },
   'Lyrids': {
-    name: 'Lyrid',
+    name: 'Lyrids',
     peak: 'April',
     date: '4/22',
     map: 'lyrids_north.jpg',
@@ -86,7 +87,7 @@ window.METEOR_CLOUD_DATA = {
     full_orbit_data: window.Lyrid,
   },
   'Orionids': {
-    name: 'Orionid',
+    name: 'Orionids',
     peak: 'late October',
     date: '10/21',
     map: 'orionids_north.jpg',
@@ -105,7 +106,7 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Eta Aquariids': {
-    name: 'Eta Aquariid',
+    name: 'Eta Aquariids',
     peak: 'early May',
     date: '5/5',
     map: 'eta_aquarids_north.jpg',
@@ -125,7 +126,7 @@ window.METEOR_CLOUD_DATA = {
   },
   'Quadrantids': {
     source_type: 'asteroid',
-    name: 'Quadrantid',
+    name: 'Quadrantids',
     peak: 'early January',
     date: '1/3',
     map: 'quadrantids_north.jpg',
@@ -146,7 +147,7 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Delta Aquariids': {
-    name: 'Delta Aquariid',
+    name: 'Delta Aquariids',
     peak: 'late July',
     date: '7/28',
     map: 'delta_aquarids_north.jpg',
@@ -165,7 +166,7 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Southern Taurids': {
-    name: 'Southern Taurid',
+    name: 'Southern Taurids',
     peak: 'October',
     date: '10/10',
     source_name: 'Encke',
@@ -183,7 +184,7 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Northern Taurids': {
-    name: 'Northern Taurid',
+    name: 'Northern Taurids',
     peak: 'November',
     date: '11/12',
     source_name: 'Encke',
@@ -203,7 +204,7 @@ window.METEOR_CLOUD_DATA = {
   'Geminids': {
     // TODO: fewer particles
     source_type: 'asteroid',
-    name: 'Geminid',
+    name: 'Geminids',
     peak: 'mid-December',
     date: '12/14',
     map: 'geminids_north.jpg',
@@ -227,7 +228,7 @@ window.METEOR_CLOUD_DATA = {
   },
   'Ursids': {
     source_type: 'comet',
-    name: 'Ursid',
+    name: 'Ursids',
     peak: 'mid-December',
     date: '12/21',
     map: 'ursids_north.jpg',
