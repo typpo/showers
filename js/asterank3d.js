@@ -534,7 +534,7 @@
   }
 
   function loadNewIAUSelection(iau_num) {
-    $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
+    $.getJSON('js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
       loadParticlesFromOrbitData(data);
     }).fail(function(err) {
       alert('Sorry, the request for meteor shower data has failed.');
