@@ -506,7 +506,7 @@
   function populateMinimap() {
     var $skymap = $('#sky-map');
     var selection = window.METEOR_CLOUD_DATA[$select.val()];
-    if (!selection.map) {
+    if (!selection || !selection.map) {
       $skymap.hide();
       return;
     }
@@ -644,6 +644,8 @@
   function viewAll() {
     $('#view-all-summary').show();
     $('#normal-summary').hide();
+    populateMinimap();
+
     window.location.hash = '#all';
 
     cleanUpPreviousViewSelection();
