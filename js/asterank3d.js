@@ -435,12 +435,14 @@
     return false;
   }
 
+  var lastIauNumber = 20;
   function setupIAUInputHandler() {
     $('#btn-iau-input').on('click', function() {
-      var iau_num = prompt('What IAU meteor shower number would you like to view?', '20');
+      var iau_num = prompt('What IAU meteor shower number would you like to view?', lastIauNumber);
       if (!iau_num && iau_num !== '0') {
         return;
       }
+      lastIauNumber = iau_num;
       cleanUpPreviousViewSelection();
       loadNewIAUSelection(iau_num);
     });
