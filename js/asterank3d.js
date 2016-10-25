@@ -600,6 +600,8 @@
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
       loadParticlesFromOrbitData(cloud_obj.full_orbit_data);
+    } else if (cloud_obj.iau_number) {
+      loadNewIAUSelection(cloud_obj.iau_number);
     } else if (cloud_obj.source_orbit) {
       // We only have the comet's orbit, no meteor-specific data.
       var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
