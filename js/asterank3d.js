@@ -544,6 +544,11 @@
     $.getJSON('js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
       loadParticlesFromOrbitData(data);
     }).fail(function(err) {
+      if (typeof mixpanel !== 'undefined') {
+        mixpanel.track('iau selection failed', {
+          iau_num: iau_num
+        });
+      }
       alert('Sorry, the request for meteor shower data has failed.');
     });
   }
