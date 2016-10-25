@@ -541,9 +541,12 @@
   }
 
   function loadNewIAUSelection(iau_num) {
+    showLoader();
     $.getJSON('js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
       loadParticlesFromOrbitData(data);
+      hideLoader();
     }).fail(function(err) {
+      hideLoader();
       if (typeof mixpanel !== 'undefined') {
         mixpanel.track('iau selection failed', {
           iau_num: iau_num
@@ -1048,5 +1051,13 @@
 
   function isWebGLSupported() {
     return WEB_GL_ENABLED && Detector.webgl;
+  }
+
+  function showLoader() {
+    $('#loading-container').show();
+  }
+
+  function hideLoader() {
+    $('#loading-container').hide();
   }
 }

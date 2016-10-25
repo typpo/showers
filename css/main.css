@@ -224,3 +224,14 @@ ul.share-buttons img {
     font-size: 14px;
   }
 }
+
+#loading-container {
+	color: #fff;
+	width: 100%;
+	text-align: center;
+	z-index: 99999;
+	position: absolute;
+	top: 200px;
+	left: 0;
+	font-size: 20px;
+}
