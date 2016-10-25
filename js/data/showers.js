@@ -27,6 +27,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'mid-November',
     date: '11/18',
     map: 'leonids_north.jpg',
+    iau_number: 13,
     source_name: 'Tempel-Tuttle',
     source_orbit: {
       full_name: 'Comet 55P/Tempel-Tuttle',
@@ -45,6 +46,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Alpha Capricornids',
     peak: 'late July',
     date: '7/31',
+    iau_number: 1,
     source_name: '169P/NEAT',
     source_orbit: {
       full_name: 'Comet 169P/NEAT',
@@ -65,6 +67,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'April',
     date: '4/22',
     map: 'lyrids_north.jpg',
+    iau_number: 6,
     source_name: 'C/1861 G1 Thatcher',
     source_orbit: {
       full_name: 'Comet C/1861 G1 Thatcher',
@@ -91,6 +94,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'late October',
     date: '10/21',
     map: 'orionids_north.jpg',
+    iau_number: 8,
     source_name: 'Halley',
     source_orbit: {
       full_name: 'Comet 1P/Halley',
@@ -110,6 +114,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'early May',
     date: '5/5',
     map: 'eta_aquarids_north.jpg',
+    iau_number: 31,
     source_name: 'Halley',
     source_orbit: {
       full_name: 'Comet 1P/Halley',
@@ -129,6 +134,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Quadrantids',
     peak: 'early January',
     date: '1/3',
+    iau_number: 10,
     map: 'quadrantids_north.jpg',
     // TODO comet struct
     source_name: '2003 EH1',
@@ -151,6 +157,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'late July',
     date: '7/28',
     map: 'delta_aquarids_north.jpg',
+    iau_number: 26,
     source_name: 'Machholz',
     source_orbit: {
       full_name: 'Comet 96P/Machholz',
@@ -169,6 +176,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Southern Taurids',
     peak: 'October',
     date: '10/10',
+    iau_number: 2,
     source_name: 'Encke',
     source_orbit: {
       full_name: 'Comet 2P/Encke',
@@ -187,6 +195,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Northern Taurids',
     peak: 'November',
     date: '11/12',
+    iau_number: 17,
     source_name: 'Encke',
     source_orbit: {
       full_name: 'Comet 2P/Encke',
@@ -208,6 +217,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'mid-December',
     date: '12/14',
     map: 'geminids_north.jpg',
+    iau_number: 4,
     source_name: 'Phaethon',
     source_orbit: {
       full_name: 'Asteroid 3200 Phaethon',
@@ -232,6 +242,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'mid-December',
     date: '12/21',
     map: 'ursids_north.jpg',
+    iau_number: 15,
     source_name: 'Tuttle',
     source_orbit: {
       full_name: 'Comet 8P/Tuttle',
