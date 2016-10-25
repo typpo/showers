@@ -20,6 +20,9 @@ def process_lines(lines):
             obj['w'] = float(line['w'])
             obj['q'] = float(line['q'])
             obj['om'] = float(line['Node'])
+            if int(obj['a']) == 999:
+                # Skip unknown semi major axes.
+                continue
             d.append(obj)
         except ValueError:
             print 'Invalid line:', line
