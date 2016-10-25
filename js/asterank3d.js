@@ -441,6 +441,7 @@
       if (!iau_num && iau_num !== '0') {
         return;
       }
+      cleanUpPreviousViewSelection();
       loadNewIAUSelection(iau_num);
     });
   }
@@ -531,7 +532,6 @@
   }
 
   function loadNewIAUSelection(iau_num) {
-    cleanUpPreviousViewSelection();
     $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
       loadParticlesFromOrbitData(data);
     }).fail(function(err) {
