@@ -210,6 +210,17 @@ ul.share-buttons img {
   color: #eee;
 }
 
+#loading-container {
+	color: #fff;
+	width: 100%;
+	text-align: center;
+	z-index: 99999;
+	position: absolute;
+	top: 200px;
+	left: 0;
+	font-size: 20px;
+}
+
 @media screen and (max-width: 850px) {
   #left-nav, #btn-left-nav-toggle, #learn-more, #sky-map, #instructions {
     display: none;
@@ -223,15 +234,4 @@ ul.share-buttons img {
   h2 {
     font-size: 14px;
   }
-}
-
-#loading-container {
-	color: #fff;
-	width: 100%;
-	text-align: center;
-	z-index: 99999;
-	position: absolute;
-	top: 200px;
-	left: 0;
-	font-size: 20px;
 }
