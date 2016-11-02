@@ -435,7 +435,7 @@
     return false;
   }
 
-  var lastIauNumber = 20;
+  var lastIauNumber = 0;
   function setupIAUInputHandler() {
     $('#btn-iau-input').on('click', function() {
       var iau_num = prompt('What IAU meteor shower number would you like to view?', lastIauNumber);
