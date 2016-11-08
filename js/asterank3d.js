@@ -552,7 +552,7 @@
           iau_num: iau_num
         });
       }
-      alert('Sorry, the request for meteor shower data has failed.');
+      alert('Sorry, your request for meteor shower data has failed: not an established shower or no data, please try again.');
     });
   }
 
