@@ -426,12 +426,23 @@
       return true;
     }
 
+    // Maybe one of the featured showers?
     var selection = window.METEOR_CLOUD_DATA[hash];
     if (selection) {
       $select.val(selection.name);
       onVisualsReady(loadNewViewSelection);
       return true;
     }
+
+    // Maybe an IAU number?
+    if (hash.indexOf('iau') === 0) {
+      var iau_num = parseInt(hash.replace('iau', ''));
+      cleanUpPreviousViewSelection();
+      setupUiForIAUSelection(iau_num);
+      loadNewIAUSelection(iau_num);
+      return true;
+    }
+
     return false;
   }
 
@@ -443,14 +454,8 @@
         return;
       }
 
-      $('#iau-summary').show();
-      $('#view-all-summary').hide();
-      $('#normal-summary').hide();
-
-      $('#iau-shower-number').html(iau_num);
-
-      lastIauNumber = iau_num;
       cleanUpPreviousViewSelection();
+      setupUiForIAUSelection(iau_num);
       loadNewIAUSelection(iau_num);
     });
   }
@@ -540,9 +545,17 @@
     }
   }
 
+  function setupUiForIAUSelection(iau_num) {
+    $('#iau-summary').show();
+    $('#view-all-summary').hide();
+    $('#normal-summary').hide();
+    $('#iau-shower-number').html(iau_num);
+  }
+
   function loadNewIAUSelection(iau_num) {
     showLoader();
     $.getJSON('js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
+      lastIauNumber = iau_num;
       loadParticlesFromOrbitData(data);
       hideLoader();
     }).fail(function(err) {
