@@ -57,3 +57,5 @@ function getParameterByName(name)
 }
 
 window.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+window.isIframe = window.self !== window.top;
+window.isIframe = true;

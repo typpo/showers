@@ -4,12 +4,16 @@ function MeteorsUi(visualization) {
       $('#summary').toggleClass('minimized').toggleClass('maximized');
     });
 
-    if (window.isMobile) {
+    if (window.isMobile || window.isIframe) {
       $('#sky-map').hide();
     } else {
       $('#sky-map img').on('click', function() {
         $('#skymap-modal').empty().append($(this).clone()).modal();
       });
+    }
+
+    if (window.isIframe) {
+      $('.shower-details-container').hide();
     }
 
     setupButtonHandlers();
