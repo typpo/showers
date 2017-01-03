@@ -550,6 +550,17 @@
     $('#view-all-summary').hide();
     $('#normal-summary').hide();
     $('#iau-shower-number').html(iau_num);
+    $('#iau-shower-suffix').empty();
+    var iau_num_int = parseInt(iau_num);
+    for (var key in window.METEOR_CLOUD_DATA) {
+      if (window.METEOR_CLOUD_DATA.hasOwnProperty(key)) {
+        var obj = window.METEOR_CLOUD_DATA[key];
+        if (obj.iau_number === iau_num_int) {
+          $('#iau-shower-suffix').html(' - ' + obj.name);
+          return;
+        }
+      }
+    }
   }
 
   function loadNewIAUSelection(iau_num) {
