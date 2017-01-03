@@ -14,6 +14,7 @@ function MeteorsUi(visualization) {
 
     if (window.isIframe) {
       $('.shower-details-container').hide();
+      $('.iframe-details-container').show();
     }
 
     setupButtonHandlers();

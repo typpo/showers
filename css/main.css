@@ -42,6 +42,10 @@ a {
   display: none;
 }
 
+.iframe-details-container {
+  margin-bottom: 15px;
+}
+
 #summary.minimized .hide-summary {
   display: none;
 }
