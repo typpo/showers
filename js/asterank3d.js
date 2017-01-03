@@ -435,8 +435,8 @@
     }
 
     // Maybe an IAU number?
-    if (hash.indexOf('iau') === 0) {
-      var iau_num = parseInt(hash.replace('iau', ''));
+    if (hash.indexOf('iau-') === 0) {
+      var iau_num = parseInt(hash.replace('iau-', ''));
       cleanUpPreviousViewSelection();
       setupUiForIAUSelection(iau_num);
       loadNewIAUSelection(iau_num);
