@@ -152,24 +152,24 @@ window.METEOR_CLOUD_DATA = {
       Q: 5.054905873457415, // aphelion
     }
   },
-  'Delta Aquariids': {
-    name: 'Delta Aquariids',
+  'Southern Delta Aquariids': {
+    name: 'Southern Delta Aquariids',
     peak: 'late July',
     date: '7/28',
-    map: 'delta_aquarids_north.jpg',
-    iau_number: 26,
-    source_name: 'Machholz',
+    map: 'delta_aquarids_south.jpg',
+    iau_number: 5,
+    source_name: 'P/2008 Y12',
     source_orbit: {
-      full_name: 'Comet 96P/Machholz',
-      epoch: 2456541.5,
-      a: 3.033939724939583,
-      e: 0.9592118287498192,
-      q: 0.123748853063562,
-      i: 58.31221423529453,
-      om: 94.32323631127545, // long of ascending node, aka 'node' in sbdb
-      w: 14.75774840136655, // arg of peri, aka 'peri' in sbdb
-      ma: 77.99276065152682, // mean anomaly, aka 'M' in sbdb
-      p: 1930.229059113251, // period, in days
+      full_name: 'Comet P/2008 Y12 (SOHO)',
+      epoch: 2455476.5,
+      a: 3.078224129104039,
+      e: 0.9787495374822994,
+      q: 0.06541368647660686,
+      i: 23.34562318136519,
+      om: 312.5525907382889, // long of ascending node, aka 'node' in sbdb
+      w: 146.614161143522, // arg of peri, aka 'peri' in sbdb
+      ma: 119.2654854953976, // mean anomaly, aka 'M' in sbdb
+      p: 1972.644309786168, // period, in days
     }
   },
   'Southern Taurids': {
