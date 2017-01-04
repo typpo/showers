@@ -152,12 +152,12 @@ window.METEOR_CLOUD_DATA = {
       Q: 5.054905873457415, // aphelion
     }
   },
-  'Delta Aquariids': {
-    name: 'Delta Aquariids',
+  'Southern Delta Aquariids': {
+    name: 'Southern Delta Aquariids',
     peak: 'late July',
     date: '7/28',
-    map: 'delta_aquarids_north.jpg',
-    iau_number: 26,
+    map: 'delta_aquarids_south.jpg',
+    iau_number: 5,
     source_name: 'P/2008 Y12',
     source_orbit: {
       full_name: 'Comet P/2008 Y12 (SOHO)',
