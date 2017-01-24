@@ -415,7 +415,7 @@
   // found something in the url.
   function setupSelectionFromUrl() {
     // First option: set from hash.
-    var hash = window.location.hash.slice(1);
+    var hash = window.location.hash.slice(1).replace('-', ' ');
     if (!hash) {
       return false;
     }
