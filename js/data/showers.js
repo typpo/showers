@@ -59,8 +59,7 @@ window.METEOR_CLOUD_DATA = {
       w: 217.9762263570652, // arg of peri, aka 'peri' in sbdb
       ma: 158.4168571978383, // mean anomaly, aka 'M' in sbdb
       p: 1535.061194216666, // period
-    },
-    full_orbit_data: window.Capricornid,
+    }
   },
   'Lyrids': {
     name: 'Lyrids',
@@ -86,8 +85,7 @@ window.METEOR_CLOUD_DATA = {
         url: 'http://astrobob.areavoices.com/files/2012/04/Lyrids-2011-12_30April-232-1024x698.jpg',
         caption: '',
       },
-    ],
-    full_orbit_data: window.Lyrid,
+    ]
   },
   'Orionids': {
     name: 'Orionids',
