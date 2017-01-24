@@ -771,6 +771,8 @@
         attributes.is_planet.value[i] = 0.0;
       }
 
+      console.log(obj.eph.i);
+
       attributes.a.value[i] = obj.eph.a;
       attributes.e.value[i] = obj.eph.e;
       attributes.i.value[i] = obj.eph.i;

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Example: python process_cams_data.py cams_2013.csv cams_splits/
+# Example: python process_cams_data.py cams_2013.csv
 
 import csv
 import sys
