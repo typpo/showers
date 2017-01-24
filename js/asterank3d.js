@@ -598,8 +598,14 @@
     // Update caption
     $('#meteor-shower-name').html(cloud_obj.name);
     $('#meteor-shower-peak').html(cloud_obj.peak);
-    $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
-    $('#meteor-shower-object-name').html(cloud_obj.source_name);
+
+    if (cloud_obj.source_type && cloud_obj.source_name) {
+      $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
+      $('#meteor-shower-object-name').html(cloud_obj.source_name);
+    } else {
+      $('#meteor-shower-source-type').empty();
+      $('#meteor-shower-object-name').html('an unknown object');
+    }
 
     // Add it to visualization.
     addCloudObj(cloud_obj);
@@ -615,20 +621,22 @@
   // particles, and other annotations to the simulation.
   function addCloudObj(cloud_obj) {
     // Add new comet.
-    var comet = new Orbit3D(cloud_obj.source_orbit, {
-      color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
-      display_color: new THREE.Color(0xff69b4), // hot pink
-      particle_geometry: particle_system_geometry,
-      name: cloud_obj.source_name,
-    });
-    cometDisplayed = comet;
-    cometOrbitDisplayed = comet.getEllipse();
-    if (planet_orbits_visible) {
-      scene.add(cometOrbitDisplayed);
-    }
+    if (cloud_obj.source_orbit) {
+      var comet = new Orbit3D(cloud_obj.source_orbit, {
+        color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+        display_color: new THREE.Color(0xff69b4), // hot pink
+        particle_geometry: particle_system_geometry,
+        name: cloud_obj.source_name,
+      });
+      cometDisplayed = comet;
+      cometOrbitDisplayed = comet.getEllipse();
+      if (planet_orbits_visible) {
+        scene.add(cometOrbitDisplayed);
+      }
 
-    // Add mouseover label.
-    annotateOrbit(comet.opts.name, comet.getFatEllipse());
+      // Add mouseover label.
+      annotateOrbit(comet.opts.name, comet.getFatEllipse());
+    }
 
     // Add meteor cloud.
     loadParticles(cloud_obj);
@@ -770,8 +778,6 @@
         attributes.size.value[i] = obj.opts.object_size;
         attributes.is_planet.value[i] = 0.0;
       }
-
-      console.log(obj.eph.i);
 
       attributes.a.value[i] = obj.eph.a;
       attributes.e.value[i] = obj.eph.e;

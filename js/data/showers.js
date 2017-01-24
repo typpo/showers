@@ -6,6 +6,7 @@ window.METEOR_CLOUD_DATA = {
     map: 'perseids_north.jpg',
     iau_number: 7,
     // TODO comet struct
+    source_type: 'comet',
     source_name: 'Swift-Tuttle',
     source_orbit: {
       full_name: 'Comet 109P/Swift-Tuttle',
@@ -28,6 +29,7 @@ window.METEOR_CLOUD_DATA = {
     date: '11/18',
     map: 'leonids_north.jpg',
     iau_number: 13,
+    source_type: 'comet',
     source_name: 'Tempel-Tuttle',
     source_orbit: {
       full_name: 'Comet 55P/Tempel-Tuttle',
@@ -47,6 +49,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'late July',
     date: '7/31',
     iau_number: 1,
+    source_type: 'comet',
     source_name: '169P/NEAT',
     source_orbit: {
       full_name: 'Comet 169P/NEAT',
@@ -67,6 +70,7 @@ window.METEOR_CLOUD_DATA = {
     date: '4/22',
     map: 'lyrids_north.jpg',
     iau_number: 6,
+    source_type: 'comet',
     source_name: 'C/1861 G1 Thatcher',
     source_orbit: {
       full_name: 'Comet C/1861 G1 Thatcher',
@@ -93,6 +97,7 @@ window.METEOR_CLOUD_DATA = {
     date: '10/21',
     map: 'orionids_north.jpg',
     iau_number: 8,
+    source_type: 'comet',
     source_name: 'Halley',
     source_orbit: {
       full_name: 'Comet 1P/Halley',
@@ -113,6 +118,7 @@ window.METEOR_CLOUD_DATA = {
     date: '5/5',
     map: 'eta_aquarids_north.jpg',
     iau_number: 31,
+    source_type: 'comet',
     source_name: 'Halley',
     source_orbit: {
       full_name: 'Comet 1P/Halley',
@@ -128,13 +134,13 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Quadrantids': {
-    source_type: 'asteroid',
     name: 'Quadrantids',
     peak: 'early January',
     date: '1/3',
     iau_number: 10,
     map: 'quadrantids_north.jpg',
     // TODO comet struct
+    source_type: 'asteroid',
     source_name: '2003 EH1',
     source_orbit: {
       full_name: 'Asteroid 2003 EH1',
@@ -156,6 +162,7 @@ window.METEOR_CLOUD_DATA = {
     date: '7/28',
     map: 'delta_aquarids_south.jpg',
     iau_number: 5,
+    source_type: 'comet',
     source_name: 'P/2008 Y12',
     source_orbit: {
       full_name: 'Comet P/2008 Y12 (SOHO)',
@@ -175,6 +182,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'October',
     date: '10/10',
     iau_number: 2,
+    source_type: 'comet',
     source_name: 'Encke',
     source_orbit: {
       full_name: 'Comet 2P/Encke',
@@ -194,6 +202,7 @@ window.METEOR_CLOUD_DATA = {
     peak: 'November',
     date: '11/12',
     iau_number: 17,
+    source_type: 'comet',
     source_name: 'Encke',
     source_orbit: {
       full_name: 'Comet 2P/Encke',
@@ -210,12 +219,12 @@ window.METEOR_CLOUD_DATA = {
   },
   'Geminids': {
     // TODO: fewer particles
-    source_type: 'asteroid',
     name: 'Geminids',
     peak: 'mid-December',
     date: '12/14',
     map: 'geminids_north.jpg',
     iau_number: 4,
+    source_type: 'asteroid',
     source_name: 'Phaethon',
     source_orbit: {
       full_name: 'Asteroid 3200 Phaethon',
@@ -235,12 +244,12 @@ window.METEOR_CLOUD_DATA = {
     }
   },
   'Ursids': {
-    source_type: 'comet',
     name: 'Ursids',
     peak: 'mid-December',
     date: '12/21',
     map: 'ursids_north.jpg',
     iau_number: 15,
+    source_type: 'comet',
     source_name: 'Tuttle',
     source_orbit: {
       full_name: 'Comet 8P/Tuttle',
@@ -261,8 +270,10 @@ window.METEOR_CLOUD_DATA = {
   },
   'Kappa Cygnids': {
     name: 'Kappa Cygnids',
-    peak: 'late July',
-    date: '7/31',
+    peak: 'mid August',
+    date: '8/21',
+    /*
+    source_type: 'comet',
     source_name: '169P/NEAT',
     source_orbit: {
       full_name: 'Comet 169P/NEAT',
@@ -276,12 +287,15 @@ window.METEOR_CLOUD_DATA = {
       ma: 158.4168571978383, // mean anomaly, aka 'M' in sbdb
       p: 1535.061194216666, // period
     },
+    */
     full_orbit_data: window.KCY,
   },
   'Omicron Eridanids': {
     name: 'Omicron Eridanids',
-    peak: 'late July',
-    date: '7/31',
+    peak: 'mid November',
+    date: '11/22',
+    /*
+    source_type: 'comet',
     source_name: '169P/NEAT',
     source_orbit: {
       full_name: 'Comet 169P/NEAT',
@@ -295,6 +309,7 @@ window.METEOR_CLOUD_DATA = {
       ma: 158.4168571978383, // mean anomaly, aka 'M' in sbdb
       p: 1535.061194216666, // period
     },
+    */
     full_orbit_data: window.OER,
   },
 };
