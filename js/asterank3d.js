@@ -469,8 +469,15 @@
     // Show the upcoming meteor shower that's closest to today.
     var now = new Date();
     shower_names.sort(function(a, b) {
-      var showerAdate = new Date(window.METEOR_CLOUD_DATA[a].date);
-      var showerBdate = new Date(window.METEOR_CLOUD_DATA[b].date);
+      var showerA = window.METEOR_CLOUD_DATA[a];
+      var showerB = window.METEOR_CLOUD_DATA[b];
+      if (showerA.hideInMenu) {
+        return 1;
+      } else if (showerB.hideInMenu) {
+        return -1;
+      }
+      var showerAdate = new Date(showerA.date);
+      var showerBdate = new Date(showerB.date);
 
       showerAdate.setYear(1900 + now.getYear());
       showerBdate.setYear(1900 + now.getYear());
@@ -488,7 +495,11 @@
     shower_names.forEach(function(key) {
       var shower = window.METEOR_CLOUD_DATA[key];
       var display = key + ' - ' + shower.peak;
-      $('<option>').html(display).attr('value', key).appendTo($select);
+      var $opt = $('<option>').html(display).attr('value', key)
+      if (shower.hideInMenu) {
+        $opt.hide();
+      }
+      $opt.appendTo($select);
     });
     $select.append('<option value="View all">Everything at once</option>');
 
@@ -707,7 +718,9 @@
     var already_added = {};
     for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
       var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
-      if (already_added[cloud_obj.source_orbit.full_name]) continue;
+      if (cloud_obj.hideInMenu || already_added[cloud_obj.source_orbit.full_name]) {
+        continue;
+      }
 
       if (cloud_obj.full_orbit_data) {
         everything.full_orbit_data.push.apply(
