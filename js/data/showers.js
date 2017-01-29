@@ -270,6 +270,7 @@ window.METEOR_CLOUD_DATA = {
   },
   'Kappa Cygnids': {
     hideInMenu: true,
+    highlight_ecliptic: true,
 
     name: 'Kappa Cygnids',
     peak: 'mid August',
@@ -294,6 +295,7 @@ window.METEOR_CLOUD_DATA = {
   },
   'Omicron Eridanids': {
     hideInMenu: true,
+    highlight_ecliptic: true,
 
     name: 'Omicron Eridanids',
     peak: 'mid November',

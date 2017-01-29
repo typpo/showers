@@ -56,6 +56,9 @@
     , first_loaded = false
     , skyBox = null
 
+  // Meteor cloud stuff
+  var current_cloud_obj = null;
+
   // Lock/feature stuff
   var feature_map = {}       // map from object full name to Orbit3D instance
     , locked_object = null
@@ -655,7 +658,7 @@
 
   // Adds particles to the simulation.
   function loadParticles(cloud_obj) {
-    // TODO loader
+    // TODO(ian): loader
     //$('#loading').show();
     //$('#loading-text').html('asteroids database');
     if (cloud_obj.full_orbit_data) {
@@ -668,6 +671,7 @@
       var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
       onVisualsReady(me.setupParticlesFromData, data);
     }
+    current_cloud_obj = cloud_obj;
   }
 
   function loadParticlesFromOrbitData(orbit_data) {
@@ -756,6 +760,7 @@
       is_planet: { type: 'f', value: [] }
     };
 
+    console.log(current_cloud_obj);
     uniforms = {
       color: { type: 'c', value: new THREE.Color(0xffffff) },
       jed: { type: 'f', value: jed },
@@ -770,7 +775,11 @@
       small_roid_circled_texture: {
         type: 't',
         value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png')
-      }
+      },
+      highlight_above_ecliptic: current_cloud_obj.highlight_ecliptic ?
+          { type: 'f', value: 1. } : { type: 'f', value: 0. },
+      highlight_below_ecliptic: current_cloud_obj.highlight_ecliptic ?
+          { type: 'f', value: 1. } : { type: 'f', value: 0. },
     };
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
@@ -803,14 +812,14 @@
       attributes.realP.value[i] = attributes.P.value[i] =
         obj.eph.p || Math.sqrt(
           Math.pow(obj.eph.a, 3)) * 365.256;  // TODO
-      if (i >= planets.length) {
+      if (i >= planets.length && current_cloud_obj.artificially_increase_speed) {
         // Artificially speed up non-planets.
         attributes.P.value[i] /= opts.meteoroid_factor;
       }
       attributes.epoch.value[i] = obj.eph.epoch ||
-        Math.random() * 2451545.0; // TODO
+        Math.random() * 2451545.0;
       attributes.value_color.value[i] = obj.opts.display_color ||
-        new THREE.Color(0xff00ff); // TODO
+        new THREE.Color(0xff00ff);
       attributes.locked.value[i] = 0.0;
       particle_system_geometry.vertices.push(new THREE.Vector3(0, 0, 0));
     }  // end added_objects loop

@@ -136,6 +136,8 @@
 
     uniform float earth_i;
     uniform float earth_om;
+    uniform float highlight_above_ecliptic;
+    uniform float highlight_below_ecliptic;
 
     uniform float jed;
 
@@ -203,9 +205,17 @@
       vPlanet = is_planet;
 
       vec3 newpos = getAstroPos();
+      if (newpos[2] > 0. && highlight_above_ecliptic > 0.) {
+        vColor = vec3(148., 198., 73.) / vec3(255., 255., 255.);
+        gl_PointSize = size * 2.;
+      } else if (newpos[2] < 0. && highlight_below_ecliptic > 0.) {
+        vColor = vec3(73., 134., 198.) / vec3(255., 255., 255.);
+        gl_PointSize = size * 2.;
+      } else {
+        gl_PointSize = size;
+      }
       vec4 mvPosition = modelViewMatrix * vec4(newpos, 1.0);
       gl_Position = projectionMatrix * mvPosition;
-      gl_PointSize = size;
     }
   </script>
   <script type="x-shader/x-fragment" id="orbit-fragment-shader">
