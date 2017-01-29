@@ -1,4 +1,4 @@
-window.KCY=[
+window.KCG=[
   {
     "a": 3.293,
     "om": 115.406,

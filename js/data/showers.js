@@ -271,6 +271,7 @@ window.METEOR_CLOUD_DATA = {
   'Kappa Cygnids': {
     hideInMenu: true,
     highlight_ecliptic: true,
+    // iau_number: 338,  // Not full
 
     name: 'Kappa Cygnids',
     peak: 'mid August',
@@ -291,11 +292,12 @@ window.METEOR_CLOUD_DATA = {
       p: 1535.061194216666, // period
     },
     */
-    full_orbit_data: window.KCY,
+    full_orbit_data: window.KCG,
   },
   'Omicron Eridanids': {
     hideInMenu: true,
     highlight_ecliptic: true,
+    // iau_number: 338,  // Not full
 
     name: 'Omicron Eridanids',
     peak: 'mid November',

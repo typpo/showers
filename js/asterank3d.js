@@ -757,10 +757,13 @@
 
       // Attributes can't be bool or int in some versions of opengl
       locked: { type: 'f', value: [] },
-      is_planet: { type: 'f', value: [] }
+      is_planet: { type: 'f', value: [] },
+
+      // Highlight attributes
+      highlight_above_ecliptic: { type: 'f', value: [] },
+      highlight_below_ecliptic: { type: 'f', value: [] },
     };
 
-    console.log(current_cloud_obj);
     uniforms = {
       color: { type: 'c', value: new THREE.Color(0xffffff) },
       jed: { type: 'f', value: jed },
@@ -776,10 +779,6 @@
         type: 't',
         value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png')
       },
-      highlight_above_ecliptic: current_cloud_obj.highlight_ecliptic ?
-          { type: 'f', value: 1. } : { type: 'f', value: 0. },
-      highlight_below_ecliptic: current_cloud_obj.highlight_ecliptic ?
-          { type: 'f', value: 1. } : { type: 'f', value: 0. },
     };
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
@@ -796,9 +795,15 @@
       if (i < planets.length) {
         attributes.size.value[i] = 100;
         attributes.is_planet.value[i] = 1.0;
+        attributes.highlight_above_ecliptic.value[i] = 0.0;
+        attributes.highlight_below_ecliptic.value[i] = 0.0;
       } else {
         attributes.size.value[i] = obj.opts.object_size;
         attributes.is_planet.value[i] = 0.0;
+        attributes.highlight_above_ecliptic.value[i] =
+            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
+        attributes.highlight_below_ecliptic.value[i] =
+            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
       }
 
       attributes.a.value[i] = obj.eph.a;

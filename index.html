@@ -136,8 +136,6 @@
 
     uniform float earth_i;
     uniform float earth_om;
-    uniform float highlight_above_ecliptic;
-    uniform float highlight_below_ecliptic;
 
     uniform float jed;
 
@@ -150,6 +148,9 @@
     attribute float n;
     attribute float w;
     attribute float epoch;
+
+    attribute float highlight_above_ecliptic;
+    attribute float highlight_below_ecliptic;
 
     attribute float locked;
     attribute float is_planet;
@@ -282,7 +283,7 @@
   <script type="text/javascript" src="lib/dat.gui.js"></script>
 
   <!-- My scripts -->
-  <script type="text/javascript" src="js/data/kcy.js"></script>
+  <script type="text/javascript" src="js/data/kcg.js"></script>
   <script type="text/javascript" src="js/data/oer.js"></script>
   <script type="text/javascript" src="js/data/showers.js"></script>
 
