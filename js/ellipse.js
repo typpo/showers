@@ -43,6 +43,12 @@
   };
 
   Orbit3D.prototype.getPosAtTime = function(jed) {
+    // Dummies for CAMS data.
+    this.eph.w_bar = this.eph.w_bar || 0;
+    this.eph.ma = this.eph.ma || Math.random() * 360;
+    this.eph.epoch = this.eph.epoch || 0;
+    this.eph.p = this.eph.p || 1000;
+
     // Note: logic below must match the vertex shader.
     // This position calculation is used to create orbital ellipses.
     var e = this.eph.e;
@@ -82,6 +88,21 @@
     return ret;
   };
 
+  Orbit3D.prototype.getSkinnyEllipse = function() {
+    if (!this.ellipse) {
+      var pointGeometry = this.createOrbit(this.opts.jed);
+      this.ellipse = new THREE.Line(pointGeometry,
+        new THREE.LineDashedMaterial({
+          color: this.opts.color,
+          // Anything below lineWidth 1 will be blinky.
+          linewidth: 1,
+          dashSize: 0.5,
+          gapSize: 2,
+        }), THREE.LineStrip);
+    }
+    return this.ellipse;
+  };
+
   Orbit3D.prototype.getEllipse = function() {
     if (!this.ellipse) {
       var pointGeometry = this.createOrbit(this.opts.jed);
@@ -90,7 +111,7 @@
           color: this.opts.color,
           linewidth: 1,
           dashSize: 2,
-          gapSize: 0.5
+          gapSize: 0.5,
         }), THREE.LineStrip);
     }
     return this.ellipse;
