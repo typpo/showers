@@ -46,6 +46,7 @@
     , object_movement_on = true
     , last_hovered
     , added_objects = []
+    , added_particle_orbits = []
     , planets = []
     , planet_orbits_visible = true
     , source_orbit = null
@@ -283,12 +284,11 @@
         orbit_params.particle_geometry = particle_system_geometry; // will add itself to this geometry
         orbit_params.jed = jed;
         orbit = new Orbit3D(roid, orbit_params);
-      }
-      else {
-        var display_color = /*i < NUM_BIG_PARTICLES ?
-            opts.top_object_color :*/ displayColorForObject(roid);
+      } else {
+        var display_color = displayColorForObject(roid);
+
         orbit = new Orbit3D(roid, {
-          color: 0xcccccc,
+          color: 0xaaaaaa,
           display_color: display_color,
           width: 2,
           object_size: i < NUM_BIG_PARTICLES ? 50 : 30, //1.5,
@@ -549,13 +549,15 @@
     me.clearRankings();
     if (cometOrbitDisplayed) {
       scene.remove(cometOrbitDisplayed);
-    }
-    if (cometOrbitDisplayed) {
+
       // Clean up mouseovers.
       try {
         domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
         domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
       } catch(e) {}
+    }
+    for (var i=0; i < added_particle_orbits.length; i++) {
+      scene.remove(added_particle_orbits[i]);
     }
   }
 
@@ -664,6 +666,9 @@
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
       loadParticlesFromOrbitData(cloud_obj.full_orbit_data);
+      if (cloud_obj.show_particle_orbits) {
+        onVisualsReady(addParticleOrbits);
+      }
     } else if (cloud_obj.iau_number) {
       loadNewIAUSelection(cloud_obj.iau_number);
     } else if (cloud_obj.source_orbit) {
@@ -676,6 +681,14 @@
 
   function loadParticlesFromOrbitData(orbit_data) {
     onVisualsReady(me.setupParticlesFromData, orbit_data);
+  }
+
+  function addParticleOrbits() {
+    for (var j=planets.length; j < added_objects.length; j++) {
+      var ellipse = added_objects[j].getSkinnyEllipse();
+      added_particle_orbits.push(ellipse);
+      scene.add(ellipse);
+    }
   }
 
   // Creates a meteor cloud based on the orbit of a comet or asteroid, or any

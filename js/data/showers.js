@@ -271,53 +271,23 @@ window.METEOR_CLOUD_DATA = {
   'Kappa Cygnids': {
     hideInMenu: true,
     highlight_ecliptic: true,
+    show_particle_orbits: true,
     // iau_number: 338,  // Not full
 
     name: 'Kappa Cygnids',
     peak: 'mid August',
     date: '8/21',
-    /*
-    source_type: 'comet',
-    source_name: '169P/NEAT',
-    source_orbit: {
-      full_name: 'Comet 169P/NEAT',
-      epoch: 2454306.5,
-      a: 2.604263020070025,
-      e: 0.7669213009105551,
-      q: 0.6069982368046702,
-      i: 11.30426956301453,
-      om: 176.2198405695179, // long of ascending node, aka 'node' in sbdb
-      w: 217.9762263570652, // arg of peri, aka 'peri' in sbdb
-      ma: 158.4168571978383, // mean anomaly, aka 'M' in sbdb
-      p: 1535.061194216666, // period
-    },
-    */
     full_orbit_data: window.KCG,
   },
   'Omicron Eridanids': {
     hideInMenu: true,
     highlight_ecliptic: true,
+    show_particle_orbits: true,
     // iau_number: 338,  // Not full
 
     name: 'Omicron Eridanids',
     peak: 'mid November',
     date: '11/22',
-    /*
-    source_type: 'comet',
-    source_name: '169P/NEAT',
-    source_orbit: {
-      full_name: 'Comet 169P/NEAT',
-      epoch: 2454306.5,
-      a: 2.604263020070025,
-      e: 0.7669213009105551,
-      q: 0.6069982368046702,
-      i: 11.30426956301453,
-      om: 176.2198405695179, // long of ascending node, aka 'node' in sbdb
-      w: 217.9762263570652, // arg of peri, aka 'peri' in sbdb
-      ma: 158.4168571978383, // mean anomaly, aka 'M' in sbdb
-      p: 1535.061194216666, // period
-    },
-    */
     full_orbit_data: window.OER,
   },
 };
