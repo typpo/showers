@@ -30,7 +30,9 @@
     var parts = this.eph.e > .20 ? 1200 : 300;   // Extra precision for high eccentricity.
     parts = this.eph.a > 10 ? parts + 10000 : parts;
     var delta = Math.ceil(limit / parts);
-    var prev;
+    var prevPos;
+
+    points = new THREE.Geometry();
     for (var i=0; i <= parts; i++, time+=delta) {
       var pos = this.getPosAtTime(time);
       if (isNaN(pos[0]) || isNaN(pos[1]) || isNaN(pos[2])) {
@@ -38,7 +40,14 @@
         console.log(this.eph);
       }
       var vector = new THREE.Vector3(pos[0], pos[1], pos[2]);
-      prev = vector;
+      if (prevPos && Math.abs(prevPos[0] - pos[0]) +
+                     Math.abs(prevPos[1] - pos[1]) +
+                     Math.abs(prevPos[2] - pos[2]) > 50) {
+        // Don't render bogus ellipses.
+        points.vertices = [];
+        return points;
+      }
+      prevPos = pos;
       pts.push(vector);
     }
 
