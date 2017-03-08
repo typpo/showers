@@ -50,6 +50,12 @@ a {
   display: none;
 }
 
+#ianww {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
 ul.share-buttons {
   display: inline;
   list-style: none;

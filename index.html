@@ -32,7 +32,7 @@
       <h2><span id="meteor-shower-name">Loading</span> meteor shower</h2>
       <span class="description">
         This shower peaks in <span id="meteor-shower-peak"></span>, when Earth intersects the dust cloud left by <span id="meteor-shower-source-type">comet</span> <span id="meteor-shower-object-name"></span>.  <a class="iframe-hide-container" href="#faq-modal" rel="modal:open">Learn more.</a>
-        <span class="iframe-details-container" style="display:none">
+        <span class="iframe-show-container" style="display:none">
           <a target="_blank" href="http://www.ianww.com/meteor-showers">View other showers and learn more.</a>
         </span>
       </span>
@@ -106,7 +106,7 @@
     </p>
   </div>
 
-  <div id="instructions">
+  <div id="instructions" class="iframe-hide-container">
     Click and drag to turn &middot; Right click to pan &middot; Scroll to zoom
   </div>
 
@@ -120,6 +120,10 @@
   <div id="loading-container" style="display:none">
     <h2>Loading shower data...</h2>
     <p id="loading-message"></p>
+  </div>
+
+  <div id="ianww" class="iframe-show-container" style="display:none">
+    <a href="http://www.ianww.com" target="_blank">ianww.com</a>
   </div>
 
   <script type="x-shader/x-vertex" id="orbit-vertex-shader">
