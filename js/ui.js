@@ -1,3 +1,4 @@
+window.isIframe = true;
 function MeteorsUi(visualization) {
   MeteorsUi.prototype.init = function() {
     $('.toggle-summary').on('click', function() {
@@ -13,7 +14,7 @@ function MeteorsUi(visualization) {
     }
 
     if (window.isIframe) {
-      $('.shower-details-container').hide();
+      $('.iframe-hide-container').hide();
       $('.iframe-details-container').show();
     }
 
