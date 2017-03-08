@@ -1,4 +1,3 @@
-window.isIframe = true;
 function MeteorsUi(visualization) {
   MeteorsUi.prototype.init = function() {
     $('.toggle-summary').on('click', function() {
