@@ -52,8 +52,9 @@ a {
 
 #ianww {
   position: absolute;
-  right: 0;
+  right: 10px;
   bottom: 0;
+  font-size: 10px;
 }
 
 ul.share-buttons {
