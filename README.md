@@ -1,8 +1,11 @@
-# showers
-Rendering of debris clouds in the solar system that cause meteor showers.
+# meteor-showers
 
-When the Earth passes through a cloud, that's a meteor shower!
+This project renders debris clouds in the solar system.  When the Earth passes through a cloud, we experience a meteor shower!
 
-This is a modified version of [Asterank](http://github.com/typpo/asterank)'s 3D code, and should be merged back in at some point...
+The project is online at: http://www.ianww.com/meteor-showers/
 
-MIT license.
+This is a modified version of [Asterank](http://github.com/typpo/asterank)'s 3D code, which is another project of mine.
+
+![](http://i.imgur.com/muPvVzt.jpg)
+
+Copyright 2017 Ian Webster - MIT License
