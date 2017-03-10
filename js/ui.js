@@ -4,10 +4,6 @@ function MeteorsUi(visualization) {
       $('#summary').toggleClass('minimized').toggleClass('maximized');
     });
 
-    $('#ianww-link').attr('href', 'http://www.ianww.com' +
-                                    window.location.pathname +
-                                    window.location.hash);
-
     if (window.isMobile || window.isIframe) {
       $('#sky-map').hide();
     } else {
