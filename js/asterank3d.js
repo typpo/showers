@@ -449,10 +449,10 @@
     return false;
   }
 
-  var lastIauNumber = 0;
+  var last_iau_number = 0;
   function setupIAUInputHandler() {
     $('#btn-iau-input').on('click', function() {
-      var iau_num = prompt('What IAU meteor shower number would you like to view?', lastIauNumber);
+      var iau_num = prompt('What IAU meteor shower number would you like to view?', last_iau_number);
       if (!iau_num && iau_num !== '0') {
         return;
       }
@@ -579,19 +579,25 @@
     }
   }
 
-  function loadNewIAUSelection(iau_num) {
+  function loadNewIAUSelection(iau_num, cb) {
+    last_iau_number = iau_num;
+    loadOrbitsData('js/data/cams_splits/iau_' + iau_num + '.json', cb);
+  }
+
+  function loadOrbitsData(url, cb) {
     showLoader();
-    $.getJSON('js/data/cams_splits/iau_' + iau_num + '.json', function(data) {
-      lastIauNumber = iau_num;
+    $.getJSON(url, function(data) {
       loadParticlesFromOrbitData(data);
       hideLoader();
+      if (cb) cb();
     }).fail(function(err) {
       hideLoader();
       if (typeof mixpanel !== 'undefined') {
-        mixpanel.track('iau selection failed', {
-          iau_num: iau_num
+        mixpanel.track('ajax load failed', {
+          url: url
         });
       }
+      if (cb) cb();
       alert('Sorry, your request for meteor shower data has failed: not an established shower or no data, please try again.');
     });
   }
@@ -666,9 +672,12 @@
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
       loadParticlesFromOrbitData(cloud_obj.full_orbit_data);
-      if (cloud_obj.show_particle_orbits) {
-        onVisualsReady(addParticleOrbits);
-      }
+    } else if (cloud_obj.orbit_data_path) {
+      loadOrbitsData(cloud_obj.orbit_data_path, function() {
+        if (cloud_obj.show_particle_orbits) {
+          onVisualsReady(addParticleOrbits);
+        }
+      });
     } else if (cloud_obj.iau_number) {
       loadNewIAUSelection(cloud_obj.iau_number);
     } else if (cloud_obj.source_orbit) {

@@ -277,7 +277,7 @@ window.METEOR_CLOUD_DATA = {
     name: 'Kappa Cygnids',
     peak: 'mid August',
     date: '8/21',
-    full_orbit_data: window.KCG,
+    orbit_data_path: 'js/data/oer.json',
   },
   'Omicron Eridanids': {
     hideInMenu: true,
@@ -288,6 +288,6 @@ window.METEOR_CLOUD_DATA = {
     name: 'Omicron Eridanids',
     peak: 'mid November',
     date: '11/22',
-    full_orbit_data: window.OER,
+    orbit_data_path: 'js/data/kcg.json',
   },
 };
