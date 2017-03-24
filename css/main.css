@@ -178,6 +178,14 @@ ul.share-buttons img {
 #instructions {
   font-size: 12px;
   position: absolute;
+  bottom: 30px;
+  right: 15px;
+  color: #eee;
+}
+
+#copyright {
+  font-size: 12px;
+  position: absolute;
   bottom: 10px;
   right: 15px;
   color: #eee;
