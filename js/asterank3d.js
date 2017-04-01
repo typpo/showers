@@ -128,6 +128,7 @@
 
     me.setDefaultCameraPosition();
     camera.lookAt(new THREE.Vector3(0,0,0));
+    camera.up.set(0, 0, 1);
     scene.add(camera);
 
     cameraControls = new THREE.TrackballControls(camera, opts.container);
