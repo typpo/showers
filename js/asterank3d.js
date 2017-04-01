@@ -1096,7 +1096,7 @@
     skyBox.scale.set(-1, 1, 1);
     skyBox.eulerOrder = 'XZY';
     skyBox.rotation.z = 3/2*pi;
-    skyBox.rotation.x = pi;
+    skyBox.rotation.x = 5/4*pi;
     skyBox.renderDepth = 1000.0;
     scene.add(skyBox);
     window.skyBox = skyBox;
