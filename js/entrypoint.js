@@ -9,8 +9,7 @@
     },
     show_dat_gui: isScreenBigEnough() && !window.isIframe,
     static_prefix: '',
-    camera_position: [-75.9816547880393, 402.325934864043, 200.518095233536],
-    //camera_position: [18.58451231886428, -350.32000584838624, 133.3893086458709],
+    camera_position: [171.42819082608145, 748.2350595749522, 238.5350226591981],
     camera_fly_around: true,
   });
 
