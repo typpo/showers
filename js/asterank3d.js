@@ -993,7 +993,7 @@
         {
           color: 0x336633, width: 1, jed: jed, object_size: 1.7,
           texture_path: opts.static_prefix + 'img/texture-saturn.jpg',
-          display_color: new THREE.Color(0x996633),
+          display_color: new THREE.Color(0x336633),
           particle_geometry: particle_system_geometry,
           name: 'Saturn'
         });
