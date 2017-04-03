@@ -1016,7 +1016,7 @@
 
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
     planets.forEach(function(planet) {
-      scene.add(planet.getEllipse());
+      scene.add(planet.getSolidEllipse());
     });
   }
 

@@ -113,6 +113,18 @@
     return this.ellipse;
   };
 
+  Orbit3D.prototype.getSolidEllipse = function() {
+    if (!this.ellipse) {
+      var pointGeometry = this.createOrbit(this.opts.jed);
+      this.ellipse = new THREE.Line(pointGeometry,
+        new THREE.LineBasicMaterial({
+          color: this.opts.color,
+          linewidth: 1.5,
+        }), THREE.LineStrip);
+    }
+    return this.ellipse;
+  };
+
   Orbit3D.prototype.getEllipse = function() {
     if (!this.ellipse) {
       var pointGeometry = this.createOrbit(this.opts.jed);
