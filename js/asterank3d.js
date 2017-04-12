@@ -595,7 +595,8 @@
       hideLoader();
       if (typeof mixpanel !== 'undefined') {
         mixpanel.track('ajax load failed', {
-          url: url
+          url: url,
+          error: err
         });
       }
       if (cb) cb();
