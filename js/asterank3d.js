@@ -305,7 +305,7 @@
 
       // Add to list of objects in scene
       added_objects.push(orbit);
-    } // end asteroid results for loop
+    } // end particle results for loop
 
     jed = toJED(new Date());  // reset date
     if (!particles_loaded) {

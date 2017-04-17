@@ -28,32 +28,34 @@
     var pts = [];
     var limit = this.eph.p + 1;
     var parts = this.eph.e > .20 ? 1200 : 300;   // Extra precision for high eccentricity.
-    parts = this.eph.a > 10 ? parts + 10000 : parts;
+    parts = this.eph.a > 10 ? parts + 1000 : parts;
     var delta = Math.ceil(limit / parts);
     var prevPos;
 
     points = new THREE.Geometry();
-    for (var i=0; i <= parts; i++, time+=delta) {
+    for (var i=0; i <= parts; i++, time += delta) {
       var pos = this.getPosAtTime(time);
       if (isNaN(pos[0]) || isNaN(pos[1]) || isNaN(pos[2])) {
         console.error('NaN position value - you may have bad data in the following ephemeris:');
         console.log(this.eph);
       }
       var vector = new THREE.Vector3(pos[0], pos[1], pos[2]);
+      /*
       if (prevPos && Math.abs(prevPos[0] - pos[0]) +
                      Math.abs(prevPos[1] - pos[1]) +
-                     Math.abs(prevPos[2] - pos[2]) > 50) {
-        // Don't render bogus ellipses.
+                     Math.abs(prevPos[2] - pos[2]) > 100) {
+        // Don't render bogus or very large ellipses.
         points.vertices = [];
         return points;
       }
+     */
       prevPos = pos;
       pts.push(vector);
     }
 
     points = new THREE.Geometry();
     points.vertices = pts;
-    points.computeLineDistances(); // Required for dotted lines.
+    //points.computeLineDistances(); // Required for dotted lines.
 
     return points;
   };
