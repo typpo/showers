@@ -423,8 +423,8 @@
     }
 
     // Maybe an IAU number?
-    if (hash.indexOf('iau-') === 0) {
-      var iau_num = parseInt(hash.replace('iau-', ''));
+    if (hash.indexOf('iau') === 0) {
+      var iau_num = parseInt(hash.replace('iau', ''));
       cleanUpPreviousViewSelection();
       setupUiForIAUSelection(iau_num);
       loadNewIAUSelection(iau_num);
@@ -572,6 +572,7 @@
   function loadOrbitsData(url, cb) {
     showLoader();
     $.getJSON(url, function(data) {
+      current_cloud_obj = data;
       loadParticlesFromOrbitData(data);
       setTimeout(function() {
         onVisualsReady(addParticleOrbits);
@@ -760,8 +761,6 @@
       ma: { type: 'f', value: [] },
       n: { type: 'f', value: [] },
       w: { type: 'f', value: [] },
-      P: { type: 'f', value: [] },
-      realP: { type: 'f', value: [] },
       epoch: { type: 'f', value: [] },
       size: { type: 'f', value: [] },
       value_color : { type: 'c', value: [] },
@@ -825,13 +824,6 @@
       attributes.n.value[i] = obj.eph.n || -1.0;
       attributes.w.value[i] = obj.eph.w_bar ||
         (obj.eph.w + obj.eph.om);
-      attributes.realP.value[i] = attributes.P.value[i] =
-        obj.eph.p || Math.sqrt(
-          Math.pow(obj.eph.a, 3)) * 365.256;  // TODO
-      if (i >= planets.length && current_cloud_obj.artificially_increase_speed) {
-        // Artificially speed up non-planets.
-        attributes.P.value[i] /= opts.meteoroid_factor;
-      }
       attributes.epoch.value[i] = obj.eph.epoch ||
         Math.random() * 2451545.0;
       attributes.value_color.value[i] = obj.opts.display_color ||
