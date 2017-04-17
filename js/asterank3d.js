@@ -9,7 +9,7 @@
   opts.default_camera_position = opts.camera_position || [0, -136, 113];
   opts.camera_fly_around = typeof opts.camera_fly_around === 'undefined' ?
     true : opts.camera_fly_around;
-  opts.jed_delta = opts.jed_delta || 0.5;
+  opts.jed_delta = opts.jed_delta || 0.75;
   opts.meteoroid_factor = opts.meteoroid_factor || 6;
   opts.custom_object_fn = opts.custom_object_fn || null;
   opts.object_texture_path = opts.object_texture_path ||
