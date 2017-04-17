@@ -424,8 +424,8 @@
     }
 
     // Maybe an IAU number?
-    if (hash.indexOf('iau-') === 0) {
-      var iau_num = parseInt(hash.replace('iau-', ''));
+    if (hash.indexOf('iau') === 0) {
+      var iau_num = parseInt(hash.replace('iau', ''));
       cleanUpPreviousViewSelection();
       setupUiForIAUSelection(iau_num);
       loadNewIAUSelection(iau_num);
@@ -573,6 +573,7 @@
   function loadOrbitsData(url, cb) {
     showLoader();
     $.getJSON(url, function(data) {
+      current_cloud_obj = data;
       loadParticlesFromOrbitData(data);
       setTimeout(function() {
         //onVisualsReady(addParticleOrbits);
