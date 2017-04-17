@@ -17,8 +17,6 @@
     this.eph.w_bar = this.eph.w_bar;
     this.eph.ma = this.eph.ma || Math.random() * 360;
     this.eph.epoch = this.eph.epoch;
-    this.eph.p = this.eph.p;
-
   };
 
   Orbit3D.prototype.createOrbit = function() {
@@ -26,7 +24,8 @@
     var points;
     var time = this.opts.jed;
     var pts = [];
-    var limit = this.eph.p + 1;
+    var period = this.getPeriodInDays();
+    var limit = period + 1;
     var parts = this.eph.e > .20 ? 1200 : 300;   // Extra precision for high eccentricity.
     parts = this.eph.a > 10 ? parts + 10000 : parts;
     var delta = Math.ceil(limit / parts);
@@ -67,11 +66,12 @@
     var o = (this.eph.om) * pi/180; // longitude of ascending node
     // LONGITUDE of perihelion
     var p = (this.eph.w_bar || this.eph.w + this.eph.om) * pi/180;
+    var period = this.getPeriodInDays();
     var ma = this.eph.ma;
     var M;
     // Calculate mean anomaly at jed
     ma = ma * pi/180;
-    var n = 2*pi / this.eph.p;
+    var n = 2*pi / period;
     var epoch = this.eph.epoch;
     var d = jed - epoch;
     M = ma + n * d;
@@ -97,6 +97,10 @@
     var ret = [X, Y, Z];
     return ret;
   };
+
+  Orbit3D.prototype.getPeriodInDays = function() {
+    return Math.sqrt(Math.pow(this.eph.a, 3)) * 365.25;
+  }
 
   Orbit3D.prototype.getSkinnyEllipse = function() {
     if (!this.ellipse) {
