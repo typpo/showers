@@ -569,6 +569,10 @@
     loadOrbitsData('js/data/cams_splits/iau_' + iau_num + '.json', cb);
   }
 
+  function getIAUOrbitsJson(iau_num, cb) {
+    $.getJSON('js/data/cams_splits/iau_' + iau_num + '.json', cb);
+  }
+
   function loadOrbitsData(url, cb) {
     showLoader();
     $.getJSON(url, function(cloud_obj) {
@@ -732,6 +736,8 @@
       full_orbit_data: [],
     };
     var already_added = {};
+    var numReturned = 0;
+    var numExpected = 0;
     for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
       var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
       if (cloud_obj.hideInMenu || already_added[cloud_obj.source_orbit.full_name]) {
@@ -741,14 +747,29 @@
       if (cloud_obj.full_orbit_data) {
         everything.full_orbit_data.push.apply(
           everything.full_orbit_data, cloud_obj.full_orbit_data);
-      } else {
+      } else if (cloud_obj.iau_number) {
+        getIAUOrbitsJson(cloud_obj.iau_number, function(data) {
+          everything.full_orbit_data.push.apply(everything.full_orbit_data, data);
+          numReturned++;
+        });
+        numExpected++;
+      }
+      /*else {
         everything.full_orbit_data.push.apply(
           everything.full_orbit_data,
           simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit));
-      }
+      }*/
       already_added[cloud_obj.source_orbit.full_name] = true;
     }
-    loadParticles(everything);
+
+    var waitStart = new Date();
+    var waitInterval = setInterval(function() {
+      // Wait til all the data has been fetched, or 20 seconds have passed.
+      if (numExpected === numReturned || new Date() - waitStart > 20000) {
+        loadParticles(everything);
+        clearInterval(waitInterval);
+      }
+    }, 100);
   }
 
   function createParticleSystem() {
