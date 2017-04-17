@@ -346,7 +346,7 @@
           }
         }
       }).listen();
-      gui.add(text, 'Speed', 0, 2).onChange(function(val) {
+      gui.add(text, 'Speed', 0, 15).onChange(function(val) {
         opts.jed_delta = val;
         var was_moving = object_movement_on;
         object_movement_on = opts.jed_delta > 0;
