@@ -103,7 +103,7 @@
       var pointGeometry = this.createOrbit(this.opts.jed);
       this.ellipse = new THREE.Line(pointGeometry,
         new THREE.LineDashedMaterial({
-          color: this.opts.color,
+          color: new THREE.Color(0xff0000),
           // Anything below lineWidth 1 will be blinky.
           linewidth: 1,
           dashSize: 0.5,

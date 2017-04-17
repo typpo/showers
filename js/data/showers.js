@@ -70,6 +70,8 @@ window.METEOR_CLOUD_DATA = {
     date: '4/22',
     map: 'lyrids_north.jpg',
     iau_number: 6,
+    show_particle_orbits: true,
+
     source_type: 'comet',
     source_name: 'C/1861 G1 Thatcher',
     source_orbit: {

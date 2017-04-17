@@ -367,8 +367,7 @@
         scene.remove(planets[i].getEllipse());
       }
       scene.remove(cometOrbitDisplayed);
-    }
-    else {
+    } else {
       for (var i=0; i < planets.length; i++) {
         scene.add(planets[i].getEllipse());
       }
@@ -575,7 +574,7 @@
     $.getJSON(url, function(data) {
       loadParticlesFromOrbitData(data);
       setTimeout(function() {
-        //onVisualsReady(addParticleOrbits);
+        onVisualsReady(addParticleOrbits);
       }, 100);
       hideLoader();
       if (cb) cb();
@@ -683,7 +682,6 @@
   }
 
   function addParticleOrbits() {
-    console.log('adding', added_objects.length);
     for (var j=planets.length; j < added_objects.length; j++) {
       var ellipse = added_objects[j].getSkinnyEllipse();
       added_particle_orbits.push(ellipse);
