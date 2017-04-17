@@ -40,15 +40,13 @@
         console.log(this.eph);
       }
       var vector = new THREE.Vector3(pos[0], pos[1], pos[2]);
-      /*
       if (prevPos && Math.abs(prevPos[0] - pos[0]) +
                      Math.abs(prevPos[1] - pos[1]) +
-                     Math.abs(prevPos[2] - pos[2]) > 100) {
+                     Math.abs(prevPos[2] - pos[2]) > 220) {
         // Don't render bogus or very large ellipses.
         points.vertices = [];
         return points;
       }
-     */
       prevPos = pos;
       pts.push(vector);
     }
