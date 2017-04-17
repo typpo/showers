@@ -885,13 +885,16 @@
           //cam.position.set(pos[0], pos[1], pos[2]);
           cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
         } else /* mode VIEW_FROM */ {
-          // TODO Reset camera target if user clicks off follow.
           cam.position.set(pos[0], pos[1], pos[2]);
+          /*
           if (cometDisplayed) {
+            // TODO Reset camera target if user clicks off follow.
             var cometPos = cometDisplayed.getPosAtTime(jed);;
             cameraControls.target =
               new THREE.Vector3(cometPos[0], cometPos[1], cometPos[2]);
           }
+          */
+          cameraControls.target = new THREE.Vector3(-100, 0, 0);
         }
       } else {
         me.setNeutralCameraPosition();
