@@ -571,12 +571,12 @@
 
   function loadOrbitsData(url, cb) {
     showLoader();
-    $.getJSON(url, function(data) {
-      current_cloud_obj = data;
-      loadParticlesFromOrbitData(data);
-      setTimeout(function() {
+    $.getJSON(url, function(cloud_obj) {
+      current_cloud_obj = cloud_obj;
+      loadParticlesFromOrbitData(cloud_obj);
+      if (cloud_obj.show_particle_orbits) {
         onVisualsReady(addParticleOrbits);
-      }, 100);
+      }
       hideLoader();
       if (cb) cb();
     }).fail(function(err) {

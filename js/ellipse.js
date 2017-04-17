@@ -14,9 +14,9 @@
     this.eph = eph;
 
     // Dummies for CAMS data.
-    this.eph.w_bar = this.eph.w_bar;
     this.eph.ma = this.eph.ma || Math.random() * 360;
-    this.eph.epoch = this.eph.epoch;
+    this.eph.w_bar = this.eph.w_bar || 0;
+    this.eph.epoch = this.eph.epoch || 0;
   };
 
   Orbit3D.prototype.createOrbit = function() {
@@ -27,7 +27,7 @@
     var period = this.getPeriodInDays();
     var limit = period + 1;
     var parts = this.eph.e > .20 ? 1200 : 300;   // Extra precision for high eccentricity.
-    parts = this.eph.a > 10 ? parts + 1000 : parts;
+    parts = this.eph.a > 10 ? 10000 : parts;
     var delta = Math.ceil(limit / parts);
     var prevPos;
 
@@ -41,7 +41,7 @@
       var vector = new THREE.Vector3(pos[0], pos[1], pos[2]);
       if (prevPos && Math.abs(prevPos[0] - pos[0]) +
                      Math.abs(prevPos[1] - pos[1]) +
-                     Math.abs(prevPos[2] - pos[2]) > 220) {
+                     Math.abs(prevPos[2] - pos[2]) > 120) {
         // Don't render bogus or very large ellipses.
         points.vertices = [];
         return points;
@@ -107,7 +107,7 @@
       var pointGeometry = this.createOrbit(this.opts.jed);
       this.ellipse = new THREE.Line(pointGeometry,
         new THREE.LineDashedMaterial({
-          color: new THREE.Color(0xff0000),
+          color: new THREE.Color(0xffffff),
           // Anything below lineWidth 1 will be blinky.
           linewidth: 1,
           dashSize: 0.5,
