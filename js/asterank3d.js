@@ -265,7 +265,6 @@
       alert('Sorry, something went wrong and the server failed to return data.');
       return;
     }
-    var n = data.length;
     // add planets
     added_objects = planets.slice();
     particle_system_geometry = new THREE.Geometry();
@@ -276,7 +275,7 @@
       particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
     }
 
-    for (var i=0; i < n; i++) {
+    for (var i=0; i < data.length; i++) {
       var roid = data[i];
       var locked = false;
       var orbit;
@@ -330,7 +329,6 @@
     var ViewUI = function() {
       this['Date'] = '12/26/2012';
       this['Speed'] = opts.jed_delta;
-      //this['Meteoroid speed'] = opts.meteoroid_factor;
       this['Show orbits'] = planet_orbits_visible;
       this['Show Milky Way'] = opts.milky_way_visible;
     };
@@ -353,19 +351,6 @@
         var was_moving = object_movement_on;
         object_movement_on = opts.jed_delta > 0;
       });
-      /*
-      gui.add(text, 'Meteoroid speed', 1, 30).onChange(function(val) {
-        opts.meteoroid_factor = val;
-        for (var i = 0; i < added_objects.length; i++) {
-          if (i >= planets.length) {
-            // Adjust artificial speed for comet particles.
-            attributes.P.value[i] =
-              attributes.realP.value[i] / opts.meteoroid_factor;
-          }
-        }
-        attributes.P.needsUpdate = true;
-      });
-      */
       gui.add(text, 'Show orbits').onChange(function() {
         togglePlanetOrbits();
       });
@@ -589,6 +574,9 @@
     showLoader();
     $.getJSON(url, function(data) {
       loadParticlesFromOrbitData(data);
+      setTimeout(function() {
+        //onVisualsReady(addParticleOrbits);
+      }, 100);
       hideLoader();
       if (cb) cb();
     }).fail(function(err) {
@@ -695,6 +683,7 @@
   }
 
   function addParticleOrbits() {
+    console.log('adding', added_objects.length);
     for (var j=planets.length; j < added_objects.length; j++) {
       var ellipse = added_objects[j].getSkinnyEllipse();
       added_particle_orbits.push(ellipse);
