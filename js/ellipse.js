@@ -14,10 +14,10 @@
     this.eph = eph;
 
     // Dummies for CAMS data.
-    this.eph.w_bar = this.eph.w_bar || 0;
+    this.eph.w_bar = this.eph.w_bar;
     this.eph.ma = this.eph.ma || Math.random() * 360;
-    this.eph.epoch = this.eph.epoch || 0;
-    this.eph.p = this.eph.p || 1000;
+    this.eph.epoch = this.eph.epoch;
+    this.eph.p = this.eph.p;
 
   };
 
