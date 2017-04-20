@@ -236,6 +236,11 @@ ul.share-buttons img {
 	font-size: 20px;
 }
 
+.modal .close-modal {
+  top: 10px !important;
+  right: 15px !important;
+}
+
 @media screen and (max-width: 850px) {
   #left-nav, #btn-left-nav-toggle, #learn-more, #sky-map, #instructions {
     display: none;
