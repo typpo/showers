@@ -949,74 +949,66 @@
 
   function setupPlanets() {
     $('#loading-text').html('planets');
-    var mercury = new Orbit3D(Ephemeris.mercury,
-        {
-          color: 0x913CEE, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-mercury.jpg',
-          display_color: new THREE.Color(0x913CEE),
-          particle_geometry: particle_system_geometry,
-          name: 'Mercury'
-        });
-    var venus = new Orbit3D(Ephemeris.venus,
-        {
-          color: 0xFF7733, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-venus.jpg',
-          display_color: new THREE.Color(0xFF7733),
-          particle_geometry: particle_system_geometry,
-          name: 'Venus'
-        });
-    var earth = new Orbit3D(Ephemeris.earth,
-        {
-          color: 0x009ACD, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-earth.jpg',
-          display_color: new THREE.Color(0x009ACD),
-          particle_geometry: particle_system_geometry,
-          name: 'Earth'
-        });
+    var mercury = new Orbit3D(Ephemeris.mercury, {
+      color: 0x913CEE, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-mercury.jpg',
+      display_color: new THREE.Color(0x913CEE),
+      particle_geometry: particle_system_geometry,
+      name: 'Mercury'
+    });
+    var venus = new Orbit3D(Ephemeris.venus, {
+      color: 0xFF7733, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-venus.jpg',
+      display_color: new THREE.Color(0xFF7733),
+      particle_geometry: particle_system_geometry,
+      name: 'Venus'
+    });
+    var earth = new Orbit3D(Ephemeris.earth, {
+      color: 0x009ACD, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-earth.jpg',
+      display_color: new THREE.Color(0x009ACD),
+      particle_geometry: particle_system_geometry,
+      name: 'Earth'
+    });
     feature_map['earth'] = {
       orbit: earth,
       idx: 2
     };
-    var mars = new Orbit3D(Ephemeris.mars,
-        {
-          color: 0xA63A3A, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-mars.jpg',
-          display_color: new THREE.Color(0xA63A3A),
-          particle_geometry: particle_system_geometry,
-          name: 'Mars'
-        });
-    var jupiter = new Orbit3D(Ephemeris.jupiter,
-        {
-          color: 0xFFB90F, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-jupiter.jpg',
-          display_color: new THREE.Color(0xFFB90F),
-          particle_geometry: particle_system_geometry,
-          name: 'Jupiter'
-        });
-    var saturn = new Orbit3D(Ephemeris.saturn,
-        {
-          color: 0x336633, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-saturn.jpg',
-          display_color: new THREE.Color(0x336633),
-          particle_geometry: particle_system_geometry,
-          name: 'Saturn'
-        });
-    var uranus = new Orbit3D(Ephemeris.uranus,
-        {
-          color: 0x0099FF, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-uranus.jpg',
-          display_color: new THREE.Color(0x0099FF),
-          particle_geometry: particle_system_geometry,
-          name: 'Uranus'
-        });
-    var neptune = new Orbit3D(Ephemeris.neptune,
-        {
-          color: 0x3333FF, width: 1, jed: jed, object_size: 1.7,
-          texture_path: opts.static_prefix + 'img/texture-neptune.jpg',
-          display_color: new THREE.Color(0x3333FF),
-          particle_geometry: particle_system_geometry,
-          name: 'Neptune'
-        });
+    var mars = new Orbit3D(Ephemeris.mars, {
+      color: 0xA63A3A, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-mars.jpg',
+      display_color: new THREE.Color(0xA63A3A),
+      particle_geometry: particle_system_geometry,
+      name: 'Mars'
+    });
+    var jupiter = new Orbit3D(Ephemeris.jupiter, {
+      color: 0xFFB90F, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-jupiter.jpg',
+      display_color: new THREE.Color(0xFFB90F),
+      particle_geometry: particle_system_geometry,
+      name: 'Jupiter'
+    });
+    var saturn = new Orbit3D(Ephemeris.saturn, {
+      color: 0x336633, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-saturn.jpg',
+      display_color: new THREE.Color(0x336633),
+      particle_geometry: particle_system_geometry,
+      name: 'Saturn'
+    });
+    var uranus = new Orbit3D(Ephemeris.uranus, {
+      color: 0x0099FF, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-uranus.jpg',
+      display_color: new THREE.Color(0x0099FF),
+      particle_geometry: particle_system_geometry,
+      name: 'Uranus'
+    });
+    var neptune = new Orbit3D(Ephemeris.neptune, {
+      color: 0x3333FF, width: 1, jed: jed, object_size: 1.7,
+      texture_path: opts.static_prefix + 'img/texture-neptune.jpg',
+      display_color: new THREE.Color(0x3333FF),
+      particle_geometry: particle_system_geometry,
+      name: 'Neptune'
+    });
 
     planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune];
     planets.forEach(function(planet) {
