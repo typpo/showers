@@ -466,8 +466,8 @@
       }
       var showerAdate = new Date(showerA.date);
       var showerBdate = new Date(showerB.date);
-      showerAdate.setDate(showerAdate.getDate() + 1);
-      showerBdate.setDate(showerBdate.getDate() + 1);
+      showerAdate.setDate(showerAdate.getDate() + 3);
+      showerBdate.setDate(showerBdate.getDate() + 3);
 
       showerAdate.setYear(1900 + now.getYear());
       showerBdate.setYear(1900 + now.getYear());
