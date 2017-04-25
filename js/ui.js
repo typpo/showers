@@ -4,12 +4,15 @@ function MeteorsUi(visualization) {
       $('#summary').toggleClass('minimized').toggleClass('maximized');
     });
 
-    if (window.isMobile || window.isIframe) {
-      $('#sky-map').hide();
-    } else {
+    if (!window.isMobile && !window.isIframe) {
       $('#sky-map img').on('click', function() {
         $('#skymap-modal').empty().append($(this).clone()).modal();
       });
+    }
+
+    if (window.isMobile) {
+      $('.mobile-hide-container').hide();
+      $('.mobile-show-container').show();
     }
 
     if (window.isIframe) {

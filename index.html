@@ -56,13 +56,13 @@
     </ul>
     <div class="shower-details-container iframe-hide-container">
       <p>
-        View <select id="shower-select"></select> on <span id="current-date" title="Adjust this date at the top right"></span>
+        View <select id="shower-select"></select> <span class="mobile-hide-container">on <span id="current-date" title="Adjust this date at the top right"></span></span>
       </p>
       <p>
-        <span id="restore-view" class="button">View Solar System</span>
+        <span id="restore-view" class="button">Solar System</span>
         <span id="lock-earth" class="button">Follow Earth</span>
         <span id="lock-earth-view" class="button">Watch from Earth</span>
-        <span id="btn-iau-input" class="button">Input IAU Number</span>
+        <span id="btn-iau-input" class="button mobile-hide-container">Input IAU Number</span>
       </p>
     </div>
     <div>
@@ -74,7 +74,7 @@
   <!-- Three.JS Container -->
   <div id="container"></div>
 
-  <div id="sky-map" style="display: none">
+  <div id="sky-map" class="mobile-hide-container iframe-hide-container" style="display: none">
     <img src="img/skymaps/perseids_north.jpg">
     <span>Source: meteorshowersonline.com</span>
   </div>
@@ -111,10 +111,10 @@
     </p>
   </div>
 
-  <div id="instructions" class="iframe-hide-container">
+  <div id="instructions" class="iframe-hide-container mobile-hide-container">
     Click and drag to turn &middot; Right click to pan &middot; Scroll to zoom
   </div>
-  <div id="copyright" class="iframe-hide-container">
+  <div id="copyright" class="iframe-hide-container mobile-hide-container">
     Meteor data from <a target="_blank" href="https://en.wikipedia.org/wiki/Peter_Jenniskens">Peter Jenniskens</a>, visualization by <a target="_blank" href="http://www.ianww.com">Ian Webster</a>
   </div>
 
@@ -278,7 +278,7 @@
     }
   </script>
 
-  <script src="dist/bundle-20170423-1492974748.js"></script>
+  <script src="dist/bundle-20170425-1493161626.js"></script>
 
 <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
   for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
