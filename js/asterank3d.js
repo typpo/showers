@@ -159,7 +159,7 @@
     // TODO: this is pretty bad.
     onVisualsReady(setupPlanetsOrbitTooltips);
 
-    $(opts.container).on('mousedown', function() {
+    $(opts.container).on('mousedown touchstart', function() {
       opts.camera_fly_around = false;
     });
 
