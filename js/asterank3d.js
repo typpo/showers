@@ -436,6 +436,7 @@
 
   var last_iau_number = 0;
   function setupIAUInputHandler() {
+    // TODO(ian): Move this out to ui.js.
     $('#btn-iau-input').on('click', function() {
       var iau_num = prompt('What IAU meteor shower number would you like to view?', last_iau_number);
       if (!iau_num && iau_num !== '0') {
