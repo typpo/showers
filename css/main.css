@@ -219,10 +219,18 @@ ul.share-buttons img {
 
 #faq-modal {
   color: #ccc;
+  overflow-y: auto;
+  max-height: 100%;
+  max-width: 85%;
 }
 
 #faq-modal h2 {
   color: #eee;
+}
+
+#faq-modal .close-modal {
+  top: 10px !important;
+  right: 15px !important;
 }
 
 #loading-container {
@@ -234,11 +242,6 @@ ul.share-buttons img {
 	top: 200px;
 	left: 0;
 	font-size: 20px;
-}
-
-.modal .close-modal {
-  top: 10px !important;
-  right: 15px !important;
 }
 
 @media screen and (max-width: 850px) {
@@ -253,5 +256,13 @@ ul.share-buttons img {
 
   h2 {
     font-size: 14px;
+  }
+
+  #faq-modal {
+    font-size: 12px;
+  }
+
+  #faq-modal .close-modal {
+    position: fixed !important;
   }
 }
