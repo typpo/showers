@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd `dirname $0`
+pushd `dirname $0` &> /dev/null
 cd "$(git rev-parse --show-toplevel)"
 mkdir -p /var/log/showers
 
@@ -16,4 +16,4 @@ echo $job
   wait $job
 done
 
-popd
+popd &> /dev/null
