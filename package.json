@@ -1,7 +1,7 @@
 {
   "name": "showers",
   "version": "1.0.0",
-  "description": "meteor showers from space!  www.meteorshowers.org",
+  "description": "meteor showers from space! www.meteorshowers.org",
   "main": "index.js",
   "repository": "git@github.com:typpo/showers.git",
   "author": "Ian Webster <ianw_github@ianww.com>",

@@ -1,5 +1,6 @@
   js/data/showers.js
   js/util.js
+  js/nav.js
   js/ephemeris.js
   js/ellipse.js
   js/asterank3d.js

@@ -506,7 +506,8 @@
         viewAll();
       } else {
         loadNewViewSelection();
-        window.location.hash = $select.val();
+        // window.location.hash = $select.val();
+        navigateTo($select.val());
       }
     });
   }
@@ -562,7 +563,7 @@
     $('#normal-summary').hide();
     $('#iau-shower-number').html(iau_num);
     $('#iau-shower-suffix').empty();
-    var iau_num_int = parseInt(iau_num);
+    var iau_num_int = parseInt(iau_num, 10);
     for (var key in window.METEOR_CLOUD_DATA) {
       if (window.METEOR_CLOUD_DATA.hasOwnProperty(key)) {
         var obj = window.METEOR_CLOUD_DATA[key];
@@ -738,7 +739,8 @@
     $('#normal-summary').hide();
     populateMinimap();
 
-    window.location.hash = '#all';
+    // window.location.hash = '#all';
+    navigateTo('all');
 
     cleanUpPreviousViewSelection();
     num_particles_per_shower = 500;
