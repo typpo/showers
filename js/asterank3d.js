@@ -402,20 +402,27 @@
   // Returns true if this function will handle the initial state, because it
   // found something in the url.
   function setupSelectionFromUrl() {
-    // First option: set from hash.
-    var hash = window.location.hash.slice(1).replace('-', ' ');
-    if (!hash) {
+    var param;
+    if (window.location.pathname.indexOf('/meteors/') === 0) {
+      // Check for pushstate first.
+      param = window.location.pathname.slice(9);
+    } else {
+      // Or maybe it's set from hash.
+      param = window.location.hash.slice(1);
+    }
+    if (!param) {
       return false;
     }
+    param = param.replace('-', ' ');
 
-    if (hash == 'all') {
+    if (param == 'all') {
       $select.val('View all');
       onVisualsReady(viewAll);
       return true;
     }
 
     // Maybe one of the featured showers?
-    var selection = window.METEOR_CLOUD_DATA[hash];
+    var selection = window.METEOR_CLOUD_DATA[param];
     if (selection) {
       $select.val(selection.name);
       onVisualsReady(loadNewViewSelection);
@@ -423,8 +430,8 @@
     }
 
     // Maybe an IAU number?
-    if (hash.indexOf('iau') === 0) {
-      var iau_num = parseInt(hash.replace('iau', ''));
+    if (param.indexOf('iau') === 0) {
+      var iau_num = parseInt(param.replace('iau', ''));
       cleanUpPreviousViewSelection();
       setupUiForIAUSelection(iau_num);
       loadNewIAUSelection(iau_num);
