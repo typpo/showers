@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 pushd `dirname $0` &> /dev/null
 cd "$(git rev-parse --show-toplevel)"
