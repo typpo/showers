@@ -25,8 +25,8 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
 
-  <link type="text/css" href="css/main.css" rel="stylesheet" />
-  <link type="text/css" href="css/jquery.modal.css" rel="stylesheet" />
+  <link type="text/css" href="/css/main.css" rel="stylesheet" />
+  <link type="text/css" href="/css/jquery.modal.css" rel="stylesheet" />
 </head>
 <body>
   <div id="summary" class="maximized">
@@ -49,10 +49,10 @@
     </span>
 
     <ul class="share-buttons">
-      <li><a href="https://www.facebook.com/sharer/sharer.php?u=https://www.meteorshowers.org" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Facebook.png"></a></li>
-      <li><a href="https://twitter.com/intent/tweet?source=https://www.meteorshowers.org&text=:https://www.meteorshowers.org&via=iwebst" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Twitter.png"></a></li>
-      <li><a href="https://plus.google.com/share?url=https://www.meteorshowers.org" title="Share on Google+" target="_blank"><img src="img/flat_web_icon_set/black/Google+.png"></a></li>
-      <li><a href="mailto:?subject=&body=https://www.meteorshowers.org" target="_blank" title="Email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img src="img/flat_web_icon_set/black/Email.png"></a></li>
+      <li><a href="https://www.facebook.com/sharer/sharer.php?u=https://www.meteorshowers.org" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img src="/img/flat_web_icon_set/black/Facebook.png"></a></li>
+      <li><a href="https://twitter.com/intent/tweet?source=https://www.meteorshowers.org&text=:https://www.meteorshowers.org&via=iwebst" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img src="/img/flat_web_icon_set/black/Twitter.png"></a></li>
+      <li><a href="https://plus.google.com/share?url=https://www.meteorshowers.org" title="Share on Google+" target="_blank"><img src="/img/flat_web_icon_set/black/Google+.png"></a></li>
+      <li><a href="mailto:?subject=&body=https://www.meteorshowers.org" target="_blank" title="Email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img src="/img/flat_web_icon_set/black/Email.png"></a></li>
     </ul>
     <div class="shower-details-container iframe-hide-container">
       <p>
@@ -278,7 +278,13 @@
     }
   </script>
 
-<script src="dist/bundle-20170801-1501621630.js"></script>
+{% if shower %}
+<script>
+  window.shower_selection = '{{shower}}';
+</script>
+{% endif %}
+
+<script src="/dist/bundle-20170801-1501626769.js"></script>
 
 <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
   for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);

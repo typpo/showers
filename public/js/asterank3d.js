@@ -403,7 +403,9 @@
   // found something in the url.
   function setupSelectionFromUrl() {
     var param;
-    if (window.location.pathname.indexOf('/meteors/') === 0) {
+    if (window.shower_selection) {
+      param = window.shower_selection;
+    } else if (window.location.pathname.indexOf('/meteors/') === 0) {
       // Check for pushstate first.
       param = window.location.pathname.slice(9);
     } else {
@@ -535,7 +537,7 @@
       return;
     }
 
-    var imgpath = 'img/skymaps/' + selection.map;
+    var imgpath = '/img/skymaps/' + selection.map;
     $skymap.find('img').attr('src', imgpath);
     $skymap.show();
   }
@@ -577,11 +579,11 @@
 
   function loadNewIAUSelection(iau_num, cb) {
     last_iau_number = iau_num;
-    loadOrbitsData('js/data/cams_splits/iau_' + iau_num + '.json', cb);
+    loadOrbitsData('/js/data/cams_splits/iau_' + iau_num + '.json', cb);
   }
 
   function getIAUOrbitsJson(iau_num, cb) {
-    $.getJSON('js/data/cams_splits/iau_' + iau_num + '.json', cb);
+    $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', cb);
   }
 
   function loadOrbitsData(url, cb) {

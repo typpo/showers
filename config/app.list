@@ -1,8 +1,8 @@
-  js/data/showers.js
-  js/util.js
-  js/nav.js
-  js/ephemeris.js
-  js/ellipse.js
-  js/asterank3d.js
-  js/ui.js
-  js/entrypoint.js
+  public/js/data/showers.js
+  public/js/util.js
+  public/js/nav.js
+  public/js/ephemeris.js
+  public/js/ellipse.js
+  public/js/asterank3d.js
+  public/js/ui.js
+  public/js/entrypoint.js
