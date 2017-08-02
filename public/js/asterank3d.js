@@ -320,7 +320,11 @@
 
     $('#loading').hide();
 
-    if (typeof mixpanel !== 'undefined') mixpanel.track('simulation started');
+    if (typeof ga !== 'undefined') {
+      ga('send', 'event', 'visualization', 'simulation started', undefined, {
+        nonInteraction: true
+      });
+    }
   };    // end setupParticlesFromData
 
   /** Core private functions **/
