@@ -1,5 +1,5 @@
 function navigateTo(view) {
-  var page = '/meteors/' + view.replace(/ /g, '-');
+  var page = '/view/' + view.replace(/ /g, '-');
   history.replaceState({view: view},
                        'Meteor showers from space - ' + view,
                        page);

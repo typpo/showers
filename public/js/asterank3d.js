@@ -405,9 +405,9 @@
     var param;
     if (window.shower_selection) {
       param = window.shower_selection;
-    } else if (window.location.pathname.indexOf('/meteors/') === 0) {
+    } else if (window.location.pathname.indexOf('/view/') === 0) {
       // Check for pushstate first.
-      param = window.location.pathname.slice(9);
+      param = window.location.pathname.slice(6);
     } else {
       // Or maybe it's set from hash.
       param = window.location.hash.slice(1);

@@ -24,6 +24,13 @@ app.get('/', (req, res) => {
   res.render('index', {});
 });
 
+app.get('/view/:shower', (req, res) => {
+  res.render('index', {
+    shower: req.params.shower,
+  });
+});
+
+// TODO(ian): Deprecate for next push.
 app.get('/meteors/:shower', (req, res) => {
   res.render('index', {
     shower: req.params.shower,
