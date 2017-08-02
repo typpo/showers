@@ -1,5 +1,10 @@
 server {
-    server_name  meteorshowers.org www.meteorshowers.org;
+    server_name  meteorshowers.org;
+    rewrite ^(.*) https://www.meteorshowers.org$1 permanent;
+}
+
+server {
+    server_name  www.meteorshowers.org;
     location / {
         set_real_ip_from 103.21.244.0/22;
         set_real_ip_from 103.22.200.0/22;
