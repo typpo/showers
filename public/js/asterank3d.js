@@ -275,6 +275,7 @@
       particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
     }
 
+    console.log('Creating', data.length, 'particles from data...');
     for (var i=0; i < data.length; i++) {
       var roid = data[i];
       var locked = false;
@@ -583,11 +584,11 @@
 
   function loadNewIAUSelection(iau_num, cb) {
     last_iau_number = iau_num;
-    loadOrbitsData('/js/data/cams_splits/iau_' + iau_num + '.json', cb);
+    loadOrbitsData('/js/data/cams_splits_2016/iau_' + iau_num + '.json', cb);
   }
 
   function getIAUOrbitsJson(iau_num, cb) {
-    $.getJSON('/js/data/cams_splits/iau_' + iau_num + '.json', cb);
+    $.getJSON('/js/data/cams_splits_2016/iau_' + iau_num + '.json', cb);
   }
 
   function loadOrbitsData(url, cb) {
