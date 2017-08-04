@@ -44,8 +44,7 @@ function displayColorForObject(roid) {
   */
 }
 
-function getParameterByName(name)
-{
+function getParameterByName(name) {
   name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
   var regexS = "[\\?&]" + name + "=([^&#]*)";
   var regex = new RegExp(regexS);

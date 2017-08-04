@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Splits CAMS database into files by IAU number.
+# Usage: ./process_cams_data.py input.csv output_dir/
 
 import csv
 import json
