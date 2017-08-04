@@ -582,13 +582,20 @@
     }
   }
 
+  function getCamsSplitUrlSegment() {
+    if (getParameterByName('cams_year') === '2016') {
+      return 'cams_splits_2016';
+    }
+    return 'cams_splits';
+  }
+
   function loadNewIAUSelection(iau_num, cb) {
     last_iau_number = iau_num;
-    loadOrbitsData('/js/data/cams_splits_2016/iau_' + iau_num + '.json', cb);
+    loadOrbitsData('/js/data/' + getCamsSplitUrlSegment() + '/iau_' + iau_num + '.json', cb);
   }
 
   function getIAUOrbitsJson(iau_num, cb) {
-    $.getJSON('/js/data/cams_splits_2016/iau_' + iau_num + '.json', cb);
+    $.getJSON('/js/data/' + getCamsSplitUrlSegment() + '/iau_' + iau_num + '.json', cb);
   }
 
   function loadOrbitsData(url, cb) {
