@@ -459,6 +459,7 @@
 
       cleanUpPreviousViewSelection();
       setupUiForIAUSelection(iau_num);
+      navigateTo('iau-' + iau_num);
       loadNewIAUSelection(iau_num);
     });
   }
