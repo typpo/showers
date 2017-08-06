@@ -35,7 +35,6 @@
   /** Constants **/
   var WEB_GL_ENABLED = true
     , MAX_NUM_ORBITS = 4000
-    , NUM_BIG_PARTICLES = 25;   // show this many asteroids with orbits
 
   /** Other variables **/
   var stats, scene, renderer, composer
@@ -291,7 +290,7 @@
           color: 0xaaaaaa,
           display_color: display_color,
           width: 2,
-          object_size: i < NUM_BIG_PARTICLES ? 50 : 30, //1.5,
+          object_size: 30,
           jed: jed,
           particle_geometry: particle_system_geometry // will add itself to this geometry
         });
