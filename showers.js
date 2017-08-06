@@ -1,6 +1,7 @@
 const express = require('express');
 const expressNunjucks = require('express-nunjucks');
 const winston = require('winston');
+const { getScriptUrls } = require('./assets');
 
 const logger = new (winston.Logger)({
   transports: [
@@ -21,12 +22,18 @@ expressNunjucks(app, {
 });
 
 app.get('/', (req, res) => {
-  res.render('index', {});
+  res.render('index', {
+    isDev,
+    scriptUrls: getScriptUrls(),
+  });
 });
 
 app.get('/view/:shower', (req, res) => {
   res.render('index', {
     shower: req.params.shower,
+
+    isDev,
+    scriptUrls: getScriptUrls(),
   });
 });
 
@@ -34,6 +41,9 @@ app.get('/view/:shower', (req, res) => {
 app.get('/meteors/:shower', (req, res) => {
   res.render('index', {
     shower: req.params.shower,
+
+    isDev,
+    scriptUrls: getScriptUrls(),
   });
 });
 
