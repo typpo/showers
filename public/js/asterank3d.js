@@ -602,9 +602,6 @@
     $.getJSON(url, function(cloud_obj) {
       current_cloud_obj = cloud_obj;
       loadParticlesFromOrbitData(cloud_obj);
-      if (cloud_obj.show_particle_orbits) {
-        onVisualsReady(addParticleOrbits);
-      }
       hideLoader();
       if (cb) cb();
     }).fail(function(err) {
@@ -697,7 +694,9 @@
         }
       });
     } else if (cloud_obj.iau_number) {
-      loadNewIAUSelection(cloud_obj.iau_number);
+      loadNewIAUSelection(cloud_obj.iau_number, function() {
+        // No callback.
+      });
     } else if (cloud_obj.source_orbit) {
       // We only have the comet's orbit, no meteor-specific data.
       var data = simulateMeteorShowerFromBaseOrbit(cloud_obj.source_orbit);
