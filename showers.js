@@ -37,16 +37,6 @@ app.get('/view/:shower', (req, res) => {
   });
 });
 
-// TODO(ian): Deprecate for next push.
-app.get('/meteors/:shower', (req, res) => {
-  res.render('index', {
-    shower: req.params.shower,
-
-    isDev,
-    scriptUrls: getScriptUrls(),
-  });
-});
-
 const port = process.env.PORT || 8988;
 const server = app.listen(port);
 logger.info('NODE_ENV:', process.env.NODE_ENV);
