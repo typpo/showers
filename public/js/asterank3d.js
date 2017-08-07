@@ -582,10 +582,7 @@
   }
 
   function getCamsSplitUrlSegment() {
-    if (getParameterByName('cams_year') === '2016') {
-      return 'cams_splits_2016';
-    }
-    return 'cams_splits';
+    return 'cams_splits_2016';
   }
 
   function loadNewIAUSelection(iau_num, cb) {
