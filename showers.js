@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
   res.render('index', {
     isDev,
     scriptUrls: getScriptUrls(),
+    canonicalUrl: 'https://www.meteorshowers.org/',
   });
 });
 
@@ -34,6 +35,8 @@ app.get('/view/:shower', (req, res) => {
 
     isDev,
     scriptUrls: getScriptUrls(),
+
+    canonicalUrl: `https://www.meteorshowers.org/view/${req.params.shower}`,
   });
 });
 
