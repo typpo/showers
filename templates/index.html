@@ -7,19 +7,27 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
   <link rel="canonical" href="{{canonicalUrl}}">
 
-  <meta name="description" content="3D visualization of NASA meteor stream data. Scientifically accurate and fully interactive." />
+  {% if shower %}
+    <meta name="description" content="3D visualization of NASA {{shower}} data. Scientifically accurate and fully interactive." />
+    <meta name="twitter:title" content="{{shower}} meteor shower from space">
+    <meta name="twitter:description" content="Watch as Earth flies through clouds of meteors from the {{shower}} meteor shower.">
+    <meta property="og:title" content="{{shower}} meteor shower from space" />
+    <meta property="og:description" content="Watch as Earth flies through clouds of meteors from the {{shower}} meteor shower." />
+  {% else %}
+    <meta name="description" content="3D visualization of NASA meteor shower data. Scientifically accurate and fully interactive." />
+    <meta name="twitter:title" content="Meteor showers from space">
+    <meta name="twitter:description" content="Watch as Earth flies through clouds of meteors.">
+    <meta property="og:title" content="Meteor showers from space" />
+    <meta property="og:description" content="Watch as Earth flies through clouds of meteors." />
+  {% endif %}
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@iwebst">
-  <meta name="twitter:title" content="Meteor showers from space">
-  <meta name="twitter:description" content="Watch as Earth flies through clouds of meteors.">
   <meta name="twitter:creator" content="@iwebst">
   <meta name="twitter:image" content="http://i.imgur.com/n5U34ah.png">
 
-  <meta property="og:title" content="Meteor showers from space" />
-  <meta property="og:type" content="article" />
   <meta property="og:image" content="http://i.imgur.com/n5U34ah.png" />
-  <meta property="og:description" content="Watch as Earth flies through clouds of meteors." />
+  <meta property="og:type" content="article" />
 
   <!-- Allow fullscreen app install -->
   <meta name="mobile-web-app-capable" content="yes" />
