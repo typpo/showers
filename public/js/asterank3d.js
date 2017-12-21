@@ -440,6 +440,7 @@
       cleanUpPreviousViewSelection();
       setupUiForIAUSelection(iau_num);
       loadNewIAUSelection(iau_num);
+      $select.val('none');
       return true;
     }
 
@@ -506,9 +507,13 @@
       $opt.appendTo($select);
     });
     $select.append('<option value="View all">Everything at once</option>');
+    $select.append('<option value="none">Choose a shower...</option>');
 
     $select.on('change', function() {
-      if ($(this).val() == 'View all') {
+      var val = $(this).val();
+      if (val === 'none') {
+        return;
+      } if (val === 'View all') {
         viewAll();
       } else {
         loadNewViewSelection();
@@ -622,7 +627,8 @@
     $('#view-all-summary').hide();
     $('#normal-summary').show();
 
-    var cloud_obj = window.METEOR_CLOUD_DATA[$select.val()];
+    var key = $select.val();
+    var cloud_obj = window.METEOR_CLOUD_DATA[key];
     if (!cloud_obj) {
       console.error('Tried to load key', key);
       alert("Something went wrong - couldn't load data for this meteor shower!");
