@@ -420,9 +420,14 @@
     }
     param = param.replace('-', ' ');
 
-    if (param == 'all') {
+    if (param === 'all') {
       $select.val('View all');
       onVisualsReady(viewAll);
+      return true;
+    }
+    if (param === 'roadster') {
+      $select.val('SpaceX Roadster');
+      onVisualsReady(viewRoadster);
       return true;
     }
 
@@ -793,6 +798,59 @@
     }, 100);
   }
 
+  function viewRoadster() {
+    $('#iau-summary').hide();
+    $('#view-all-summary').hide();
+    $('#normal-summary').hide();
+    $('#roadster-summary').show();
+    populateMinimap();
+
+    // window.location.hash = '#all';
+    navigateTo('roadster');
+
+    cleanUpPreviousViewSelection();
+    num_particles_per_shower = 500;
+    var everything = {
+      full_orbit_data: [],
+    };
+    /*
+    var already_added = {};
+    var numReturned = 0;
+    var numExpected = 0;
+    for (var cloud_obj_key in window.METEOR_CLOUD_DATA) {
+      var cloud_obj = window.METEOR_CLOUD_DATA[cloud_obj_key];
+      if (cloud_obj.hideInMenu || already_added[cloud_obj.source_orbit.full_name]) {
+        continue;
+      }
+
+      if (cloud_obj.full_orbit_data) {
+        everything.full_orbit_data.push.apply(
+          everything.full_orbit_data, cloud_obj.full_orbit_data);
+      } else if (cloud_obj.iau_number) {
+        getIAUOrbitsJson(cloud_obj.iau_number, function(data) {
+          everything.full_orbit_data.push.apply(everything.full_orbit_data, data);
+          numReturned++;
+        });
+        numExpected++;
+      }
+      already_added[cloud_obj.source_orbit.full_name] = true;
+    }
+   */
+    var obj = new Orbit3D(Ephemeris.roadster, {
+      color: 0xccffff, width: 1, jed: jed, object_size: 1.7,
+      display_color: new THREE.Color(0xff69b4), // hot pink
+      particle_geometry: particle_system_geometry,
+      name: 'Roadster',
+    });
+    cometDisplayed = obj;
+    cometOrbitDisplayed = obj.getEllipse();
+    scene.add(cometOrbitDisplayed);
+
+    onVisualsReady(me.setupParticlesFromData, [{
+      eph: Ephemeris.roadster,
+    }]);
+  }
+
   function createParticleSystem() {
     // Attributes
     attributes = {
@@ -853,9 +911,9 @@
         attributes.size.value[i] = obj.opts.object_size;
         attributes.is_planet.value[i] = 0.0;
         attributes.highlight_above_ecliptic.value[i] =
-            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
+            current_cloud_obj && current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
         attributes.highlight_below_ecliptic.value[i] =
-            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
+            current_cloud_obj && current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
       }
 
       attributes.a.value[i] = obj.eph.a;

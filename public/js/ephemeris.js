@@ -157,6 +157,16 @@ window.Ephemeris = {
     n: 0.007395052881692476, // mean motion
     Q: 51.22462284058444, // aphelion
   },
+  roadster: {
+    // https://ssd.jpl.nasa.gov/horizons.cgi#results
+    full_name: 'SpaceX Roadster (Starman, 2018-017A)',
+    epoch: 2458160.5,
+    a: (0.99 + 1.67) / 2,
+    e: 0.2618490505628468,
+    i: 1.101657865339571,
+    om: 317.4362465179729,
+    w: 177.2917586048428,
+  },
 };
 
 for (var x in Ephemeris) {
