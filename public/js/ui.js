@@ -35,6 +35,7 @@ function MeteorsUi(visualization) {
     $('#lock-earth').on('click', function() {
       visualization.setLockMode('FOLLOW');
       visualization.setLock('earth');
+      window.followZoomOffset = 0.7;
     });
 
     $('#lock-earth-view').on('click', function() {

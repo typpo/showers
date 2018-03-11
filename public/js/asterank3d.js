@@ -908,8 +908,9 @@
         // Follow locked object
         var pos = locked_object.getPosAtTime(jed);
         if (locked_mode == 'FOLLOW') {
-          cam.position.set(pos[0]+2, pos[1]+2, pos[2]-2);
-          //cam.position.set(pos[0], pos[1], pos[2]);
+          //cam.position.set(pos[0]+2, pos[1]+2, pos[2]-2);
+          cam.position.set(pos[0]+window.followZoomOffset, pos[1]+window.followZoomOffset, pos[2]+window.followZoomOffset);
+          window.followZoomOffset *= 1.01;
           cameraControls.target = new THREE.Vector3(pos[0], pos[1], pos[2]);
         } else /* mode VIEW_FROM */ {
           cam.position.set(pos[0], pos[1], pos[2]);
