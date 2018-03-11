@@ -14,6 +14,7 @@
   });
 
   asterank3d.init();
+  asterank3d.startNvidiaDemo();
 
   // Other wiring
   // TODO move to ui.js

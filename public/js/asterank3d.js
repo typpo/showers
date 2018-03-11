@@ -164,6 +164,17 @@
     window.renderer = renderer;
   };  // end init
 
+  me.startNvidiaDemo = function() {
+    onVisualsReady(function() {
+      // Ugh...
+      setTimeout(function() {
+        me.setLockMode('FOLLOW');
+        me.setLock('earth');
+        window.followZoomOffset = 0.7;
+      }, 500);
+    });
+  };
+
   me.clearRankings = function() {
     // Remove any old setup
     me.clearLock(true);
