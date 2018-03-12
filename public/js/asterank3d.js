@@ -33,8 +33,7 @@
   })();
 
   /** Constants **/
-  var WEB_GL_ENABLED = true
-    , MAX_NUM_ORBITS = 4000
+  var WEB_GL_ENABLED = true;
 
   /** Other variables **/
   var stats, scene, renderer, composer

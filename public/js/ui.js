@@ -22,6 +22,10 @@ function MeteorsUi(visualization) {
 
     setupButtonHandlers();
     setupModalPlugin();
+
+    $('#summary').hide();
+    $('#instructions').hide();
+    $('#copyright').hide();
   }
 
   function setupButtonHandlers() {

@@ -7,7 +7,7 @@
       $('#loading').hide();
       $('#not-supported').show();
     },
-    show_dat_gui: isScreenBigEnough() && !window.isIframe,
+    //show_dat_gui: isScreenBigEnough() && !window.isIframe,
     static_prefix: '/',
     camera_position: [187.52838092794164, 648.449030071106, 438.33250509398675],
     camera_fly_around: true,
