@@ -300,7 +300,7 @@
           color: 0xaaaaaa,
           display_color: display_color,
           width: 2,
-          object_size: 20,
+          object_size: 15,
           jed: jed,
           particle_geometry: particle_system_geometry // will add itself to this geometry
         });
