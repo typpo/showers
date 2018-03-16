@@ -169,7 +169,7 @@
       setTimeout(function() {
         me.setLockMode('FOLLOW');
         me.setLock('earth');
-        window.followZoomOffset = 0.7;
+        window.followZoomOffset = 0.08;
       }, 500);
     });
   };
@@ -242,7 +242,7 @@
     attributes.value_color.value[locked_object_idx] = full_name === 'earth' ?
       new THREE.Color(0x00ff00) : new THREE.Color(0xff0000);
     locked_object_size = attributes.size.value[locked_object_idx];
-    attributes.size.value[locked_object_idx] = 30.0;
+    attributes.size.value[locked_object_idx] = 75.0;
     attributes.locked.value[locked_object_idx] = 1.0;
     setAttributeNeedsUpdateFlags();
 
@@ -786,7 +786,7 @@
           everything.full_orbit_data, cloud_obj.full_orbit_data);
       } else if (cloud_obj.iau_number) {
         getIAUOrbitsJson(cloud_obj.iau_number, function(data) {
-          everything.full_orbit_data.push.apply(everything.full_orbit_data, data);
+          everything.full_orbit_data.push.apply(everything.full_orbit_data, data.slice(0, 250));
           numReturned++;
         });
         numExpected++;
@@ -855,7 +855,7 @@
       fragmentShader: document.getElementById('orbit-fragment-shader').textContent
     });
     particle_system_shader_material.depthTest = false;
-    particle_system_shader_material.vertexColor = true;
+    //particle_system_shader_material.vertexColor = true;
     particle_system_shader_material.transparent = true;
 
     for (var i = 0; i < added_objects.length; i++) {

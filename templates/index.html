@@ -250,7 +250,8 @@
     uniform sampler2D small_roid_circled_texture;
 
     void main() {
-      if (vLocked < .5) {
+      //if (vLocked < .5) {
+      if (vLocked > -69.) {
         if (vPlanet < .5) {
           gl_FragColor = vec4(vColor, 1.0) * texture2D(small_roid_texture,
             vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y));
