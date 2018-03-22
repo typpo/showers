@@ -786,7 +786,7 @@
           everything.full_orbit_data, cloud_obj.full_orbit_data);
       } else if (cloud_obj.iau_number) {
         getIAUOrbitsJson(cloud_obj.iau_number, function(data) {
-          everything.full_orbit_data.push.apply(everything.full_orbit_data, data.slice(0, 250));
+          everything.full_orbit_data.push.apply(everything.full_orbit_data, data.slice(0, 750));
           numReturned++;
         });
         numExpected++;
