@@ -40,7 +40,7 @@ app.get('/view/:shower', (req, res) => {
   });
 });
 
-const port = process.env.PORT || 8988;
+const port = process.env.PORT || 8989;
 const server = app.listen(port);
 logger.info('NODE_ENV:', process.env.NODE_ENV);
 logger.info('Running on port', port);
