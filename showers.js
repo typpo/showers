@@ -10,7 +10,8 @@ const logger = new (winston.Logger)({
 });
 
 const app = express();
-const isDev = app.get('env') === 'development';
+//const isDev = app.get('env') === 'development';
+const isDev = true;
 
 app.enable('trust proxy');
 app.set('views', `${__dirname}/templates`);

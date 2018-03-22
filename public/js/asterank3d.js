@@ -170,7 +170,7 @@
         me.setLockMode('FOLLOW');
         me.setLock('earth');
         window.followZoomOffset = 0.08;
-      }, 500);
+      }, 1000);
     });
   };
 
