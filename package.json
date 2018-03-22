@@ -6,6 +6,9 @@
   "repository": "git@github.com:typpo/showers.git",
   "author": "Ian Webster <ianw_github@ianww.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "node showers.js"
+  },
   "devDependencies": {
     "uglify": "^0.1.5",
     "uglify-js": "^2.8.22"
