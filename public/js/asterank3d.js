@@ -168,10 +168,13 @@
   me.startNvidiaDemo = function() {
     onVisualsReady(function() {
       // Ugh...
-      setTimeout(function() {
-        me.setLockMode('FOLLOW');
-        me.setLock('earth');
-        window.followZoomOffset = 0.08;
+      var t = setInterval(function() {
+        if (typeof attributes !== 'undefined' && attributes) {
+          me.setLockMode('FOLLOW');
+          me.setLock('earth');
+          window.followZoomOffset = 0.08;
+          clearInterval(t);
+        }
       }, 1000);
     });
   };
