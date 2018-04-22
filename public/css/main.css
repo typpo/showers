@@ -217,18 +217,21 @@ ul.share-buttons img {
   height: auto;
 }
 
-#faq-modal {
+.faq-modal {
   color: #ccc;
-  overflow-y: auto;
-  max-height: 100%;
-  max-width: 85%;
 }
 
-#faq-modal h2 {
+.faq-modal-body {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  margin-top: 12px;
+}
+
+.faq-modal h2 {
   color: #eee;
 }
 
-#faq-modal .close-modal {
+.faq-modal .close-modal {
   top: 10px !important;
   right: 15px !important;
 }
@@ -258,11 +261,12 @@ ul.share-buttons img {
     font-size: 14px;
   }
 
-  #faq-modal {
-    font-size: 12px;
+  .modal {
+    max-height: 90%;
+    max-width: 90%;
   }
 
-  #faq-modal .close-modal {
-    position: fixed !important;
+  #faq-modal {
+    font-size: 12px;
   }
 }
