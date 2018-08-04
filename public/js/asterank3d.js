@@ -1117,10 +1117,11 @@
 
     skyBox = new THREE.Mesh(geometry, material);
     skyBox.scale.set(-1, 1, 1);
-    skyBox.eulerOrder = 'XZY';
+    skyBox.eulerOrder = 'XYZ';
     // Radians to degrees in terms of pi: https://www.quia.com/jg/321176list.html
+    skyBox.rotation.x = pi;
+    skyBox.rotation.y = pi;
     skyBox.rotation.z = 3/2*pi;
-    skyBox.rotation.x = 5/4*pi;
     skyBox.renderDepth = 1000.0;
     scene.add(skyBox);
     window.skyBox = skyBox;
