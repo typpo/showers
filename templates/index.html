@@ -296,6 +296,20 @@
 </script>
 {% endif %}
 
+<script>
+  window.addEventListener('error', function(e) {
+    var errlog = {
+      msg: e.message,
+      location: e.filename + ': ' + e.lineno
+    };
+    mixpanel.track('js error', errlog);
+    ga('send', 'exception', {
+      exDescription: errlog.location + ' ' + errlog.msg
+    });
+		console.info('Tracked js error', errlog);
+  });
+</script>
+
 {% if isDev %}
   {% for url in scriptUrls %}
     <script src="{{url}}"></script>
@@ -311,14 +325,6 @@ mixpanel.init("c5d915a004df96a33c912640ed0e9faf");</script><!-- end Mixpanel -->
 <script>
   mixpanel.track('meteors', {view: '{{shower}}'});
 	mixpanel.track(document.location.pathname + document.location.hash);
-  window.addEventListener('error', function(e) {
-    var errlog = {
-      msg: e.message,
-      location: e.filename + ': ' + e.lineno
-    };
-    mixpanel.track('js error', errlog);
-		console.info('Tracked js error', errlog);
-  });
 </script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
