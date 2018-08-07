@@ -133,11 +133,11 @@
     cameraControls.maxDistance = 2200;
     if (window.isMobile) {
       cameraControls.rotateSpeed = 3;
-      cameraControls.zoomSpeed = 0.08;
+      cameraControls.zoomSpeed = 0.8;
       cameraControls.panSpeed = 0.6;
     } else {
       cameraControls.rotateSpeed = 5;
-      cameraControls.zoomSpeed = 0.08;
+      cameraControls.zoomSpeed = 0.8;
       cameraControls.panSpeed = 0.6;
     }
     //cameraControls.dynamicDampingFactor = 0.5;
