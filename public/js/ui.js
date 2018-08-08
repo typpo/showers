@@ -18,6 +18,7 @@ function MeteorsUi(visualization) {
     if (window.isIframe) {
       $('.iframe-hide-container').hide();
       $('.iframe-show-container').show();
+      $('#summary').addClass('iframe-mode');
     }
 
     setupButtonHandlers();

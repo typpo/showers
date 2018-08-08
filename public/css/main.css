@@ -21,10 +21,16 @@ a {
   z-index: 99999;
   position: absolute;
   top: 0;
+  left: 0;
   max-width: 500px;
   color: white;
   background-color: rgba(238, 238, 238, 0.14);
   padding-left: 20px;
+}
+
+#summary.iframe-mode {
+  padding: 10px;
+  padding-top: 0;
 }
 
 #summary .description {
@@ -44,6 +50,10 @@ a {
 
 #summary.minimized .hide-summary {
   display: none;
+}
+
+#summary.minimized {
+  padding-bottom: 10px;
 }
 
 #summary.maximized .show-summary {
@@ -247,7 +257,7 @@ ul.share-buttons img {
 	font-size: 20px;
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 960px) {
   #left-nav, #btn-left-nav-toggle, #learn-more, #sky-map, #instructions {
     display: none;
   }
