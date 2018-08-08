@@ -68,22 +68,15 @@ a {
   background: #000a;
 }
 
-ul.share-buttons {
-  display: inline;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  vertical-align: sub;
+.share-buttons {
   margin-left: 8px;
+  vertical-align: sub;
 }
 
-ul.share-buttons li {
-  display: inline;
-}
-
-ul.share-buttons img {
+.share-buttons img {
   width: 20px;
   height: auto;
+  vertical-align: bottom;
 }
 
 .shower-details-container {
