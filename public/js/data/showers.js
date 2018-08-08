@@ -1,6 +1,6 @@
 window.METEOR_CLOUD_DATA = {
   'Perseids': {
-    name: 'Perseids',
+    name: 'Perseid',
     peak: 'mid-August',
     date: '8/12',
     map: 'perseids_north.jpg',

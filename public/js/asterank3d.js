@@ -427,6 +427,9 @@
     }
 
     // Maybe one of the featured showers?
+    if (param === 'iau 7') {
+      param = 'Perseids';
+    }
     var selection = window.METEOR_CLOUD_DATA[param];
     if (selection) {
       $select.val(selection.name);
