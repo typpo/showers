@@ -30,13 +30,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/view/:shower', (req, res) => {
+  let showerId = req.params.shower;
+  if (showerId === 'iau-7') {
+    showerId = 'Perseids';
+  }
   res.render('index', {
-    shower: req.params.shower,
+    shower: showerId,
 
     isDev,
     scriptUrls: getScriptUrls(),
 
-    canonicalUrl: `https://www.meteorshowers.org/view/${req.params.shower}`,
+    canonicalUrl: `https://www.meteorshowers.org/view/${showerId}`,
   });
 });
 
