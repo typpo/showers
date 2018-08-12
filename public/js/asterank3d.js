@@ -135,6 +135,7 @@
       cameraControls.rotateSpeed = 3;
       cameraControls.zoomSpeed = 0.8;
       cameraControls.panSpeed = 0.6;
+      cameraControls.noPan = true;
     } else {
       cameraControls.rotateSpeed = 5;
       cameraControls.zoomSpeed = 0.8;
