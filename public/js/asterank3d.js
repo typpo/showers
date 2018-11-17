@@ -430,6 +430,8 @@
     // Maybe one of the featured showers?
     if (param === 'iau 7') {
       param = 'Perseids';
+    } else if (param === 'iau 13') {
+      param = 'Leonids';
     }
     var selection = window.METEOR_CLOUD_DATA[param];
     if (selection) {

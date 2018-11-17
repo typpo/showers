@@ -33,6 +33,8 @@ app.get('/view/:shower', (req, res) => {
   let showerId = req.params.shower;
   if (showerId === 'iau-7') {
     showerId = 'Perseids';
+  } else if (showerId === 'iau-13') {
+    showerId = 'Leonids';
   }
   res.render('index', {
     shower: showerId,
