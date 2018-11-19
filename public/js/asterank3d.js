@@ -554,6 +554,10 @@
   }
 
   function cleanUpPreviousViewSelection() {
+    // Reset view
+    particle_system_geometry = new THREE.Geometry();
+    added_objects = [];
+
     // Cleanup previous.
     me.clearRankings();
     if (cometOrbitDisplayed) {
@@ -686,9 +690,6 @@
 
   // Adds particles to the simulation.
   function loadParticles(cloud_obj) {
-    particle_system_geometry = new THREE.Geometry();
-    added_objects = [];
-
     // TODO(ian): loader
     //$('#loading').show();
     //$('#loading-text').html('asteroids database');
