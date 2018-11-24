@@ -57,6 +57,7 @@
 
   // Meteor cloud stuff
   var current_cloud_obj = null;
+  var showing_cloud_obj = false;
 
   // Lock/feature stuff
   var feature_map = {}       // map from object full name to Orbit3D instance
@@ -703,6 +704,9 @@
         jed: jed,
         particle_geometry: particle_system_geometry // will add itself to this geometry
       }));
+      showing_cloud_obj = true;
+    } else {
+      showing_cloud_obj = false;
     }
 
     if (cloud_obj.full_orbit_data) {
@@ -866,9 +870,10 @@
     particle_system_shader_material.vertexColor = true;
     particle_system_shader_material.transparent = true;
 
+    var num_big_particles = showing_cloud_obj ? planets.length + 1 : planets.length;
     for (var i = 0; i < added_objects.length; i++) {
       var obj = added_objects[i];
-      if (i < planets.length + 1) { // +1 for the source object orbit
+      if (i < num_big_particles) {
         attributes.size.value[i] = 100;
         attributes.is_planet.value[i] = 1.0;
         attributes.highlight_above_ecliptic.value[i] = 0.0;
