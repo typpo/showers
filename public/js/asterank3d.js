@@ -57,6 +57,7 @@
 
   // Meteor cloud stuff
   var current_cloud_obj = null;
+  var showing_cloud_obj = false;
 
   // Lock/feature stuff
   var feature_map = {}       // map from object full name to Orbit3D instance
@@ -265,8 +266,7 @@
       return;
     }
     // add planets
-    added_objects = planets.slice();
-    particle_system_geometry = new THREE.Geometry();
+    added_objects.push.apply(added_objects, planets);
 
     for (var i=0; i < planets.length; i++) {
       // FIXME this is a workaround for the poor handling of PSG vertices in ellipse.js
@@ -558,6 +558,10 @@
   }
 
   function cleanUpPreviousViewSelection() {
+    // Reset view
+    particle_system_geometry = new THREE.Geometry();
+    added_objects = [];
+
     // Cleanup previous.
     me.clearRankings();
     if (cometOrbitDisplayed) {
@@ -693,6 +697,21 @@
     // TODO(ian): loader
     //$('#loading').show();
     //$('#loading-text').html('asteroids database');
+    if (cloud_obj.source_orbit) {
+      console.log('Adding cloud source object...');
+      added_objects.push(new Orbit3D(cloud_obj.source_orbit, {
+        color: new THREE.Color(0x800080),
+        display_color: new THREE.Color(0x800080),
+        width: 2,
+        object_size: 40,
+        jed: jed,
+        particle_geometry: particle_system_geometry // will add itself to this geometry
+      }));
+      showing_cloud_obj = true;
+    } else {
+      showing_cloud_obj = false;
+    }
+
     if (cloud_obj.full_orbit_data) {
       // We have real data on meteor showers.
       loadParticlesFromOrbitData(cloud_obj.full_orbit_data);
@@ -854,9 +873,10 @@
     particle_system_shader_material.vertexColor = true;
     particle_system_shader_material.transparent = true;
 
+    var num_big_particles = showing_cloud_obj ? planets.length + 1 : planets.length;
     for (var i = 0; i < added_objects.length; i++) {
       var obj = added_objects[i];
-      if (i < planets.length) {
+      if (i < num_big_particles) {
         attributes.size.value[i] = 100;
         attributes.is_planet.value[i] = 1.0;
         attributes.highlight_above_ecliptic.value[i] = 0.0;
