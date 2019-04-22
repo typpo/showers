@@ -435,7 +435,7 @@
     }
     var selection = window.METEOR_CLOUD_DATA[param];
     if (selection) {
-      $select.val(selection.name);
+      $select.val(param || selection.name);
       onVisualsReady(loadNewViewSelection);
       return true;
     }
