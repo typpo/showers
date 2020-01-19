@@ -54,7 +54,7 @@ app.get('/view/:shower', (req, res) => {
 
     canonicalUrl: `https://www.meteorshowers.org/view/${showerId}`,
 
-    showerCloud: cloudData[showerId],
+    showerCloud: cloudData[showerId.replace('-', ' ')],
     cloudDataJson: JSON.stringify(cloudData),
   });
 });

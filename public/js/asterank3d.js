@@ -650,6 +650,7 @@
     $('#meteor-shower-peak').html(cloud_obj.peak);
 
     if (cloud_obj.source_type && cloud_obj.source_name) {
+      console.log(cloud_obj)
       $('#meteor-shower-source-type').html(cloud_obj.source_type || 'comet');
       $('#meteor-shower-object-name').html(cloud_obj.source_name);
       $('#meteor-shower-object-name').attr('href', cloud_obj.spaceref_url);
