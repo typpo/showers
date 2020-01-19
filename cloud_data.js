@@ -1,4 +1,4 @@
-window.METEOR_CLOUD_DATA = {
+module.exports = {
   'Perseids': {
     name: 'Perseid',
     peak: 'mid-August',

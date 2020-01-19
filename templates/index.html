@@ -39,9 +39,9 @@
 <body>
   <div id="summary" class="maximized">
     <span id="normal-summary">
-      <h2><span id="meteor-shower-name">Perseid</span> meteor shower</h2>
+      <h2><span id="meteor-shower-name">{{showerCloud.name}}</span> meteor shower</h2>
       <span class="description">
-        This shower peaks in <span id="meteor-shower-peak">mid-August</span>, when Earth intersects the dust cloud left by <span id="meteor-shower-source-type">comet</span> <a target="_blank" href="https://www.spacereference.org/comet/109p-swift-tuttle" id="meteor-shower-object-name">Swift-Tuttle</a>.  <a class="iframe-hide-container" href="#faq-modal" rel="modal:open">Learn more.</a>
+        This shower peaks in <span id="meteor-shower-peak">{{showerCloud.peak}}</span>, when Earth intersects the dust cloud left by <span id="meteor-shower-source-type">{{showerCloud.source_type}}</span> <a target="_blank" href="{{showerCloud.source_orbit.spaceref_url}}" id="meteor-shower-object-name">{{showerCloud.source_name}}</a>.  <a class="iframe-hide-container" href="#faq-modal" rel="modal:open">Learn more.</a>
         <span class="iframe-show-container" style="display:none">
           <a target="_blank" href="https://www.meteorshowers.org">View more showers.</a>
         </span>
@@ -315,12 +315,16 @@
   });
 </script>
 
+<script>
+  window.METEOR_CLOUD_DATA = {{cloudDataJson | safe}};
+</script>
+
 {% if isDev %}
   {% for url in scriptUrls %}
     <script src="{{url}}"></script>
   {% endfor %}
 {% else %}
-  <script src="/dist/bundle-20200119-1579461190.js"></script>
+  <script src="/dist/bundle-20200119-1579462078.js"></script>
 {% endif %}
 
 <!-- start Mixpanel --><script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,

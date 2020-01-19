@@ -1,6 +1,8 @@
 const express = require('express');
 const expressNunjucks = require('express-nunjucks');
 const winston = require('winston');
+
+const cloudData = require('./cloud_data');
 const { getScriptUrls } = require('./assets');
 
 const logger = new (winston.Logger)({
@@ -26,16 +28,22 @@ app.get('/', (req, res) => {
     isDev,
     scriptUrls: getScriptUrls(),
     canonicalUrl: 'https://www.meteorshowers.org/',
+
+    cloudDataJson: JSON.stringify(cloudData),
   });
 });
 
 app.get('/view/:shower', (req, res) => {
   let showerId = req.params.shower;
-  if (showerId === 'iau-7') {
-    showerId = 'Perseids';
-  } else if (showerId === 'iau-13') {
-    showerId = 'Leonids';
+  if (showerId.startsWith('iau-')) {
+    Object.keys(cloudData).map(key => {
+      const cloud = cloudData[key];
+      if (showerId.endsWith('-' + cloud.iau_number)) {
+        showerId = cloud.name;
+      }
+    });
   }
+
   res.render('index', {
     shower: showerId,
 
@@ -43,6 +51,9 @@ app.get('/view/:shower', (req, res) => {
     scriptUrls: getScriptUrls(),
 
     canonicalUrl: `https://www.meteorshowers.org/view/${showerId}`,
+
+    showerCloud: cloudData[showerId],
+    cloudDataJson: JSON.stringify(cloudData),
   });
 });
 
