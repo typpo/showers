@@ -10,6 +10,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Swift-Tuttle',
     source_orbit: {
       full_name: 'Comet 109P/Swift-Tuttle',
+      spaceref_url: 'https://www.spacereference.org/comet/109p-swift-tuttle',
       epoch: 2450000.5,
       a: 26.0920694978266,
       e: 0.963225755046038,
@@ -33,6 +34,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Tempel-Tuttle',
     source_orbit: {
       full_name: 'Comet 55P/Tempel-Tuttle',
+      spaceref_url: 'https://www.spacereference.org/comet/55p-tempel-tuttle',
       epoch: 2451040.5,
       a: 10.3383382297577,
       e: 0.905552720972412,
@@ -53,6 +55,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: '169P/NEAT',
     source_orbit: {
       full_name: 'Comet 169P/NEAT',
+      spaceref_url: 'https://www.spacereference.org/comet/169p-neat',
       epoch: 2454306.5,
       a: 2.604263020070025,
       e: 0.7669213009105551,
@@ -75,6 +78,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'C/1861 G1 Thatcher',
     source_orbit: {
       full_name: 'Comet C/1861 G1 Thatcher',
+      spaceref_url: 'https://www.spacereference.org/comet/c-1861-g1-thatcher',
       epoch: 2400920.5,
       a: 55.6818869,
       e: 0.983465,
@@ -102,6 +106,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Halley',
     source_orbit: {
       full_name: 'Comet 1P/Halley',
+      spaceref_url: 'https://www.spacereference.org/comet/1p-halley',
       epoch: 2449400.5,
       a: 17.8341442925537,
       e: 0.967142908462304,
@@ -123,6 +128,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Halley',
     source_orbit: {
       full_name: 'Comet 1P/Halley',
+      spaceref_url: 'https://www.spacereference.org/comet/1p-halley',
       epoch: 2449400.5,
       a: 17.8341442925537,
       e: 0.967142908462304,
@@ -145,6 +151,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: '2003 EH1',
     source_orbit: {
       full_name: 'Asteroid 2003 EH1',
+      spaceref_url: 'https://www.spacereference.org/asteroid/196256-2003-eh1',
       epoch: 2457000.5,
       a: 3.122076326984469,
       e: 0.6190846552236009,
@@ -167,6 +174,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'P/2008 Y12',
     source_orbit: {
       full_name: 'Comet P/2008 Y12 (SOHO)',
+      spaceref_url: 'https://www.spacereference.org/comet/p-2008-y12-soho',
       epoch: 2455476.5,
       a: 3.078224129104039,
       e: 0.9787495374822994,
@@ -187,6 +195,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Encke',
     source_orbit: {
       full_name: 'Comet 2P/Encke',
+      spaceref_url: 'https://www.spacereference.org/comet/2p-encke',
       epoch: 2457260.5,
       a: 2.215132168119717,
       e: 0.8483353543281217,
@@ -207,6 +216,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Encke',
     source_orbit: {
       full_name: 'Comet 2P/Encke',
+      spaceref_url: 'https://www.spacereference.org/comet/2p-encke',
       epoch: 2457260.5,
       a: 2.215132168119717,
       e: 0.8483353543281217,
@@ -229,6 +239,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Phaethon',
     source_orbit: {
       full_name: 'Asteroid 3200 Phaethon',
+      spaceref_url: 'https://www.spacereference.org/asteroid/3200-phaethon-1983-tb',
       epoch: 2457000.5,
       a: 1.271171408008421,
       e: 0.8898360011148798,
@@ -254,6 +265,7 @@ window.METEOR_CLOUD_DATA = {
     source_name: 'Tuttle',
     source_orbit: {
       full_name: 'Comet 8P/Tuttle',
+      spaceref_url: 'https://www.spacereference.org/comet/8p-tuttle',
       epoch: 2454374.5,
       a: 5.6998620708785754374048,
       e: 0.8197997470243816309221,
