@@ -29,6 +29,8 @@ app.get('/', (req, res) => {
     scriptUrls: getScriptUrls(),
     canonicalUrl: 'https://www.meteorshowers.org/',
 
+    // Default to Perseids - Javascript will override to next shower.
+    showerCloud: cloudData['Perseids'],
     cloudDataJson: JSON.stringify(cloudData),
   });
 });
