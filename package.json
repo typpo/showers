@@ -11,7 +11,7 @@
     "uglify-js": "^2.8.22"
   },
   "dependencies": {
-    "express": "^4.15.3",
+    "express": "^4.17.3",
     "express-nunjucks": "^2.2.3",
     "nunjucks": "^3.0.1",
     "winston": "^2.3.1"
