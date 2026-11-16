@@ -156,90 +156,80 @@
     // MIT License.
     // Copyright Ian Webster 2012 (asterank.com)
     // https://github.com/typpo/asterank/blob/master/LICENSE
-    #define pi 3.141592653589793238462643383279
+    #define PI 3.141592653589793
+    #define TWO_PI 6.283185307179586
 
-    attribute vec3 value_color;
-    varying vec3 vColor;
+    float cbrt(float x) {
+      return sign(x) * pow(abs(x), 1.0 / 3.0);
+    }
 
-    attribute float size;
-
-    uniform float earth_i;
-    uniform float earth_om;
-
+    // Days since the particle system was created (particle_jed_origin).
     uniform float jed;
+    uniform float point_scale;
 
-    attribute float a;
-    attribute float e;
-    attribute float i;
-    attribute float o;
-    attribute float ma;
-    attribute float n;
-    attribute float w;
-    attribute float epoch;
+    // Per-particle orbit, precomputed in createParticleSystem():
+    //   orbit_p: (perifocal basis vector toward perihelion, scaled by a in
+    //     scene units; mean anomaly at jed = 0 in radians)
+    //   orbit_q: (basis vector 90 degrees ahead in the orbital plane, scaled by
+    //     a * sqrt(1 - e^2); mean motion in radians/day)
+    //   params: (e, point size, flags bitfield, 0xRRGGBB color)
+    attribute vec4 orbit_p;
+    attribute vec4 orbit_q;
+    attribute vec4 params;
 
-    attribute float highlight_above_ecliptic;
-    attribute float highlight_below_ecliptic;
-
-    attribute float locked;
-    attribute float is_planet;
+    varying vec3 vColor;
     varying float vLocked;
     varying float vPlanet;
 
+    // Returns bit number `bit` (as a power of two) of a small non-negative
+    // integer stored in a float.
+    float flag(float bits, float bit) {
+      return mod(floor(bits / bit), 2.0);
+    }
+
     vec3 getAstroPos() {
-      float i_rad = i * pi/180.0;
-      float o_rad = o * pi/180.0; // longitude of ascending node
-      float p_rad = w * pi/180.0; // LONGITUDE of perihelion
-      float ma_rad = ma * pi/180.0;
+      float e = params.x;
+      // Mean anomaly, wrapped to [-pi, pi).
+      float M = mod(orbit_p.w + orbit_q.w * jed + PI, TWO_PI) - PI;
 
-      // Compute mean motion from period.
-      float period = sqrt(a * a * a) * 365.25;
-      float n_rad = 2.0 * pi / period;
-
-      float d = jed - epoch;
-      float M = ma_rad + n_rad * d;
-
-      // Estimate eccentric and true anom using iterative approximation (this
-      // is normally an intergral).
-      float E0 = M;
-      float E1 = M + e * sin(E0);
-      float lastdiff = abs(E1-E0);
-      E0 = E1;
-      for (int foo=0; foo < 25; foo++) {
-        E1 = M + e * sin(E0);
-        lastdiff = abs(E1-E0);
-        E0 = E1;
-        if (lastdiff < 0.0000001) {
-          break;
-        }
+      // Solve Kepler's equation M = E - e sin(E). Near perihelion, start from
+      // the root of its cubic approximation (1 - e) E + e E^3 / 6 = M, which is
+      // what makes nearly parabolic comet orbits converge; elsewhere use
+      // Danby's guess. Three Newton steps then reach float precision for all
+      // e < 1.
+      float p = 6.0 * (1.0 - e) / e;
+      float q = 6.0 * M / e;
+      float D = sqrt(q * q / 4.0 + p * p * p / 27.0);
+      float E = cbrt(q / 2.0 + D) + cbrt(q / 2.0 - D);
+      if (abs(E) >= 1.0 || e < 0.0001) {
+        E = M + 0.85 * e * sign(M);
+      }
+      for (int k = 0; k < 3; k++) {
+        E -= (E - e * sin(E) - M) / (1.0 - e * cos(E));
       }
 
-      float E = E0;
-      float v = 2.0 * atan(sqrt((1.0+e)/(1.0-e)) * tan(E/2.0));
-
-      // Compute radius vector, in AU.
-      float r = a * (1.0 - e*e) / (1.0 + e * cos(v)) * 50.;  // 50 pixels per AU
-
-      // Compute heliocentric coords.
-      float X = r * (cos(o_rad) * cos(v + p_rad - o_rad) - sin(o_rad) * sin(v + p_rad - o_rad) * cos(i_rad));
-      float Y = r * (sin(o_rad) * cos(v + p_rad - o_rad) + cos(o_rad) * sin(v + p_rad - o_rad) * cos(i_rad));
-      float Z = r * (sin(v + p_rad - o_rad) * sin(i_rad));
-      return vec3(X, Y, Z);
+      // Position in the orbital plane, rotated into heliocentric coords.
+      return (cos(E) - e) * orbit_p.xyz + sin(E) * orbit_q.xyz;
     }
 
     void main() {
-      vColor = value_color;
-      vLocked = locked;
-      vPlanet = is_planet;
+      float size = params.y;
+      float bits = params.z;
+      float rgb = params.w;
+      vColor = vec3(floor(rgb / 65536.0), mod(floor(rgb / 256.0), 256.0),
+                    mod(rgb, 256.0)) / 255.0;
+      vLocked = flag(bits, 1.0);
+      vPlanet = flag(bits, 2.0);
 
       vec3 newpos = getAstroPos();
-      if (newpos[2] > 0. && highlight_above_ecliptic > 0.) {
-        vColor = vec3(255., 255., 255.) / vec3(255., 255., 255.);
-        gl_PointSize = size * 2.;
-      } else if (newpos[2] < 0. && highlight_below_ecliptic > 0.) {
-        vColor = vec3(195., 195., 195.) / vec3(255., 255., 255.);
-        gl_PointSize = size * 2.;
+      if (newpos.z > 0. && flag(bits, 4.0) > 0.) {
+        vColor = vec3(1.0);
+        gl_PointSize = size * 2. * point_scale;
+      } else if (newpos.z < 0. && flag(bits, 8.0) > 0.) {
+        vColor = vec3(195. / 255.);
+        gl_PointSize = size * 2. * point_scale;
       } else {
-        gl_PointSize = size;
+        gl_PointSize = size * point_scale;
       }
       vec4 mvPosition = modelViewMatrix * vec4(newpos, 1.0);
       gl_Position = projectionMatrix * mvPosition;
@@ -324,7 +314,7 @@
     <script src="{{url}}"></script>
   {% endfor %}
 {% else %}
-  <script src="/dist/bundle-20261115-1794808544.js"></script>
+  <script src="/dist/bundle-20261115-1794812941.js"></script>
 {% endif %}
 
 <!-- start Mixpanel --><script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
