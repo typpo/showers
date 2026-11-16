@@ -156,25 +156,19 @@
     // MIT License.
     // Copyright Ian Webster 2012 (asterank.com)
     // https://github.com/typpo/asterank/blob/master/LICENSE
-    #define pi 3.141592653589793238462643383279
 
     attribute vec3 value_color;
     varying vec3 vColor;
 
     attribute float size;
 
-    uniform float earth_i;
-    uniform float earth_om;
-
     uniform float jed;
 
-    attribute float a;
     attribute float e;
-    attribute float i;
-    attribute float o;
-    attribute float ma;
-    attribute float n;
-    attribute float w;
+    attribute float mean_anomaly;
+    attribute float mean_motion;
+    attribute vec3 orbit_axis_x;
+    attribute vec3 orbit_axis_y;
     attribute float epoch;
 
     attribute float highlight_above_ecliptic;
@@ -186,17 +180,8 @@
     varying float vPlanet;
 
     vec3 getAstroPos() {
-      float i_rad = i * pi/180.0;
-      float o_rad = o * pi/180.0; // longitude of ascending node
-      float p_rad = w * pi/180.0; // LONGITUDE of perihelion
-      float ma_rad = ma * pi/180.0;
-
-      // Compute mean motion from period.
-      float period = sqrt(a * a * a) * 365.25;
-      float n_rad = 2.0 * pi / period;
-
       float d = jed - epoch;
-      float M = ma_rad + n_rad * d;
+      float M = mean_anomaly + mean_motion * d;
 
       // Estimate eccentric and true anom using iterative approximation (this
       // is normally an intergral).
@@ -214,16 +199,9 @@
       }
 
       float E = E0;
-      float v = 2.0 * atan(sqrt((1.0+e)/(1.0-e)) * tan(E/2.0));
-
-      // Compute radius vector, in AU.
-      float r = a * (1.0 - e*e) / (1.0 + e * cos(v)) * 50.;  // 50 pixels per AU
-
-      // Compute heliocentric coords.
-      float X = r * (cos(o_rad) * cos(v + p_rad - o_rad) - sin(o_rad) * sin(v + p_rad - o_rad) * cos(i_rad));
-      float Y = r * (sin(o_rad) * cos(v + p_rad - o_rad) + cos(o_rad) * sin(v + p_rad - o_rad) * cos(i_rad));
-      float Z = r * (sin(v + p_rad - o_rad) * sin(i_rad));
-      return vec3(X, Y, Z);
+      // Position directly from eccentric anomaly, with scale and orientation
+      // already baked into the two orbital axes.
+      return orbit_axis_x * (cos(E) - e) + orbit_axis_y * sin(E);
     }
 
     void main() {
@@ -324,7 +302,7 @@
     <script src="{{url}}"></script>
   {% endfor %}
 {% else %}
-  <script src="/dist/bundle-20200119-1579462493.js"></script>
+  <script src="/dist/bundle-20261115-1794807813.js"></script>
 {% endif %}
 
 <!-- start Mixpanel --><script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,

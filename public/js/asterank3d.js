@@ -44,7 +44,6 @@
     , object_movement_on = true
     , last_hovered
     , added_objects = []
-    , added_particle_orbits = []
     , planets = []
     , planet_orbits_visible = true
     , source_orbit = null
@@ -78,6 +77,7 @@
     , uniforms
     , particleSystem
     , num_particles_per_shower = 500
+    , texture_cache = Object.create(null)
 
   // DOM related.
   var $select = $('#shower-select')
@@ -171,7 +171,10 @@
     me.clearLock(true);
     if (particleSystem) {
       scene.remove(particleSystem);
+      particleSystem.geometry.dispose();
+      particleSystem.material.dispose();
       particleSystem = null;
+      window.ps = null;
     }
 
     if (last_hovered) {
@@ -267,12 +270,6 @@
     }
     // add planets
     added_objects.push.apply(added_objects, planets);
-
-    for (var i=0; i < planets.length; i++) {
-      // FIXME this is a workaround for the poor handling of PSG vertices in ellipse.js
-      // needs to be cleaned up
-      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
-    }
 
     console.log('Creating', data.length, 'particles from data...');
     for (var i=0; i < data.length; i++) {
@@ -558,24 +555,33 @@
   }
 
   function cleanUpPreviousViewSelection() {
-    // Reset view
-    particle_system_geometry = new THREE.Geometry();
-    added_objects = [];
-
-    // Cleanup previous.
     me.clearRankings();
-    if (cometOrbitDisplayed) {
-      scene.remove(cometOrbitDisplayed);
+    if (cometDisplayed) {
+      disposeOrbit(cometDisplayed);
+    }
+    for (var i=0; i < added_objects.length; i++) {
+      if (planets.indexOf(added_objects[i]) === -1) {
+        disposeOrbit(added_objects[i]);
+      }
+    }
+    cometDisplayed = null;
+    cometOrbitDisplayed = null;
+    added_objects = [];
+    feature_map = { earth: feature_map.earth };
+    particle_system_geometry = new THREE.Geometry();
+  }
 
-      // Clean up mouseovers.
+  function disposeOrbit(orbit) {
+    [orbit.ellipse, orbit.fatEllipse].forEach(function(ellipse) {
+      if (!ellipse) return;
+      scene.remove(ellipse);
       try {
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
+        domEvents.removeEventListener(ellipse, 'mouseover');
+        domEvents.removeEventListener(ellipse, 'mouseout');
       } catch(e) {}
-    }
-    for (var i=0; i < added_particle_orbits.length; i++) {
-      scene.remove(added_particle_orbits[i]);
-    }
+      ellipse.geometry.dispose();
+      ellipse.material.dispose();
+    });
   }
 
   function setupUiForIAUSelection(iau_num) {
@@ -743,7 +749,6 @@
   function addParticleOrbits() {
     for (var j=planets.length; j < added_objects.length; j++) {
       var ellipse = added_objects[j].getSkinnyEllipse();
-      added_particle_orbits.push(ellipse);
       scene.add(ellipse);
     }
   }
@@ -830,13 +835,11 @@
   function createParticleSystem() {
     // Attributes
     attributes = {
-      a: { type: 'f', value: [] },
       e: { type: 'f', value: [] },
-      i: { type: 'f', value: [] },
-      o: { type: 'f', value: [] },
-      ma: { type: 'f', value: [] },
-      n: { type: 'f', value: [] },
-      w: { type: 'f', value: [] },
+      mean_anomaly: { type: 'f', value: [] },
+      mean_motion: { type: 'f', value: [] },
+      orbit_axis_x: { type: 'v3', value: [] },
+      orbit_axis_y: { type: 'v3', value: [] },
       epoch: { type: 'f', value: [] },
       size: { type: 'f', value: [] },
       value_color : { type: 'c', value: [] },
@@ -853,8 +856,6 @@
     uniforms = {
       color: { type: 'c', value: new THREE.Color(0xffffff) },
       jed: { type: 'f', value: jed },
-      earth_i: { type: 'f', value: Ephemeris.earth.i },
-      earth_om: { type: 'f', value: Ephemeris.earth.om },
       planet_texture: {
         type: 't',
         value: loadTexture(opts.static_prefix + 'img/cloud4.png')
@@ -893,14 +894,31 @@
             current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
       }
 
-      attributes.a.value[i] = obj.eph.a;
+      // These orbital terms are constant for the lifetime of the particle.
+      var a = obj.eph.a;
+      var e = obj.eph.e;
+      var inclination = obj.eph.i * pi / 180;
+      var node = obj.eph.om * pi / 180;
+      var perihelion = (obj.eph.w_bar || obj.eph.w + obj.eph.om) * pi / 180 - node;
+      var cosNode = Math.cos(node), sinNode = Math.sin(node);
+      var cosPerihelion = Math.cos(perihelion), sinPerihelion = Math.sin(perihelion);
+      var cosInclination = Math.cos(inclination), sinInclination = Math.sin(inclination);
+      var major = a * 50; // 50 scene units per AU.
+      var minor = major * Math.sqrt(1 - e * e);
+
       attributes.e.value[i] = obj.eph.e;
-      attributes.i.value[i] = obj.eph.i;
-      attributes.o.value[i] = obj.eph.om;
-      attributes.ma.value[i] = obj.eph.ma || 0; // TODO
-      attributes.n.value[i] = obj.eph.n || -1.0;
-      attributes.w.value[i] = obj.eph.w_bar ||
-        (obj.eph.w + obj.eph.om);
+      attributes.mean_anomaly.value[i] = (obj.eph.ma || 0) * pi / 180;
+      attributes.mean_motion.value[i] = 2 * pi / (Math.sqrt(a * a * a) * 365.25);
+      attributes.orbit_axis_x.value[i] = new THREE.Vector3(
+        major * (cosNode * cosPerihelion - sinNode * sinPerihelion * cosInclination),
+        major * (sinNode * cosPerihelion + cosNode * sinPerihelion * cosInclination),
+        major * sinPerihelion * sinInclination
+      );
+      attributes.orbit_axis_y.value[i] = new THREE.Vector3(
+        minor * (-cosNode * sinPerihelion - sinNode * cosPerihelion * cosInclination),
+        minor * (-sinNode * sinPerihelion + cosNode * cosPerihelion * cosInclination),
+        minor * cosPerihelion * sinInclination
+      );
       attributes.epoch.value[i] = obj.eph.epoch ||
         Math.random() * 2451545.0;
       attributes.value_color.value[i] = obj.opts.display_color ||
@@ -1169,6 +1187,9 @@
   /** Util functions **/
 
   function loadTexture(path) {
+    if (texture_cache[path]) {
+      return texture_cache[path];
+    }
     if (typeof passthrough_vars !== 'undefined' &&
         passthrough_vars.offline_mode) {
       // same origin policy workaround
@@ -1180,9 +1201,9 @@
         texture.needsUpdate = true;
       };
       new_image.src = b64_data;
-      return texture;
+      return texture_cache[path] = texture;
     }
-    return THREE.ImageUtils.loadTexture(path);
+    return texture_cache[path] = THREE.ImageUtils.loadTexture(path);
   }
 
   function isWebGLSupported() {
