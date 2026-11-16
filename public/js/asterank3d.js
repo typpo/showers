@@ -35,6 +35,8 @@
   /** Constants **/
   var WEB_GL_ENABLED = true
     , MAX_NUM_ORBITS = 4000
+    , PIXELS_PER_AU = 50
+    , MAX_PIXEL_RATIO = 2
 
   /** Other variables **/
   var stats, scene, renderer, composer
@@ -44,7 +46,6 @@
     , object_movement_on = true
     , last_hovered
     , added_objects = []
-    , added_particle_orbits = []
     , planets = []
     , planet_orbits_visible = true
     , source_orbit = null
@@ -77,6 +78,9 @@
   var attributes
     , uniforms
     , particleSystem
+    , particle_textures = null
+    , particle_colors = []
+    , particle_jed_origin = 0
     , num_particles_per_shower = 500
 
   // DOM related.
@@ -94,7 +98,9 @@
     $('#loading-text').html('renderer');
     if (isWebGLSupported()){
       renderer = new THREE.WebGLRenderer({
-        antialias		: true	// to get smoother output
+        antialias		: true,	// to get smoother output
+        // Rendering above 2x is very hard to see but costs a lot of fill rate.
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO)
         //preserveDrawingBuffer	: true	// to allow screenshot
       });
       renderer.setClearColor(0x000000, 1);
@@ -171,6 +177,9 @@
     me.clearLock(true);
     if (particleSystem) {
       scene.remove(particleSystem);
+      // Free the GPU buffers and shader program. Textures are shared and kept.
+      particleSystem.geometry.dispose();
+      particleSystem.material.dispose();
       particleSystem = null;
     }
 
@@ -194,9 +203,9 @@
     cameraControls.target = new THREE.Vector3(0, 0, 0);
 
     // restore color and size
-    attributes.value_color.value[locked_object_idx] = locked_object_color;
-    attributes.size.value[locked_object_idx] = locked_object_size;
-    attributes.locked.value[locked_object_idx] = 0.0;
+    setParticleColor(locked_object_idx, locked_object_color);
+    setParticleSize(locked_object_idx, locked_object_size);
+    setParticleLocked(locked_object_idx, false);
     setAttributeNeedsUpdateFlags();
     if (locked_object_idx >= planets.length) {
       // not a planet
@@ -230,12 +239,12 @@
     }
     locked_object = orbit_obj;
     locked_object_idx = mapped_obj['idx']; // this is the object's position in the added_objects array
-    locked_object_color = attributes.value_color.value[locked_object_idx];
-    attributes.value_color.value[locked_object_idx] = full_name === 'earth' ?
-      new THREE.Color(0x00ff00) : new THREE.Color(0xff0000);
-    locked_object_size = attributes.size.value[locked_object_idx];
-    attributes.size.value[locked_object_idx] = 30.0;
-    attributes.locked.value[locked_object_idx] = 1.0;
+    locked_object_color = getParticleColor(locked_object_idx);
+    setParticleColor(locked_object_idx, full_name === 'earth' ?
+      new THREE.Color(0x00ff00) : new THREE.Color(0xff0000));
+    locked_object_size = getParticleSize(locked_object_idx);
+    setParticleSize(locked_object_idx, 30.0);
+    setParticleLocked(locked_object_idx, true);
     setAttributeNeedsUpdateFlags();
 
     locked_object_ellipse = locked_object.getEllipse();
@@ -267,12 +276,6 @@
     }
     // add planets
     added_objects.push.apply(added_objects, planets);
-
-    for (var i=0; i < planets.length; i++) {
-      // FIXME this is a workaround for the poor handling of PSG vertices in ellipse.js
-      // needs to be cleaned up
-      particle_system_geometry.vertices.push(new THREE.Vector3(0,0,0));
-    }
 
     console.log('Creating', data.length, 'particles from data...');
     for (var i=0; i < data.length; i++) {
@@ -397,9 +400,9 @@
       return;
     }
     var idx = mapped_obj.idx; // this is the object's position in the added_objects array
-    attributes.value_color.value[idx] = new THREE.Color(0x0000ff);
-    attributes.size.value[idx] = 30.0;
-    attributes.locked.value[idx] = 1.0;
+    setParticleColor(idx, new THREE.Color(0x0000ff));
+    setParticleSize(idx, 30.0);
+    setParticleLocked(idx, true);
     setAttributeNeedsUpdateFlags();
   }
 
@@ -558,24 +561,38 @@
   }
 
   function cleanUpPreviousViewSelection() {
-    // Reset view
-    particle_system_geometry = new THREE.Geometry();
-    added_objects = [];
-
-    // Cleanup previous.
     me.clearRankings();
-    if (cometOrbitDisplayed) {
-      scene.remove(cometOrbitDisplayed);
 
-      // Clean up mouseovers.
+    // Free every orbit line from the previous view, including fat ellipses
+    // created for mouseover labels. Planets are kept across views.
+    if (cometDisplayed) {
+      disposeOrbit(cometDisplayed);
+    }
+    for (var i=0; i < added_objects.length; i++) {
+      if (planets.indexOf(added_objects[i]) === -1) {
+        disposeOrbit(added_objects[i]);
+      }
+    }
+    cometDisplayed = null;
+    cometOrbitDisplayed = null;
+
+    // Reset view. Drop lookups for objects that no longer exist.
+    added_objects = [];
+    feature_map = { earth: feature_map.earth };
+    particle_system_geometry = new THREE.Geometry();
+  }
+
+  function disposeOrbit(orbit) {
+    [orbit.ellipse, orbit.fatEllipse].forEach(function(ellipse) {
+      if (!ellipse) return;
+      scene.remove(ellipse);
       try {
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
+        domEvents.removeEventListener(ellipse, 'mouseover');
+        domEvents.removeEventListener(ellipse, 'mouseout');
       } catch(e) {}
-    }
-    for (var i=0; i < added_particle_orbits.length; i++) {
-      scene.remove(added_particle_orbits[i]);
-    }
+      ellipse.geometry.dispose();
+      ellipse.material.dispose();
+    });
   }
 
   function setupUiForIAUSelection(iau_num) {
@@ -743,7 +760,6 @@
   function addParticleOrbits() {
     for (var j=planets.length; j < added_objects.length; j++) {
       var ellipse = added_objects[j].getSkinnyEllipse();
-      added_particle_orbits.push(ellipse);
       scene.add(ellipse);
     }
   }
@@ -827,44 +843,55 @@
     }, 100);
   }
 
+  function getParticleTextures() {
+    // Loaded once and shared by every particle system we create.
+    if (!particle_textures) {
+      particle_textures = {
+        planet: loadTexture(opts.static_prefix + 'img/cloud4.png'),
+        small_roid: loadTexture(opts.object_texture_path),
+        small_roid_circled:
+          loadTexture(opts.static_prefix + 'img/cloud4-circled.png'),
+      };
+    }
+    return particle_textures;
+  }
+
+  // Bits of the per-particle flags value, see orbit-vertex-shader.
+  var FLAG_LOCKED = 1, FLAG_PLANET = 2, FLAG_HIGHLIGHT_ABOVE_ECLIPTIC = 4,
+      FLAG_HIGHLIGHT_BELOW_ECLIPTIC = 8;
+
   function createParticleSystem() {
-    // Attributes
+    // Orbit values that don't change over time are computed here, once per
+    // particle, so the vertex shader only has to solve Kepler's equation.
+    // Everything is packed into three vec4s to keep per-vertex reads small.
     attributes = {
-      a: { type: 'f', value: [] },
-      e: { type: 'f', value: [] },
-      i: { type: 'f', value: [] },
-      o: { type: 'f', value: [] },
-      ma: { type: 'f', value: [] },
-      n: { type: 'f', value: [] },
-      w: { type: 'f', value: [] },
-      epoch: { type: 'f', value: [] },
-      size: { type: 'f', value: [] },
-      value_color : { type: 'c', value: [] },
-
-      // Attributes can't be bool or int in some versions of opengl
-      locked: { type: 'f', value: [] },
-      is_planet: { type: 'f', value: [] },
-
-      // Highlight attributes
-      highlight_above_ecliptic: { type: 'f', value: [] },
-      highlight_below_ecliptic: { type: 'f', value: [] },
+      // (perifocal basis vector toward perihelion, scaled by a;
+      //  mean anomaly at particle_jed_origin)
+      orbit_p: { type: 'v4', value: [] },
+      // (perifocal basis vector 90 degrees ahead, scaled by a * sqrt(1 - e^2);
+      //  mean motion in radians/day)
+      orbit_q: { type: 'v4', value: [] },
+      // (e, size, flags bitfield, 0xRRGGBB color)
+      params: { type: 'v4', value: [] },
     };
+    particle_colors = [];
+    // Times are sent to the GPU relative to this date. That keeps float32
+    // precision much better than sending full Julian dates.
+    particle_jed_origin = jed;
 
+    var textures = getParticleTextures();
     uniforms = {
-      color: { type: 'c', value: new THREE.Color(0xffffff) },
-      jed: { type: 'f', value: jed },
-      earth_i: { type: 'f', value: Ephemeris.earth.i },
-      earth_om: { type: 'f', value: Ephemeris.earth.om },
-      planet_texture: {
-        type: 't',
-        value: loadTexture(opts.static_prefix + 'img/cloud4.png')
+      jed: { type: 'f', value: 0 },
+      // gl_PointSize is in device pixels. Keeps sprites the same on-screen size
+      // when the renderer's pixel ratio is capped below the screen's.
+      point_scale: {
+        type: 'f',
+        value: renderer.devicePixelRatio / (window.devicePixelRatio || 1)
       },
-      small_roid_texture:
-        { type: 't', value: loadTexture(opts.object_texture_path) },
-      small_roid_circled_texture: {
-        type: 't',
-        value: loadTexture(opts.static_prefix + 'img/cloud4-circled.png')
-      },
+      planet_texture: { type: 't', value: textures.planet },
+      small_roid_texture: { type: 't', value: textures.small_roid },
+      small_roid_circled_texture:
+        { type: 't', value: textures.small_roid_circled },
     };
     var particle_system_shader_material = new THREE.ShaderMaterial( {
       uniforms:       uniforms,
@@ -876,36 +903,49 @@
     particle_system_shader_material.vertexColor = true;
     particle_system_shader_material.transparent = true;
 
+    var deg = pi / 180;
+    var highlight_flags =
+      current_cloud_obj && current_cloud_obj.highlight_ecliptic ?
+      FLAG_HIGHLIGHT_ABOVE_ECLIPTIC | FLAG_HIGHLIGHT_BELOW_ECLIPTIC : 0;
     var num_big_particles = showing_cloud_obj ? planets.length + 1 : planets.length;
-    for (var i = 0; i < added_objects.length; i++) {
-      var obj = added_objects[i];
-      if (i < num_big_particles) {
-        attributes.size.value[i] = 100;
-        attributes.is_planet.value[i] = 1.0;
-        attributes.highlight_above_ecliptic.value[i] = 0.0;
-        attributes.highlight_below_ecliptic.value[i] = 0.0;
-      } else {
-        attributes.size.value[i] = obj.opts.object_size;
-        attributes.is_planet.value[i] = 0.0;
-        attributes.highlight_above_ecliptic.value[i] =
-            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
-        attributes.highlight_below_ecliptic.value[i] =
-            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
-      }
+    for (var idx = 0; idx < added_objects.length; idx++) {
+      var obj = added_objects[idx];
+      var eph = obj.eph;
+      var is_big = idx < num_big_particles;
 
-      attributes.a.value[i] = obj.eph.a;
-      attributes.e.value[i] = obj.eph.e;
-      attributes.i.value[i] = obj.eph.i;
-      attributes.o.value[i] = obj.eph.om;
-      attributes.ma.value[i] = obj.eph.ma || 0; // TODO
-      attributes.n.value[i] = obj.eph.n || -1.0;
-      attributes.w.value[i] = obj.eph.w_bar ||
-        (obj.eph.w + obj.eph.om);
-      attributes.epoch.value[i] = obj.eph.epoch ||
-        Math.random() * 2451545.0;
-      attributes.value_color.value[i] = obj.opts.display_color ||
-        new THREE.Color(0xff00ff);
-      attributes.locked.value[i] = 0.0;
+      // Must match Orbit3D.getPosAtTime in ellipse.js.
+      var e = eph.e;
+      var a = eph.a * PIXELS_PER_AU;
+      var b = a * Math.sqrt(1 - e * e);
+      var i = eph.i * deg;
+      var o = eph.om * deg;  // longitude of ascending node
+      var p = (eph.w_bar || (eph.w + eph.om)) * deg;  // longitude of perihelion
+      var w = p - o;  // argument of perihelion
+      var cos_o = Math.cos(o), sin_o = Math.sin(o);
+      var cos_w = Math.cos(w), sin_w = Math.sin(w);
+      var cos_i = Math.cos(i), sin_i = Math.sin(i);
+      var period = Math.sqrt(eph.a * eph.a * eph.a) * 365.25;
+      var n = 2 * pi / period;
+      var epoch = eph.epoch || Math.random() * 2451545.0;
+      var ma = (eph.ma || 0) * deg + n * (particle_jed_origin - epoch);
+      ma -= 2 * pi * Math.floor(ma / (2 * pi));
+
+      attributes.orbit_p.value[idx] = new THREE.Vector4(
+        a * (cos_o * cos_w - sin_o * sin_w * cos_i),
+        a * (sin_o * cos_w + cos_o * sin_w * cos_i),
+        a * (sin_w * sin_i),
+        ma);
+      attributes.orbit_q.value[idx] = new THREE.Vector4(
+        b * (-cos_o * sin_w - sin_o * cos_w * cos_i),
+        b * (-sin_o * sin_w + cos_o * cos_w * cos_i),
+        b * (cos_w * sin_i),
+        n);
+      attributes.params.value[idx] = new THREE.Vector4(
+        e,
+        is_big ? 100 : obj.opts.object_size,
+        is_big ? FLAG_PLANET : highlight_flags,
+        0);
+      setParticleColor(idx, obj.opts.display_color || new THREE.Color(0xff00ff));
       particle_system_geometry.vertices.push(new THREE.Vector3(0, 0, 0));
     }  // end added_objects loop
     setAttributeNeedsUpdateFlags();
@@ -919,10 +959,31 @@
     scene.add(particleSystem);
   }
 
+  // Per-particle display setters. Call setAttributeNeedsUpdateFlags() after.
+  function getParticleColor(idx) {
+    return particle_colors[idx];
+  }
+
+  function setParticleColor(idx, color) {
+    particle_colors[idx] = color;
+    attributes.params.value[idx].w = color.getHex();
+  }
+
+  function getParticleSize(idx) {
+    return attributes.params.value[idx].y;
+  }
+
+  function setParticleSize(idx, size) {
+    attributes.params.value[idx].y = size;
+  }
+
+  function setParticleLocked(idx, locked) {
+    var params = attributes.params.value[idx];
+    params.z = (params.z & ~FLAG_LOCKED) | (locked ? FLAG_LOCKED : 0);
+  }
+
   function setAttributeNeedsUpdateFlags() {
-    attributes.value_color.needsUpdate = true;
-    attributes.locked.needsUpdate = true;
-    attributes.size.needsUpdate = true;
+    attributes.params.needsUpdate = true;
   }
 
   // Main animation loop
@@ -979,7 +1040,7 @@
 
     if (object_movement_on || force) {
       // Update shader vals for asteroid cloud.
-      uniforms.jed.value = jed;
+      uniforms.jed.value = jed - particle_jed_origin;
       jed += opts.jed_delta;
     }
 
