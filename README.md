@@ -12,49 +12,13 @@ This is a modified version of [Asterank](http://github.com/typpo/asterank)'s 3D 
 
 # Installation & Usage
 
-Requires Node.js 22.18 or newer. Install the pinned dependencies with `npm ci`.
+Requires Node.js 22.18 or newer. Install dependencies with `npm ci`.
 
 - `npm run dev` runs the app in the local Workers runtime at http://localhost:8988/.
 - `npm test` builds and tests the production Worker, routes, redirects, and datasets.
 - `npm run build` produces deployable output in `.cloudflare/output/v0/`.
 - `npm run preview` serves that production build locally at http://localhost:8988/.
 - `npm run deploy` builds and deploys the Worker using Cloudflare's `cf` CLI.
-
-The build compiles the Nunjucks template ahead of time, creates a content-hashed
-JavaScript bundle from `config/vendor.list` and `config/app.list`, and copies
-`public/` into Workers Static Assets. The CAMS dataset symlinks are dereferenced
-so both datasets are included in every deployment. Generated files are ignored
-by Git. There is no manual bundle filename to update.
-
-In dev, scripts listed in `config/*.list` are loaded individually and unminified
-straight from `public/`, so frontend and dataset edits show up on reload. Restart
-the dev server after changing the template or the script lists.
-
-# Deployment
-
-`cloudflare.config.ts` defines the `meteorshowers` Worker and its `ASSETS` binding.
-The compatibility date matches the newest date supported by the pinned local
-runtime. Logs and traces are enabled with 10% sampling. There are no application
-secrets, database bindings, background jobs, or origin-server requests.
-
-Authenticate with `npx cf auth login`, or set `CLOUDFLARE_API_TOKEN` for CI.
-The token needs permission to deploy Workers scripts and custom domains in the configured
-account and read the `meteorshowers.org` zone. Use `npx cf deploy --dry-run` to
-validate the build without publishing it.
-
-The Worker owns the custom domains `www.meteorshowers.org` and `meteorshowers.org`.
-Cloudflare manages their DNS records directly. Neither hostname points at an
-origin server, and no Workers route overrides are required.
-The Worker redirects the apex hostname and HTTP requests to HTTPS on `www`,
-preserving paths and query strings. Named showers, `/view/iau-N` iframe links,
-and `/view/all` retain their existing URLs. Missing assets return 404 responses.
-
-The proxied A records for the previous Express origin were replaced by
-Worker-managed custom domain records. The site's Google verification TXT record
-was preserved. Roll back application changes by redeploying an earlier Worker
-version. Returning to the old server would require removing the custom domains
-and restoring the proxied A records for `@` and `www`, after confirming that the
-origin service is healthy.
 
 # License
 
