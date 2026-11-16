@@ -46,7 +46,6 @@
     , object_movement_on = true
     , last_hovered
     , added_objects = []
-    , added_particle_orbits = []
     , planets = []
     , planet_orbits_visible = true
     , source_orbit = null
@@ -562,30 +561,38 @@
   }
 
   function cleanUpPreviousViewSelection() {
-    // Reset view
-    particle_system_geometry = new THREE.Geometry();
-    added_objects = [];
-
-    // Cleanup previous.
     me.clearRankings();
-    if (cometOrbitDisplayed) {
-      scene.remove(cometOrbitDisplayed);
-      cometOrbitDisplayed.geometry.dispose();
-      cometOrbitDisplayed.material.dispose();
 
-      // Clean up mouseovers.
+    // Free every orbit line from the previous view, including fat ellipses
+    // created for mouseover labels. Planets are kept across views.
+    if (cometDisplayed) {
+      disposeOrbit(cometDisplayed);
+    }
+    for (var i=0; i < added_objects.length; i++) {
+      if (planets.indexOf(added_objects[i]) === -1) {
+        disposeOrbit(added_objects[i]);
+      }
+    }
+    cometDisplayed = null;
+    cometOrbitDisplayed = null;
+
+    // Reset view. Drop lookups for objects that no longer exist.
+    added_objects = [];
+    feature_map = { earth: feature_map.earth };
+    particle_system_geometry = new THREE.Geometry();
+  }
+
+  function disposeOrbit(orbit) {
+    [orbit.ellipse, orbit.fatEllipse].forEach(function(ellipse) {
+      if (!ellipse) return;
+      scene.remove(ellipse);
       try {
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseover');
-        domEvents.removeEventListener(cometOrbitDisplayed, 'mouseout');
+        domEvents.removeEventListener(ellipse, 'mouseover');
+        domEvents.removeEventListener(ellipse, 'mouseout');
       } catch(e) {}
-      cometOrbitDisplayed = null;
-    }
-    for (var i=0; i < added_particle_orbits.length; i++) {
-      scene.remove(added_particle_orbits[i]);
-      added_particle_orbits[i].geometry.dispose();
-      added_particle_orbits[i].material.dispose();
-    }
-    added_particle_orbits = [];
+      ellipse.geometry.dispose();
+      ellipse.material.dispose();
+    });
   }
 
   function setupUiForIAUSelection(iau_num) {
@@ -753,7 +760,6 @@
   function addParticleOrbits() {
     for (var j=planets.length; j < added_objects.length; j++) {
       var ellipse = added_objects[j].getSkinnyEllipse();
-      added_particle_orbits.push(ellipse);
       scene.add(ellipse);
     }
   }
