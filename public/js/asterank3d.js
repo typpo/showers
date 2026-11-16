@@ -229,7 +229,7 @@
       return;
     }
     locked_object = orbit_obj;
-    locked_object_idx = mapped_obj['idx']; // this is the object's position in the added_objects array
+    locked_object_idx = particleIndexOf(mapped_obj);
     locked_object_color = attributes.value_color.value[locked_object_idx];
     attributes.value_color.value[locked_object_idx] = full_name === 'earth' ?
       new THREE.Color(0x00ff00) : new THREE.Color(0xff0000);
@@ -384,6 +384,14 @@
     skyBox.visible = opts.milky_way_visible = !opts.milky_way_visible;
   }
 
+  // Returns the object's position in the added_objects array, which is also
+  // its index in the particle system. Looked up rather than stored because
+  // planets come after the meteor cloud's source object when one is shown.
+  function particleIndexOf(mapped_obj) {
+    var idx = added_objects.indexOf(mapped_obj.orbit);
+    return idx >= 0 ? idx : mapped_obj.idx;
+  }
+
   function changeJED(new_jed) {
     jed = new_jed;
   }
@@ -396,7 +404,7 @@
       alert("Sorry, something went wrong and I can't highlight this object.");
       return;
     }
-    var idx = mapped_obj.idx; // this is the object's position in the added_objects array
+    var idx = particleIndexOf(mapped_obj);
     attributes.value_color.value[idx] = new THREE.Color(0x0000ff);
     attributes.size.value[idx] = 30.0;
     attributes.locked.value[idx] = 1.0;
@@ -561,6 +569,7 @@
     // Reset view
     particle_system_geometry = new THREE.Geometry();
     added_objects = [];
+    current_cloud_obj = null;
 
     // Cleanup previous.
     me.clearRankings();
@@ -611,9 +620,10 @@
 
   function loadOrbitsData(url, cb) {
     showLoader();
-    $.getJSON(url, function(cloud_obj) {
-      current_cloud_obj = cloud_obj;
-      loadParticlesFromOrbitData(cloud_obj);
+    $.getJSON(url, function(orbit_data) {
+      // This is orbit data, not a shower config, so leave current_cloud_obj
+      // (and its display options such as highlight_ecliptic) alone.
+      loadParticlesFromOrbitData(orbit_data);
       hideLoader();
       if (cb) cb();
     }).fail(function(err) {
@@ -876,6 +886,8 @@
     particle_system_shader_material.vertexColor = true;
     particle_system_shader_material.transparent = true;
 
+    var highlight =
+      current_cloud_obj && current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
     var num_big_particles = showing_cloud_obj ? planets.length + 1 : planets.length;
     for (var i = 0; i < added_objects.length; i++) {
       var obj = added_objects[i];
@@ -887,10 +899,8 @@
       } else {
         attributes.size.value[i] = obj.opts.object_size;
         attributes.is_planet.value[i] = 0.0;
-        attributes.highlight_above_ecliptic.value[i] =
-            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
-        attributes.highlight_below_ecliptic.value[i] =
-            current_cloud_obj.highlight_ecliptic ? 1.0 : 0.0;
+        attributes.highlight_above_ecliptic.value[i] = highlight;
+        attributes.highlight_below_ecliptic.value[i] = highlight;
       }
 
       attributes.a.value[i] = obj.eph.a;
