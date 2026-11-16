@@ -2,18 +2,26 @@
   "name": "showers",
   "version": "1.0.0",
   "description": "meteor showers from space! www.meteorshowers.org",
-  "main": "index.js",
   "repository": "git@github.com:typpo/showers.git",
   "author": "Ian Webster <ianw_github@ianww.com>",
   "license": "MIT",
   "devDependencies": {
-    "uglify": "^0.1.5",
-    "uglify-js": "^2.8.22"
+    "@cloudflare/vite-plugin": "2.0.0-beta.v.12",
+    "cf": "1.0.0-beta.28",
+    "miniflare": "5.20261104.0-beta",
+    "nunjucks": "3.2.4",
+    "uglify-js": "3.19.3",
+    "vite": "8.3.6"
   },
-  "dependencies": {
-    "express": "^4.15.3",
-    "express-nunjucks": "^2.2.3",
-    "nunjucks": "^3.0.1",
-    "winston": "^2.3.1"
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "cf dev",
+    "build": "cf build",
+    "preview": "vite preview --port 8988",
+    "test": "npm run build && node --test",
+    "deploy": "npm run build && cf deploy --prebuilt"
   }
 }

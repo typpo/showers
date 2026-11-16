@@ -1,4 +1,11 @@
 node_modules/
+.generated/
+.cloudflare/
+dist/
+.dev.vars*
+.env*
+.playwright-cli/
+output/
 
 ### Vim ###
 [._]*.s[a-w][a-z]

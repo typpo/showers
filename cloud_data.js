@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'Perseids': {
     name: 'Perseid',
     peak: 'mid-August',
