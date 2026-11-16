@@ -238,7 +238,7 @@
       return;
     }
     locked_object = orbit_obj;
-    locked_object_idx = mapped_obj['idx']; // this is the object's position in the added_objects array
+    locked_object_idx = particleIndexOf(mapped_obj);
     locked_object_color = getParticleColor(locked_object_idx);
     setParticleColor(locked_object_idx, full_name === 'earth' ?
       new THREE.Color(0x00ff00) : new THREE.Color(0xff0000));
@@ -387,6 +387,14 @@
     skyBox.visible = opts.milky_way_visible = !opts.milky_way_visible;
   }
 
+  // Returns the object's position in the added_objects array, which is also
+  // its index in the particle system. Looked up rather than stored because
+  // planets come after the meteor cloud's source object when one is shown.
+  function particleIndexOf(mapped_obj) {
+    var idx = added_objects.indexOf(mapped_obj.orbit);
+    return idx >= 0 ? idx : mapped_obj.idx;
+  }
+
   function changeJED(new_jed) {
     jed = new_jed;
   }
@@ -399,7 +407,7 @@
       alert("Sorry, something went wrong and I can't highlight this object.");
       return;
     }
-    var idx = mapped_obj.idx; // this is the object's position in the added_objects array
+    var idx = particleIndexOf(mapped_obj);
     setParticleColor(idx, new THREE.Color(0x0000ff));
     setParticleSize(idx, 30.0);
     setParticleLocked(idx, true);
@@ -578,6 +586,7 @@
 
     // Reset view. Drop lookups for objects that no longer exist.
     added_objects = [];
+    current_cloud_obj = null;
     feature_map = { earth: feature_map.earth };
     particle_system_geometry = new THREE.Geometry();
   }
@@ -628,9 +637,10 @@
 
   function loadOrbitsData(url, cb) {
     showLoader();
-    $.getJSON(url, function(cloud_obj) {
-      current_cloud_obj = cloud_obj;
-      loadParticlesFromOrbitData(cloud_obj);
+    $.getJSON(url, function(orbit_data) {
+      // This is orbit data, not a shower config, so leave current_cloud_obj
+      // (and its display options such as highlight_ecliptic) alone.
+      loadParticlesFromOrbitData(orbit_data);
       hideLoader();
       if (cb) cb();
     }).fail(function(err) {
