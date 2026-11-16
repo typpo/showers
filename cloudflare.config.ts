@@ -7,7 +7,7 @@ export default defineConfig({
     entrypoint: './showers.js',
     // Latest date supported by the pinned local Workers runtime.
     compatibilityDate: '2026-11-11',
-    workersDev: true,
+    workersDev: false,
     domains: ['www.meteorshowers.org', 'meteorshowers.org'],
     triggers: [],
     env: { ASSETS: bindings.assets() },

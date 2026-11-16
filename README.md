@@ -24,8 +24,11 @@ The build compiles the Nunjucks template ahead of time, creates a content-hashed
 JavaScript bundle from `config/vendor.list` and `config/app.list`, and copies
 `public/` into Workers Static Assets. The CAMS dataset symlinks are dereferenced
 so both datasets are included in every deployment. Generated files are ignored
-by Git. There is no manual bundle filename to update. Restart the dev server
-after changing templates, frontend source files, or datasets so they are rebuilt.
+by Git. There is no manual bundle filename to update.
+
+In dev, scripts listed in `config/*.list` are loaded individually and unminified
+straight from `public/`, so frontend and dataset edits show up on reload. Restart
+the dev server after changing the template or the script lists.
 
 # Deployment
 
@@ -46,18 +49,12 @@ The Worker redirects the apex hostname and HTTP requests to HTTPS on `www`,
 preserving paths and query strings. Named showers, `/view/iau-N` iframe links,
 and `/view/all` retain their existing URLs. Missing assets return 404 responses.
 
-Before migration, the live site returned Express headers and the January 2020
-JavaScript bundle through Cloudflare's proxy. The origin is the Linode server
-`grunthos`, reachable as `gate.ianww.com` (`97.107.131.22`). Its systemd service
-`gate-node-showers.service` runs `/home/ian/showers/showers.js` on port 8988,
-using Node 22.23.4 under `/opt/gate-node-runtime/22.23.4`. The removed PM2/Upstart
-scripts predate that systemd setup.
-Both proxied A records pointing to `97.107.131.22` were removed and replaced by
+The proxied A records for the previous Express origin were replaced by
 Worker-managed custom domain records. The site's Google verification TXT record
 was preserved. Roll back application changes by redeploying an earlier Worker
 version. Returning to the old server would require removing the custom domains
-and restoring proxied A records for `@` and `www` to `97.107.131.22`, after
-confirming that the origin service is healthy.
+and restoring the proxied A records for `@` and `www`, after confirming that the
+origin service is healthy.
 
 # License
 

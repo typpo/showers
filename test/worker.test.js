@@ -67,6 +67,24 @@ test('featured IAU links use the catalogue key, while other IAU embeds remain se
   }
 });
 
+test('canonical URLs match the ones the Express site published', async () => {
+  const canonical = async path =>
+    (await (await get(path)).text()).match(/<link rel="canonical" href="([^"]*)">/)[1];
+  const cases = {
+    '/': '/',
+    '/view/Southern-Delta-Aquariids': '/view/Southern-Delta-Aquariids',
+    '/view/Southern%20Delta%20Aquariids': '/view/Southern%20Delta%20Aquariids',
+    '/view/Leonids/': '/view/Leonids',
+    '/view/iau-13': '/view/Leonids',
+    '/view/iau-7': '/view/Perseids',
+    '/view/iau-873': '/view/iau-873',
+    '/view/all': '/view/all',
+  };
+  for (const [path, expected] of Object.entries(cases)) {
+    assert.equal(await canonical(path), `https://www.meteorshowers.org${expected}`, path);
+  }
+});
+
 test('both CAMS datasets and public assets are served by the assets binding', async () => {
   for (const path of ['/js/data/cams_splits/iau_7.json', '/js/data/cams_splits_2016/iau_873.json', '/js/data/oer.json', '/css/main.css', '/img/cloud4.png']) {
     const response = await get(path);
