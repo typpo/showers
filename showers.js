@@ -1,85 +1,64 @@
-const express = require('express');
-const expressNunjucks = require('express-nunjucks');
-const winston = require('winston');
+import nunjucks from 'nunjucks/browser/nunjucks-slim.js';
+import cloudData from './cloud_data.js';
+import templateCode from './.generated/template.js';
+import { bundleUrl } from './.generated/bundle.js';
 
-const cloudData = require('./cloud_data');
-const { getScriptUrls } = require('./assets');
+const environment = new nunjucks.Environment([], { autoescape: true });
+const template = new nunjucks.Template({ type: 'code', obj: templateCode }, environment);
 
-const logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({ timestamp: true, colorize: true }),
-  ],
-});
+// HTML escaping alone is insufficient inside a script element.
+function scriptJson(value) {
+  return JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+}
 
-const app = express();
-const isDev = app.get('env') === 'development';
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.hostname === 'meteorshowers.org' ||
+        (url.hostname === 'www.meteorshowers.org' && url.protocol === 'http:')) {
+      url.protocol = 'https:';
+      url.hostname = 'www.meteorshowers.org';
+      return Response.redirect(url.href, 301);
+    }
 
-app.enable('trust proxy');
-app.set('views', `${__dirname}/templates`);
-app.use(express.static('public'));
+    const view = url.pathname.match(/^\/view\/([^/]+)\/?$/i);
+    if (url.pathname !== '/' && !view) {
+      return env.ASSETS.fetch(request);
+    }
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } });
+    }
 
-expressNunjucks(app, {
-  watch: isDev,
-  noCache: isDev,
-});
-
-app.get('/', (req, res) => {
-  res.render('index', {
-    isDev,
-    scriptUrls: getScriptUrls(),
-    canonicalUrl: 'https://www.meteorshowers.org/',
-
-    // Default to Perseids - Javascript will override to next shower.
-    showerCloud: cloudData['Perseids'],
-    cloudDataJson: JSON.stringify(cloudData),
-  });
-});
-
-app.get('/view/:shower', (req, res) => {
-  let showerId = req.params.shower;
-  if (showerId.startsWith('iau-')) {
-    Object.keys(cloudData).map(key => {
-      const cloud = cloudData[key];
-      if (showerId.endsWith('-' + cloud.iau_number)) {
-        showerId = cloud.name;
+    let shower = '';
+    if (view) {
+      try {
+        shower = decodeURIComponent(view[1]);
+      } catch {
+        return new Response('Bad request', { status: 400 });
       }
+      // Use the catalogue key, not its display name (e.g. Perseids vs Perseid).
+      if (/^iau-\d+$/.test(shower)) {
+        const number = Number(shower.slice(4));
+        const featured = Object.keys(cloudData).find(key => cloudData[key].iau_number === number);
+        shower = featured || shower;
+      } else {
+        shower = shower.replace(/-/g, ' ');
+      }
+    }
+
+    const html = template.render({
+      shower,
+      showerJson: scriptJson(shower),
+      showerCloud: cloudData[shower || 'Perseids'],
+      cloudDataJson: scriptJson(cloudData),
+      bundleUrl,
+      canonicalUrl: `https://www.meteorshowers.org/${view ? `view/${encodeURIComponent(shower)}` : ''}`,
     });
-  }
-
-  res.render('index', {
-    shower: showerId,
-
-    isDev,
-    scriptUrls: getScriptUrls(),
-
-    canonicalUrl: `https://www.meteorshowers.org/view/${showerId}`,
-
-    showerCloud: cloudData[showerId.replace('-', ' ')],
-    cloudDataJson: JSON.stringify(cloudData),
-  });
-});
-
-const port = process.env.PORT || 8988;
-const server = app.listen(port);
-logger.info('NODE_ENV:', process.env.NODE_ENV);
-logger.info('Running on port', port);
-
-const gracefulShutdown = function gracefulShutdown() {
-  logger.info('Received kill signal, shutting down gracefully.');
-  server.close(() => {
-    logger.info('Closed out remaining connections.');
-    process.exit();
-  });
-  setTimeout(() => {
-    logger.error('Could not close connections in time, forcefully shutting down');
-    process.exit();
-  }, 10 * 1000);
+    return new Response(request.method === 'HEAD' ? null : html, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=0, must-revalidate',
+      },
+    });
+  },
 };
-
-// Listen for TERM signal .e.g. kill
-process.on('SIGTERM', gracefulShutdown);
-
-// Listen for INT signal e.g. Ctrl-C
-process.on('SIGINT', gracefulShutdown);
-
-module.exports = app;
