@@ -35,11 +35,13 @@ runtime. Logs and traces are enabled with 10% sampling. There are no application
 secrets, database bindings, background jobs, or origin-server requests.
 
 Authenticate with `npx cf auth login`, or set `CLOUDFLARE_API_TOKEN` for CI.
-The token needs permission to deploy Workers scripts and routes in the configured
+The token needs permission to deploy Workers scripts and custom domains in the configured
 account and read the `meteorshowers.org` zone. Use `npx cf deploy --dry-run` to
 validate the build without publishing it.
 
-The production routes cover `www.meteorshowers.org/*` and `meteorshowers.org/*`.
+The Worker owns the custom domains `www.meteorshowers.org` and `meteorshowers.org`.
+Cloudflare manages their DNS records directly. Neither hostname points at an
+origin server, and no Workers route overrides are required.
 The Worker redirects the apex hostname and HTTP requests to HTTPS on `www`,
 preserving paths and query strings. Named showers, `/view/iau-N` iframe links,
 and `/view/all` retain their existing URLs. Missing assets return 404 responses.
@@ -50,10 +52,12 @@ JavaScript bundle through Cloudflare's proxy. The origin is the Linode server
 `gate-node-showers.service` runs `/home/ian/showers/showers.js` on port 8988,
 using Node 22.23.4 under `/opt/gate-node-runtime/22.23.4`. The removed PM2/Upstart
 scripts predate that systemd setup.
-Workers routes now intercept all site requests before they reach that origin.
-The existing DNS records and original server are retained for rollback. Removing
-the two Workers routes returns traffic to that server. Redeploying an earlier
-Worker version is the preferred rollback after subsequent Worker releases.
+Both proxied A records pointing to `97.107.131.22` were removed and replaced by
+Worker-managed custom domain records. The site's Google verification TXT record
+was preserved. Roll back application changes by redeploying an earlier Worker
+version. Returning to the old server would require removing the custom domains
+and restoring proxied A records for `@` and `www` to `97.107.131.22`, after
+confirming that the origin service is healthy.
 
 # License
 

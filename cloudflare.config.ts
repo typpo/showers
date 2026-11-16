@@ -1,4 +1,4 @@
-import { bindings, defineConfig, triggers } from 'cf/config';
+import { bindings, defineConfig } from 'cf/config';
 
 export default defineConfig({
   accountId: '2d93479a0c78707f4517a9335fba6388',
@@ -8,10 +8,8 @@ export default defineConfig({
     // Latest date supported by the pinned local Workers runtime.
     compatibilityDate: '2026-11-11',
     workersDev: true,
-    triggers: [
-      triggers.fetch({ pattern: 'www.meteorshowers.org/*', zone: 'meteorshowers.org' }),
-      triggers.fetch({ pattern: 'meteorshowers.org/*', zone: 'meteorshowers.org' }),
-    ],
+    domains: ['www.meteorshowers.org', 'meteorshowers.org'],
+    triggers: [],
     env: { ASSETS: bindings.assets() },
     assets: {
       // The apex redirect must also cover static asset requests.
